@@ -1,0 +1,44 @@
+<?php
+/**
+ * PLUGIN NAME: REDCap Vizr
+ * DESCRIPTION:
+ */
+
+/*
+ * NOTE: This file is required by `../index.php` to simplify upgrades, so all paths are
+ * relative to the parent directory.
+ */
+
+// Call the REDCap Connect file in the main "redcap" directory
+require_once "../../redcap_connect.php";
+require_once "permissions.php";
+
+// Display the project header
+require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
+?>
+
+<div class="vizr-container">
+  <h1>Vizr Charts</h1>
+
+  <div id="vizr-instructions"></div>
+
+  <div class="vizr-charts">
+  </div>
+</div>
+
+<% for (var file in htmlWebpackPlugin.files.js) { %>
+<script src="<%= htmlWebpackPlugin.files.js[file].slice(3) %>"></script>
+<% } %>
+<script type="text/javascript">
+$(document).ready(function(){
+  <% for (var css in htmlWebpackPlugin.files.css) { %>
+  $('head').append('<link href="<%= htmlWebpackPlugin.files.css[css].slice(3) %>" rel="stylesheet">');
+  <% } %>
+  Vizr.run(<?php echo $project_id ?>, <?php echo ($can_edit ? "true" : "false") ?>);
+});
+</script>
+
+<?php
+// Display the project footer
+require_once APP_PATH_DOCROOT . "ProjectGeneral/footer.php";
+?>

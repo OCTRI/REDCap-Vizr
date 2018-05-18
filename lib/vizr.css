@@ -1,0 +1,126 @@
+/*
+  Styles for the REDCap Vizr plugin
+*/
+.vizr-form-panel {
+	width:600px;
+}
+.vizr-form-panel .panel-heading {
+	font-size:140%;
+}
+.vizr-form-panel .panel-heading {
+	color:#ffff99;
+}
+.vizr-form-panel .panel-heading strong {
+	color:#fff;
+}
+.vizr-form-panel legend {
+	font-size:120%;
+	font-weight:bold;
+	margin-bottom:10px;
+}
+.vizr-form-panel fieldset {
+	margin-top:10px;
+}
+.vizr-form-panel fieldset .form-group label.control-label .sub-label,
+.vizr-form-panel fieldset small {
+	color:#666;
+	font-weight:normal;
+}
+.vizr-chart-container {
+	padding-bottom: 15px;
+}
+.vizr-chart-container a {
+	color:#c30;
+	font-size:11px;
+	font-weight:600;
+	margin-left:8px;
+	text-transform:capitalize;
+}
+.vizr-chart-summary caption {
+	padding-bottom:0px !important;
+}
+.vizr-chart-summary .btn-sm {
+	font-size:14px;
+	line-height:1;
+}
+#vizr-instructions {
+	margin-top:20px;
+}
+.pull-right {
+	margin-left:30px;
+}
+#vizr-instructions li {
+	margin-bottom:15px;
+}
+#vizr-instructions li ul {
+	margin-top:8px;
+}
+#vizr-instructions li ul ul {
+	margin-top:3px;
+}
+#vizr-instructions li li {
+	margin-bottom:3px;
+}
+#vizr-instructions li li.more-li {
+	font-weight:700;
+}
+#vizr-instructions li li.more-li li {
+	font-weight:400;
+}
+#vizr-instructions li.spacious {
+	margin-top:30px;
+}
+#vizr-instructions a {
+	color:#006;
+	text-decoration:underline;
+}
+#vizr-instructions a:hover {
+	color:#c30;
+}
+.vizr-example figcaption {
+	color:#777;
+	font-size:90%;
+	font-style:italic;
+	margin-top:3px;
+	text-align:right;
+}
+#vizr-instructions .example {
+	color:#777;
+	display:block;
+	font-style:italic;
+}
+#vizr-instructions .example strong {
+	font-weight:600;
+}
+.vizr-container figcaption {
+	color:#888;
+	font-size:10px;
+}
+
+.label a:visited, .label a, .label a:link {
+	color: inherit;
+	font-size: inherit;
+	vertical-align: inherit;
+	white-space: inherit;
+	line-height: inherit;
+}
+
+.spacious {
+	margin-top: 30px;
+	margin-bottom: 15px;
+}
+
+.error {
+	color: #a94442;
+}
+
+.vizr-version {
+	color: #777;
+	font-size: 10px;
+	margin-top: 30px;
+}
+
+span.target-total {
+  display: inline-block;
+  margin-top: 10px;
+}
