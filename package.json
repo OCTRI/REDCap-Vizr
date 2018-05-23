@@ -1,6 +1,6 @@
 {
   "name": "redcap-vizr",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Visualization tool for REDCap",
   "main": "./dist/bundle.js",
   "scripts": {
