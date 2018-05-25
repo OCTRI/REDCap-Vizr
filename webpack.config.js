@@ -66,6 +66,8 @@ module.exports = {
       'VizrConfigurationProject*',
       'index.php',
       watching ? '*config.php' : 'example_config.php',
+      'Vizr.php',
+      'config.json',
       'lib/**/*.php'
     ]),
     new HtmlWebpackPlugin({

@@ -9,12 +9,37 @@
  * relative to the parent directory.
  */
 
+ // If noAuth is true, NOAUTH will be appended to the URL. The page will be public.
+$noAuth = false;
+// If true, the URL will be in the API format and will not include the REDCap version in the URL.
+$useApiEndpoint = true;
+
 // Call the REDCap Connect file in the main "redcap" directory
-require_once "../../redcap_connect.php";
-require_once "permissions.php";
+require_once dirname(realpath(__FILE__)) . '/../../../redcap_connect.php';
+require_once dirname(realpath(__FILE__)) . '/permissions.php';
 
 // Display the project header
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
+
+$jsHashedFiles = array();
+<% for (var file in htmlWebpackPlugin.files.js) { %>
+$jsHashedFiles[] = '<%= htmlWebpackPlugin.files.js[file].slice(3) %>';
+<% } %>
+
+$jsUrls = array_map(function($asset) {
+  global $module, $noAuth, $useApiEndpoint;
+  return $module->getUrl($asset, $noAuth, $useApiEndpoint);
+}, $jsHashedFiles);
+
+$cssHashedFiles = array();
+<% for (var css in htmlWebpackPlugin.files.css) { %>
+$cssHashedFiles[] = '<%= htmlWebpackPlugin.files.css[css].slice(3) %>';
+<% } %>
+
+$cssUrls = array_map(function($asset) {
+  global $module, $noAuth, $useApiEndpoint;
+  return $module->getUrl($asset, $noAuth, $useApiEndpoint);
+}, $cssHashedFiles);
 ?>
 
 <div class="vizr-container">
@@ -26,14 +51,20 @@ require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
   </div>
 </div>
 
-<% for (var file in htmlWebpackPlugin.files.js) { %>
-<script src="<%= htmlWebpackPlugin.files.js[file].slice(3) %>"></script>
-<% } %>
+<?php
+print(implode("\n", array_map(function($jsUrl) {
+  return "<script src=\"{$jsUrl}\"></script>";
+}, $jsUrls)));
+?>
+
 <script type="text/javascript">
 $(document).ready(function(){
-  <% for (var css in htmlWebpackPlugin.files.css) { %>
-  $('head').append('<link href="<%= htmlWebpackPlugin.files.css[css].slice(3) %>" rel="stylesheet">');
-  <% } %>
+  <?php
+  print(implode("\n", array_map(function($cssUrl) {
+    return "$('head').append('<link href=\"{$cssUrl}\" rel=\"stylesheet\">');";
+  }, $cssUrls)));
+  ?>
+
   Vizr.run(<?php echo $project_id ?>, <?php echo ($can_edit ? "true" : "false") ?>);
 });
 </script>
