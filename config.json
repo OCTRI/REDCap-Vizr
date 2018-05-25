@@ -4,8 +4,28 @@
   "description": "Vizr was created by the Oregon Clinical & Translational Research Institute's (OCTRI) Clinical Research Informatics (CRI) Application team at Oregon Health & Science University (OHSU) with the aim to visualize data contained within a REDCap project.",
   "authors": [
     {
-      "name": "Devs",
-      "email": "criapps@ohsu.edu",
+      "name": "Erik Benton",
+      "email": "benton@ohsu.edu",
+      "institution": "OHSU"
+    },
+    {
+      "name": "Heath Harrelson",
+      "email": "harrelst@ohsu.edu",
+      "institution": "OHSU"
+    },
+    {
+      "name": "Matthew Lawhead",
+      "email": "lawhead@ohsu.edu",
+      "institution": "OHSU"
+    },
+    {
+      "name": "Weldon Sams ",
+      "email": "sams@ohsu.edu",
+      "institution": "OHSU"
+    },
+    {
+      "name": "Amy Yates",
+      "email": "yateam@ohsu.edu",
       "institution": "OHSU"
     }
   ],
@@ -22,4 +42,3 @@
     ]
   }
 }
-

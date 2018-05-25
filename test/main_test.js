@@ -9,6 +9,13 @@ import { run } from '../js/main';
 
 // The DOM expected by the run method of main.js
 const chart = '<div class="vizr-container"><div id="vizr-instructions"/><div class="vizr-charts"/></div>';
+const endpointUrls = {
+  'lib/chart_defs.php': 'http://localhost/redcap/api/?type=module&prefix=vizr&page=lib%2Fchart_defs&pid=0',
+  'lib/data': 'http://localhost/redcap/api/?type=module&prefix=vizr&page=lib%2Fdata&pid=0',
+  'lib/metadata': 'http://localhost/redcap/api/?type=module&prefix=vizr&page=lib%2Fmetadata&pid=0',
+  'lib/permissions': 'http://localhost/redcap/api/?type=module&prefix=vizr&page=lib%2Fpermissions&pid=0',
+  'lib/persist': 'http://localhost/redcap/api/?type=module&prefix=vizr&page=lib%2Fpersist&pid=0'
+};
 
 // Tests for elements visible to all users
 describe('when plugin is started', function() {
@@ -20,7 +27,7 @@ describe('when plugin is started', function() {
     originalDatepicker = $.fn.datepicker;
     $.fn.datepicker = () => {};
     $(chart).appendTo('body');
-    run(0, false);
+    run(0, false, endpointUrls);
   });
 
   afterEach(function() {
@@ -227,7 +234,7 @@ describe('when user can edit', function() {
     originalDatepicker = $.fn.datepicker;
     $.fn.datepicker = () => {};
     $(chart).appendTo('body');
-    run(0, true);
+    run(0, true, endpointUrls);
   });
 
   afterEach(function() {
@@ -292,7 +299,7 @@ describe('when user can edit', function() {
       it('saves config when legend is toggled', () => {
         $('[data-description="toggle-legend"]').click();
         const persistenceRequest = jasmine.Ajax.requests.mostRecent();
-        expect(persistenceRequest.url).toEqual('lib/persist.php?pid=0');
+        expect(persistenceRequest.url).toEqual('http://localhost/redcap/api/?type=module&prefix=vizr&page=lib%2Fpersist&pid=0');
         persistenceRequest.respondWith(exampleResponses.persistence.successful);
       });
 
@@ -311,7 +318,7 @@ describe('when user cannot edit', function() {
     originalDatepicker = $.fn.datepicker;
     $.fn.datepicker = () => {};
     $(chart).appendTo('body');
-    run(0, false);
+    run(0, false, endpointUrls);
   });
 
   afterEach(function() {
