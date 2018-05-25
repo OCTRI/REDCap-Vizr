@@ -428,7 +428,6 @@ function persistConfig(config) {
  * @return {Object} the recordIdField, dataDictionary, and events for the current project
  */
 function getMetadata(pid) {
-  console.log(`${endpointUrls['lib/metadata.php']}`);
   return $.ajax({
     url: `${endpointUrls['lib/metadata.php']}`,
     method: "GET"

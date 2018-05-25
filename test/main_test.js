@@ -9,13 +9,14 @@ import { run } from '../js/main';
 
 // The DOM expected by the run method of main.js
 const chart = '<div class="vizr-container"><div id="vizr-instructions"/><div class="vizr-charts"/></div>';
-const endpointUrls = {
-  'lib/chart_defs.php': 'http://localhost/redcap/api/?type=module&prefix=vizr&page=lib%2Fchart_defs&pid=0',
-  'lib/data': 'http://localhost/redcap/api/?type=module&prefix=vizr&page=lib%2Fdata&pid=0',
-  'lib/metadata': 'http://localhost/redcap/api/?type=module&prefix=vizr&page=lib%2Fmetadata&pid=0',
-  'lib/permissions': 'http://localhost/redcap/api/?type=module&prefix=vizr&page=lib%2Fpermissions&pid=0',
-  'lib/persist': 'http://localhost/redcap/api/?type=module&prefix=vizr&page=lib%2Fpersist&pid=0'
-};
+const endpointBase = 'http://localhost/redcap/api/?type=module&prefix=vizr&page=';
+const endpointUrls = JSON.stringify({
+  'lib/chart_defs.php': `${endpointBase}lib%2Fchart_defs&pid=0`,
+  'lib/data.php': `${endpointBase}lib%2Fdata&pid=0`,
+  'lib/metadata.php': `${endpointBase}lib%2Fmetadata&pid=0`,
+  'lib/permissions.php': `${endpointBase}lib%2Fpermissions&pid=0`,
+  'lib/persist.php': `${endpointBase}lib%2Fpersist&pid=0`
+});
 
 // Tests for elements visible to all users
 describe('when plugin is started', function() {
