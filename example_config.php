@@ -1,7 +1,7 @@
 <?php
 /**
- * PLUGIN NAME: REDCap Vizr
- * DESCRIPTION: Configuration file for the Vizr plugin. This file is included in other Vizr php
+ * EXTERNAL MODULE: REDCap Vizr
+ * DESCRIPTION: Configuration file for the Vizr external module. This file is included in other Vizr php
  * files to retrieve the REDCap project that holds the chart definition data.
  */
 

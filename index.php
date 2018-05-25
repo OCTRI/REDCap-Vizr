@@ -1,6 +1,6 @@
 <?php
 /**
- * PLUGIN NAME: REDCap Vizr
+ * EXTERNAL MODULE: REDCap Vizr
  * DESCRIPTION:
  */
 

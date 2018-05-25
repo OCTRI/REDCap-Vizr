@@ -1,6 +1,6 @@
 <?php
 /**
- * PLUGIN: REDCap Vizr
+ * EXTERNAL MODULE: REDCap Vizr
  * DESCRIPTION: Queries the current project for the record id field and data dictionary.
  *  Also gets events and related forms if the project is longitudinal. Returns a mapping
  *  in json format like:

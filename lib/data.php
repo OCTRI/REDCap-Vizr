@@ -1,6 +1,6 @@
 <?php
 /**
- * PLUGIN: REDCap Vizr
+ * EXTERNAL MODULE: REDCap Vizr
  * DESCRIPTION: Queries the current project for data, which is then summarized by Vizr to create
  * a chart. pid must be appended to the query url for this to be treated as a project-level request
  * POST data should contain the following:

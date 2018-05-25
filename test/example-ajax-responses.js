@@ -25,7 +25,7 @@ export const exampleResponses = {
     unconfigured: {
       status: 200,
       contentType: 'application/json',
-      responseText: '{"error": "The plugin is not configured"}'
+      responseText: '{"error": "The external module is not configured"}'
     },
     noChartDefs: {
       status: 200,

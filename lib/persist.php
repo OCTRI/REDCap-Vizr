@@ -1,6 +1,6 @@
 <?php
 /**
- * PLUGIN: REDCap Vizr
+ * EXTERNAL MODULE: REDCap Vizr
  * DESCRIPTION: Persists chart configuration data for the current project in the VIZR configuration
  *  project. The $config_project_id parameter is specified in config.php. This functionality is
  *  only available for users with the 'Project Design and Setup' rights for the current project.

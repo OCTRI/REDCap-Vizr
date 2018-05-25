@@ -19,7 +19,7 @@ const endpointUrls = JSON.stringify({
 });
 
 // Tests for elements visible to all users
-describe('when plugin is started', function() {
+describe('when external module is started', function() {
 
   let originalDatepicker;
 
@@ -37,7 +37,7 @@ describe('when plugin is started', function() {
     $('.vizr-container').remove();
   });
 
-  describe('unconfigured plugin', function() {
+  describe('unconfigured external module', function() {
     let metadataRequest, configRequest;
 
     beforeEach(function() {
@@ -48,7 +48,7 @@ describe('when plugin is started', function() {
     });
 
     it('emits error', function() {
-      expect($('.error')).toContainText('The plugin is not configured');
+      expect($('.error')).toContainText('The external module is not configured');
     });
 
   });
