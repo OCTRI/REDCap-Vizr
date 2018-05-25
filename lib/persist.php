@@ -7,9 +7,9 @@
  */
 
 // Call the REDCap Connect file in the main "redcap" directory
-require_once "../../../redcap_connect.php";
-require_once "../config.php";
-require_once "permissions.php";
+require_once dirname(realpath(__FILE__)) . '/../../../redcap_connect.php';
+require_once dirname(realpath(__FILE__)) . '/../config.php';
+require_once dirname(realpath(__FILE__)) . '/permissions.php';
 
 // pid in query ensures that the user has access to this project; this is also required for the
 // REDCap::getUserRights() call.

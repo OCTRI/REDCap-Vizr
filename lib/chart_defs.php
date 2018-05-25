@@ -9,11 +9,12 @@
 header('Content-Type: application/json');
 
 // Call the REDCap Connect file in the main "redcap" directory; enforces permissions.
-require_once "../../../redcap_connect.php";
+require_once dirname(realpath(__FILE__)) . '/../../../redcap_connect.php';
 
 $defs_object = new stdClass();
 $error_message = "The Vizr plugin is not configured in your REDCap instance. Contact your REDCap administrator.";
-if (!@include "../config.php") {
+
+if (!@include dirname(realpath(__FILE__)) . '/../config.php') {
   $defs_object->error = $error_message;
 } else if ($config_project_id == -1) {
   $defs_object->error = $error_message;

@@ -21,25 +21,35 @@ require_once dirname(realpath(__FILE__)) . '/permissions.php';
 // Display the project header
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
 
-$jsHashedFiles = array();
+$jsFileNames = array();
 <% for (var file in htmlWebpackPlugin.files.js) { %>
-$jsHashedFiles[] = '<%= htmlWebpackPlugin.files.js[file].slice(3) %>';
+$jsFileNames[] = '<%= htmlWebpackPlugin.files.js[file].slice(3) %>';
 <% } %>
 
 $jsUrls = array_map(function($asset) {
   global $module, $noAuth, $useApiEndpoint;
   return $module->getUrl($asset, $noAuth, $useApiEndpoint);
-}, $jsHashedFiles);
+}, $jsFileNames);
 
-$cssHashedFiles = array();
+$cssFileNames = array();
 <% for (var css in htmlWebpackPlugin.files.css) { %>
-$cssHashedFiles[] = '<%= htmlWebpackPlugin.files.css[css].slice(3) %>';
+$cssFileNames[] = '<%= htmlWebpackPlugin.files.css[css].slice(3) %>';
 <% } %>
 
 $cssUrls = array_map(function($asset) {
   global $module, $noAuth, $useApiEndpoint;
   return $module->getUrl($asset, $noAuth, $useApiEndpoint);
-}, $cssHashedFiles);
+}, $cssFileNames);
+
+// Construct a JSON object where the key is like `lib/data.php` and the value is the corresponding external module URL.
+$libFilePaths = glob(dirname(realpath(__FILE__)) . '/*.php');
+$endpointUrls = array();
+foreach ($libFilePaths as $libFilePath) {
+  $relFilePath = str_replace(dirname(realpath(__FILE__)), 'lib', $libFilePath);
+  $endpointUrls[$relFilePath] = $module->getUrl($relFilePath, $noAuth, $useApiEndpoint);
+}
+
+$jsonEndpointUrls = json_encode($endpointUrls);
 ?>
 
 <div class="vizr-container">
@@ -52,7 +62,7 @@ $cssUrls = array_map(function($asset) {
 </div>
 
 <?php
-print(implode("\n", array_map(function($jsUrl) {
+echo(implode("\n", array_map(function($jsUrl) {
   return "<script src=\"{$jsUrl}\"></script>";
 }, $jsUrls)));
 ?>
@@ -60,12 +70,12 @@ print(implode("\n", array_map(function($jsUrl) {
 <script type="text/javascript">
 $(document).ready(function(){
   <?php
-  print(implode("\n", array_map(function($cssUrl) {
+  echo(implode("\n", array_map(function($cssUrl) {
     return "$('head').append('<link href=\"{$cssUrl}\" rel=\"stylesheet\">');";
   }, $cssUrls)));
   ?>
 
-  Vizr.run(<?php echo $project_id ?>, <?php echo ($can_edit ? "true" : "false") ?>);
+  Vizr.run(<?php echo $project_id ?>, <?php echo ($can_edit ? "true" : "false") ?>, '<?php echo $jsonEndpointUrls ?>');
 });
 </script>
 

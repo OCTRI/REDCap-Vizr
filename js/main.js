@@ -37,6 +37,8 @@ const messages = {
   }
 };
 
+let endpointUrls = {};
+
 /**
  * Shows more detailed instructions and an example chart if no charts are configured,
  * otherwise hides most documentation.
@@ -412,7 +414,7 @@ function persistConfig(config) {
   let json = JSON.stringify(config.charts);
   json = json.replace(/\\"/g,'\\\\"');
   return $.ajax({
-    url: `lib/persist.php?pid=${config.pid}`,
+    url: `${endpointUrls['lib/persist.php']}`,
     data: { "charts": json },
     method: "POST"
   });
@@ -426,8 +428,9 @@ function persistConfig(config) {
  * @return {Object} the recordIdField, dataDictionary, and events for the current project
  */
 function getMetadata(pid) {
+  console.log(`${endpointUrls['lib/metadata.php']}`);
   return $.ajax({
-    url: `lib/metadata.php?pid=${pid}`,
+    url: `${endpointUrls['lib/metadata.php']}`,
     method: "GET"
   });
 }
@@ -445,7 +448,7 @@ function getMetadata(pid) {
  */
 function getChartData(config, container, chartDef, recordIdField) {
   $.ajax({
-    url: `lib/data.php?pid=${config.pid}`,
+    url: `${endpointUrls['lib/data.php']}`,
     data: {
       "recordIdField": recordIdField,
       "filter": chartDef.filter,
@@ -587,7 +590,7 @@ function filterByEventSelection(data, selection) {
  */
 function queryChartDefs(pid) {
   return $.ajax({
-    url: `lib/chart_defs.php?pid=${pid}`,
+    url: `${endpointUrls['lib/chart_defs.php']}`,
     method: "GET"
   });
 }
@@ -647,7 +650,8 @@ function vizrVersion() {
  * @param {Boolean} canEdit - boolean indicating whether or not the links should display to
  *   create or edit charts.
  */
-export function run(pid, canEdit) {
+export function run(pid, canEdit, jsonEndpointUrls) {
+  endpointUrls = JSON.parse(jsonEndpointUrls);
   getMetadata(pid).then(metadata => {
     config(pid, canEdit).then(config => {
 

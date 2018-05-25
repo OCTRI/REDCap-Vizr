@@ -36,7 +36,7 @@
 header('Content-Type: application/json');
 
 // Call the REDCap Connect file in the main "redcap" directory; enforces permissions.
-require_once "../../../redcap_connect.php";
+require_once dirname(realpath(__FILE__)) . '/../../../redcap_connect.php';
 
 /**
  * Filter the input
