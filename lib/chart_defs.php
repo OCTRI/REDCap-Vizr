@@ -1,6 +1,6 @@
 <?php
 /**
- * PLUGIN: REDCap Vizr
+ * EXTERNAL MODULE: REDCap Vizr
  * DESCRIPTION: Queries the VIZR configuration project for chart definition data for the current
  *  project. The $config_project_id parameter is specified in config.php. If config.php does not
  *  exist or the id is the default, return {error : "..."}. Otherwise, return
@@ -9,11 +9,12 @@
 header('Content-Type: application/json');
 
 // Call the REDCap Connect file in the main "redcap" directory; enforces permissions.
-require_once "../../../redcap_connect.php";
+require_once dirname(realpath(__FILE__)) . '/../../../redcap_connect.php';
 
 $defs_object = new stdClass();
-$error_message = "The Vizr plugin is not configured in your REDCap instance. Contact your REDCap administrator.";
-if (!@include "../config.php") {
+$error_message = "The Vizr external module is not configured in your REDCap instance. Contact your REDCap administrator.";
+
+if (!@include dirname(realpath(__FILE__)) . '/../config.php') {
   $defs_object->error = $error_message;
 } else if ($config_project_id == -1) {
   $defs_object->error = $error_message;

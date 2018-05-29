@@ -1,7 +1,7 @@
 <?php
 /**
- * PLUGIN NAME: REDCap Vizr
+ * EXTERNAL MODULE: REDCap Vizr
  * DESCRIPTION:
  */
 
-require_once "./lib/main.php";
+require_once dirname(realpath(__FILE__)) . '/lib/main.php';

@@ -1,6 +1,6 @@
 <?php
 /**
- * PLUGIN: REDCap Vizr
+ * EXTERNAL MODULE: REDCap Vizr
  * DESCRIPTION: Queries the current project for the record id field and data dictionary.
  *  Also gets events and related forms if the project is longitudinal. Returns a mapping
  *  in json format like:
@@ -18,7 +18,7 @@
 header('Content-Type: application/json');
 
 // Call the REDCap Connect file in the main "redcap" directory; enforces permissions.
-require_once "../../../redcap_connect.php";
+require_once dirname(realpath(__FILE__)) . '/../../../redcap_connect.php';
 
 $metadata_object = new stdClass();
 $record_id_field = REDCap::getRecordIdField();

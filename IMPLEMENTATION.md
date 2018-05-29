@@ -1,10 +1,12 @@
 # Vizr Implementation Details
 
-Vizr is a plugin for REDCap that allows users to visualize and group aggregated data over time. PHP is used to communicate with the REDCap plugin API and database, but most of the logic exists client-side in Javascript files. The point of entry to the plugin is the `index.php` file in the vizr-plugin directory. This creates the outer containers to hold the charts and instructions, then calls the `Vizr.run()` method on document.ready() to populate the rest of the DOM elements.
+Vizr is an external module for REDCap that allows users to visualize and group aggregated data over time. PHP is used to communicate with the REDCap external module API and database, but most of the logic exists client-side in Javascript files. The point of entry to the external module is the `index.php` file in the vizr_vX.Y.Z directory where X.Y.Z is the version. This creates the outer containers to hold the charts and instructions, then calls the `Vizr.run()` method on document.ready() to populate the rest of the DOM elements.
 
 ## Storage
 
-REDCap does not support additional storage for plugins. To circumvent this, Vizr requires an additional REDCap project to store chart configuration. A single project for the site's REDCap instance will be configured by the administrator. (See installation instructions in vizr-plugin/README.md.)
+TODO: Update these instructions once the Vizr external module uses native persistence.
+
+REDCap does not support additional storage for plugins. To circumvent this, Vizr requires an additional REDCap project to store chart configuration. A single project for the site's REDCap instance will be configured by the administrator. (See installation instructions in [INSTALL.md](INSTALL.md).)
 
 ## PHP Service Layer
 
@@ -21,7 +23,7 @@ persist.php | Save chart definitions to the configuration project
 
 The most complex logic at the service layer is in `data.php`. This file takes a number of inputs and must be able to retrieve and interpret data from both nonlongitudinal and longitudinal studies.
 
-Among the inputs passed in is a filter. This is a string provided by the user that should conform to REDCap syntax. It is treated as a black box. Vizr simply pushes it to the REDCap plugin API, and unexpected data may not be properly handled. If the input is bad, the filter may be ignored or the plugin API may simply crash. In the event of a crash, Vizr displays a message that the chart could not be rendered.
+Among the inputs passed in is a filter. This is a string provided by the user that should conform to REDCap syntax. It is treated as a black box. Vizr simply pushes it to the REDCap external module API, and unexpected data may not be properly handled. If the input is bad, the filter may be ignored or the external module API may simply crash. In the event of a crash, Vizr displays a message that the chart could not be rendered.
 
 A successful response should contain an object with two components - the `data` and optionally a list of `filterEvents`. For a nonlongitudinal project, only `data` will exist, and the structure would look something like this:
 
@@ -42,7 +44,7 @@ For longitudinal projects where data may be collected multiple times and at diff
 
 When a user configures a chart, they may be seeking information about up to 3 events. Both the data and group fields must have an associated event, and the UI provides selection components for these. In addition, the filter may or may not contain event information. (e.g., `[visit_1_arm_1][visit_status]='1'`).
 
-Because the filter is treated as a black box, the first step in processing a longitudinal data request is to simply apply the filter and get the record ids and events associated with that filter. Depending on whether the filter includes an event, the plugin API would return something like this:
+Because the filter is treated as a black box, the first step in processing a longitudinal data request is to simply apply the filter and get the record ids and events associated with that filter. Depending on whether the filter includes an event, the external module API would return something like this:
 
 ```
 Filter: [visit_1_arm_1][visit_status]='1' (Return all record ids where visit 1 is complete)
@@ -63,7 +65,7 @@ Filter: [visit_status]='1' (Return all record ids where ANY visit is complete)
 ```
 The second example illustrates some of the complexity. The same record may be returned more than once for each matching event. Rather than make assumptions about the user's intent, `data.php` will return all of the rows retrieved from the filter back to the Javascript for processing. The UI will aggregate the data returned and present a select box for live filtering of the data based on event.
 
-Before this can happen, though, `data.php` must perform some transformations. At this point, only the filter has been applied and only the set of record ids and events have been retrieved. It also needs to process the other inputs - retrieving the data and group fields from their respective events. An additional call is made to the plugin API to get this data only for the record ids returned from the filter.
+Before this can happen, though, `data.php` must perform some transformations. At this point, only the filter has been applied and only the set of record ids and events have been retrieved. It also needs to process the other inputs - retrieving the data and group fields from their respective events. An additional call is made to the external module API to get this data only for the record ids returned from the filter.
 
 Depending on whether the data and group fields were in the same event, the API would return something like this:
 

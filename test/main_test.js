@@ -9,9 +9,17 @@ import { run } from '../js/main';
 
 // The DOM expected by the run method of main.js
 const chart = '<div class="vizr-container"><div id="vizr-instructions"/><div class="vizr-charts"/></div>';
+const endpointBase = 'http://localhost/redcap/api/?type=module&prefix=vizr&page=';
+const endpointUrls = JSON.stringify({
+  'lib/chart_defs.php': `${endpointBase}lib%2Fchart_defs&pid=0`,
+  'lib/data.php': `${endpointBase}lib%2Fdata&pid=0`,
+  'lib/metadata.php': `${endpointBase}lib%2Fmetadata&pid=0`,
+  'lib/permissions.php': `${endpointBase}lib%2Fpermissions&pid=0`,
+  'lib/persist.php': `${endpointBase}lib%2Fpersist&pid=0`
+});
 
 // Tests for elements visible to all users
-describe('when plugin is started', function() {
+describe('when external module is started', function() {
 
   let originalDatepicker;
 
@@ -20,7 +28,7 @@ describe('when plugin is started', function() {
     originalDatepicker = $.fn.datepicker;
     $.fn.datepicker = () => {};
     $(chart).appendTo('body');
-    run(0, false);
+    run(0, false, endpointUrls);
   });
 
   afterEach(function() {
@@ -29,7 +37,7 @@ describe('when plugin is started', function() {
     $('.vizr-container').remove();
   });
 
-  describe('unconfigured plugin', function() {
+  describe('unconfigured external module', function() {
     let metadataRequest, configRequest;
 
     beforeEach(function() {
@@ -40,7 +48,7 @@ describe('when plugin is started', function() {
     });
 
     it('emits error', function() {
-      expect($('.error')).toContainText('The plugin is not configured');
+      expect($('.error')).toContainText('The external module is not configured');
     });
 
   });
@@ -227,7 +235,7 @@ describe('when user can edit', function() {
     originalDatepicker = $.fn.datepicker;
     $.fn.datepicker = () => {};
     $(chart).appendTo('body');
-    run(0, true);
+    run(0, true, endpointUrls);
   });
 
   afterEach(function() {
@@ -292,7 +300,7 @@ describe('when user can edit', function() {
       it('saves config when legend is toggled', () => {
         $('[data-description="toggle-legend"]').click();
         const persistenceRequest = jasmine.Ajax.requests.mostRecent();
-        expect(persistenceRequest.url).toEqual('lib/persist.php?pid=0');
+        expect(persistenceRequest.url).toEqual('http://localhost/redcap/api/?type=module&prefix=vizr&page=lib%2Fpersist&pid=0');
         persistenceRequest.respondWith(exampleResponses.persistence.successful);
       });
 
@@ -311,7 +319,7 @@ describe('when user cannot edit', function() {
     originalDatepicker = $.fn.datepicker;
     $.fn.datepicker = () => {};
     $(chart).appendTo('body');
-    run(0, false);
+    run(0, false, endpointUrls);
   });
 
   afterEach(function() {

@@ -1,6 +1,6 @@
 <?php
 /**
- * PLUGIN: REDCap Vizr
+ * EXTERNAL MODULE: REDCap Vizr
  * DESCRIPTION: Queries the current project for data, which is then summarized by Vizr to create
  * a chart. pid must be appended to the query url for this to be treated as a project-level request
  * POST data should contain the following:
@@ -36,7 +36,7 @@
 header('Content-Type: application/json');
 
 // Call the REDCap Connect file in the main "redcap" directory; enforces permissions.
-require_once "../../../redcap_connect.php";
+require_once dirname(realpath(__FILE__)) . '/../../../redcap_connect.php';
 
 /**
  * Filter the input
