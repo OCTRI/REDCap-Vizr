@@ -368,7 +368,7 @@ function updateCallback(chartId, metadata, config) {
 }
 
 /**
- * Writes the config to the REDCap configuration project.
+ * Writes the config to the external module settings.
  *
  * @param {Object} config - config object with the pid of the config project and the chart defs.
  *     Note that this parameter may be updated by this method.
@@ -405,7 +405,7 @@ function deleteConfig(config, chartId) {
 }
 
 /**
- * Writes the given configuration to the REDCap config project.
+ * Writes the given configuration to the external module settings.
  *
  * @param {Object} config - config object with the chart defs.
  * @return {Promise -> Object[]}
@@ -579,22 +579,21 @@ function filterByEventSelection(data, selection) {
 }
 
 /**
- * Retrieve the chart definitions from the REDCap configuration project.
+ * Retrieve the chart definitions from external module settings.
  *
  * @param {Number} pid - project id for the current project
  * @return {Promise -> Object[]} - resolves to an Object with either the key 'error'
- *    or 'records'. Records is a list of 0 or 1 Objects of
- *    {record_id: Number/Str, config_array: JsonString}
+ *    or 'configArray', where configArray is a list of 0 or more chart definition objects.
  */
 function queryChartDefs(pid) {
   return $.ajax({
     url: `${endpointUrls['lib/chart_defs.php']}`,
-    method: "GET"
+    method: 'GET'
   });
 }
 /**
- * Construct a project configuration object. Chart definitions are retrieved from the config REDCap
- * project.
+ * Construct a project configuration object. Chart definitions are retrieved from the external
+ * module settings.
  *
  * @param {Number} pid - project id for the current project
  * @param {Boolean} canEdit - boolean indicating whether or not the links should display to

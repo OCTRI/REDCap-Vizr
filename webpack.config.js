@@ -10,8 +10,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
 
-const watching = process.env.WATCHING ? true : false;
-
 module.exports = {
   externals: {
     jquery: 'jQuery'
@@ -62,10 +60,9 @@ module.exports = {
       VIZR_GIT_HASH: JSON.stringify(repoInfo.abbreviatedSha)
     }),
     new CopyWebpackPlugin([
-      'README.md',
-      'VizrConfigurationProject*',
+      '*.md',
+      'LICENSE',
       'index.php',
-      watching ? '*config.php' : 'example_config.php',
       'Vizr.php',
       'config.json',
       'lib/**/*.php'

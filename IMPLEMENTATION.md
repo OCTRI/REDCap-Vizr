@@ -4,9 +4,7 @@ Vizr is an external module for REDCap that allows users to visualize and group a
 
 ## Storage
 
-TODO: Update these instructions once the Vizr external module uses native persistence.
-
-REDCap does not support additional storage for plugins. To circumvent this, Vizr requires an additional REDCap project to store chart configuration. A single project for the site's REDCap instance will be configured by the administrator. (See installation instructions in [INSTALL.md](INSTALL.md).)
+Chart configuration is stored as JSON in the external module's settings. See `getProjectSetting` in [the external module documentation](https://github.com/vanderbilt/redcap-external-modules/blob/master/docs/official-documentation.md) and the `redcap_external_module_settings` database table for details.
 
 ## PHP Service Layer
 
@@ -15,9 +13,9 @@ PHP is used to communicate with the REDCap Plugin API and the database directly.
 PHP File | Function
 ---------| ---------
 metadata.php | Retrieve metadata about the project including the data dictionary and information about events if the project is longitudinal
-chart_defs.php | Retrieve chart definitions from the configuration project
+chart_defs.php | Retrieve chart definitions from external module settings
 data.php | Retrieve data from the project based on the chart definition
-persist.php | Save chart definitions to the configuration project
+persist.php | Save chart definitions to the external module settings
 
 ### Getting data
 
