@@ -21,6 +21,17 @@ require_once dirname(realpath(__FILE__)) . '/permissions.php';
 // Display the project header
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
 
+/**
+ * Constructs the path to a file relative to the root of the external module directory.
+ *
+ * @param string $path - a full path to a file
+ * @return string the path to the file, relative to the root of the external module
+ */
+function moduleRelativePath($path) {
+  $prefix = basename(dirname($path));
+  return str_replace(dirname($path), $prefix, $path);
+}
+
 $jsFileNames = array();
 <% for (var file in htmlWebpackPlugin.files.js) { %>
 $jsFileNames[] = '<%= htmlWebpackPlugin.files.js[file].slice(3) %>';
@@ -41,15 +52,23 @@ $cssUrls = array_map(function($asset) {
   return $module->getUrl($asset, $noAuth, $useApiEndpoint);
 }, $cssFileNames);
 
-// Construct a JSON object where the key is like `lib/data.php` and the value is the corresponding external module URL.
+// Construct a JSON object where the key is like `lib/data.php` and the value is the
+// corresponding external module URL.
+$assetUrls = array();
+
 $libFilePaths = glob(dirname(realpath(__FILE__)) . '/*.php');
-$endpointUrls = array();
 foreach ($libFilePaths as $libFilePath) {
-  $relFilePath = str_replace(dirname(realpath(__FILE__)), 'lib', $libFilePath);
-  $endpointUrls[$relFilePath] = $module->getUrl($relFilePath, $noAuth, $useApiEndpoint);
+  $relFilePath = moduleRelativePath($libFilePath);
+  $assetUrls[$relFilePath] = $module->getUrl($relFilePath, $noAuth, $useApiEndpoint);
 }
 
-$jsonEndpointUrls = json_encode($endpointUrls);
+$imageFilePaths = glob(realpath(__DIR__ . '/../assets') . '/*.png');
+foreach ($imageFilePaths as $imageFilePath) {
+  $relFilePath = moduleRelativePath($imageFilePath);
+  $assetUrls[$relFilePath] = $module->getUrl($relFilePath, $noAuth, $useApiEndpoint);
+}
+
+$jsonAssetUrls = json_encode($assetUrls);
 ?>
 
 <div class="vizr-container">
@@ -75,7 +94,7 @@ $(document).ready(function(){
   }, $cssUrls)));
   ?>
 
-  Vizr.run(<?php echo $project_id ?>, <?php echo ($can_edit ? "true" : "false") ?>, '<?php echo $jsonEndpointUrls ?>');
+  Vizr.run(<?php echo $project_id ?>, <?php echo ($can_edit ? "true" : "false") ?>, '<?php echo $jsonAssetUrls ?>');
 });
 </script>
 

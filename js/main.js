@@ -2,6 +2,7 @@ import $ from 'jquery';
 import uuid from 'uuid/v4';
 
 import '../lib/vizr.css';
+import vizrExample from '../lib/vizr_example.png';
 
 import { makeStackedChart } from './chart-config';
 import { groupedByInterval, summarizeGroups, trendPoints } from './bucket';
@@ -37,7 +38,7 @@ const messages = {
   }
 };
 
-let endpointUrls = {};
+let assetUrls = {};
 
 /**
  * Shows more detailed instructions and an example chart if no charts are configured,
@@ -412,7 +413,7 @@ function deleteConfig(config, chartId) {
  */
 function persistConfig(config) {
   return $.ajax({
-    url: `${endpointUrls['lib/persist.php']}`,
+    url: assetUrls['lib/persist.php'],
     contentType: 'application/json',
     data: JSON.stringify({ charts: config.charts }),
     method: 'POST'
@@ -428,7 +429,7 @@ function persistConfig(config) {
  */
 function getMetadata(pid) {
   return $.ajax({
-    url: `${endpointUrls['lib/metadata.php']}`,
+    url: assetUrls['lib/metadata.php'],
     method: "GET"
   });
 }
@@ -446,7 +447,7 @@ function getMetadata(pid) {
  */
 function getChartData(config, container, chartDef, recordIdField) {
   $.ajax({
-    url: `${endpointUrls['lib/data.php']}`,
+    url: assetUrls['lib/data.php'],
     data: {
       "recordIdField": recordIdField,
       "filter": chartDef.filter,
@@ -587,7 +588,7 @@ function filterByEventSelection(data, selection) {
  */
 function queryChartDefs(pid) {
   return $.ajax({
-    url: `${endpointUrls['lib/chart_defs.php']}`,
+    url: assetUrls['lib/chart_defs.php'],
     method: 'GET'
   });
 }
@@ -646,9 +647,12 @@ function vizrVersion() {
  * @param {Number} pid - project id; used to construct the data queries.
  * @param {Boolean} canEdit - boolean indicating whether or not the links should display to
  *   create or edit charts.
+ * @param {String} jsonAssetUrls - JSON-encoded string containing key/value pairs where
+ *   the key is a relative file path like `lib/data.php`, and the value is the corresponding
+ *   external module URL like `http://localhost/redcap/api/?type=module&prefix=vizr&page=lib%2Fdata&pid=14`
  */
-export function run(pid, canEdit, jsonEndpointUrls) {
-  endpointUrls = JSON.parse(jsonEndpointUrls);
+export function run(pid, canEdit, jsonAssetUrls) {
+  assetUrls = JSON.parse(jsonAssetUrls);
   getMetadata(pid).then(metadata => {
     config(pid, canEdit).then(config => {
 
@@ -656,7 +660,7 @@ export function run(pid, canEdit, jsonEndpointUrls) {
       if (config.error) {
         mainContainerElem.append(errorMessage(config.error));
       } else {
-        mainContainerElem.prepend(exampleChart());
+        mainContainerElem.prepend(exampleChart(assetUrls[vizrExample]));
         showInstructionsForConfig(config);
 
         config.charts.forEach(chartDef => {
