@@ -1,10 +1,8 @@
 <?php
 /**
  * EXTERNAL MODULE: REDCap Vizr
- * DESCRIPTION: Queries the VIZR configuration project for chart definition data for the current
- *  project. The $config_project_id parameter is specified in config.php. If config.php does not
- *  exist or the id is the default, return {error : "..."}. Otherwise, return
- *  {records : "[configArray...]"}.
+ * DESCRIPTION: Queries the Vizr external module settings for chart definition data for the current
+ *  project. Returns JSON with the shape {"configArray": [...]}.
  */
 header('Content-Type: application/json');
 
@@ -12,20 +10,10 @@ header('Content-Type: application/json');
 require_once dirname(realpath(__FILE__)) . '/../../../redcap_connect.php';
 
 $defs_object = new stdClass();
-$error_message = "The Vizr external module is not configured in your REDCap instance. Contact your REDCap administrator.";
 
-if (!@include dirname(realpath(__FILE__)) . '/../config.php') {
-  $defs_object->error = $error_message;
-} else if ($config_project_id == -1) {
-  $defs_object->error = $error_message;
-} else {
-  // NOTE: pid must be appended to the query url for this to be treated as a project-level request
-  $defs = REDCap::getData ($config_project_id, 'json' /* return_format */, $project_id,
-    NULL /*$fields*/, NULL /* events */, NULL /* groups */, FALSE /* combineCheckboxValues */,
-    FALSE /* exportDataAccessGroups */, FALSE /* exportSurveyFields */, NULL /* filterLogic */,
-    TRUE /* exportAsLabels */, FALSE /* exportCsvHeadersAsLabels */);
-  $defs_object->records = json_decode($defs);
-}
+// NOTE: pid must be appended to the query url for this to be treated as a project-level request
+$chart_defs = $module->getProjectSetting('chart-definitions', $project_id);
+$defs_object->configArray = $chart_defs ? $chart_defs : array();
 
 print json_encode($defs_object);
 ?>

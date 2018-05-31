@@ -411,12 +411,11 @@ function deleteConfig(config, chartId) {
  * @return {Promise -> Object[]}
  */
 function persistConfig(config) {
-  let json = JSON.stringify(config.charts);
-  json = json.replace(/\\"/g,'\\\\"');
   return $.ajax({
     url: `${endpointUrls['lib/persist.php']}`,
-    data: { "charts": json },
-    method: "POST"
+    contentType: 'application/json',
+    data: JSON.stringify({ charts: config.charts }),
+    method: 'POST'
   });
 }
 
@@ -605,13 +604,13 @@ function queryChartDefs(pid) {
  */
 function config(pid, canEdit) {
   return queryChartDefs(pid).then(chartDef => {
-    const { error, records } = chartDef;
+    const { error, configArray } = chartDef;
     if (error) {
       return { error };
     }
-    const emptyConfig = (records.length < 1 || records[0].config_array.trim().length === 0);
-    let charts = emptyConfig ? [] : JSON.parse(records[0].config_array);
-    return { "pid": pid, "canEdit": canEdit, "charts": charts };
+    const emptyConfig = (!!configArray && configArray.length < 1);
+    let charts = emptyConfig ? [] : configArray;
+    return { pid, canEdit, charts };
   });
 }
 
