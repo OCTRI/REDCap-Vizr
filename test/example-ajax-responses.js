@@ -1,13 +1,6 @@
 import { exampleMetadata, exampleLongitudinalMetadata } from './example-metadata';
 import { exampleChartDef, exampleNoGroupChartDef, exampleLongitudinalChartDef } from './example-chart-def';
 
-/*
- * Stringify a config array and escape quotes to mock how the response comes back from PHP
- */
-function stringifyAndEscape(config) {
-  return (JSON.stringify(config)).replace(/"/g, '\\"');
-}
-
 export const exampleResponses = {
   metadata: {
     nonlongitudinal: {
@@ -30,22 +23,22 @@ export const exampleResponses = {
     noChartDefs: {
       status: 200,
       contentType: 'application/json',
-      responseText: '{"records": []}'
+      responseText: '{"configArray": []}'
     },
     nonlongitudinal: {
       status: 200,
       contentType: 'application/json',
-      responseText: `{"records": [{"record_id":"0", "config_array":"${stringifyAndEscape([exampleChartDef()])}"}]}`
+      responseText: JSON.stringify({ configArray: [exampleChartDef()] })
     },
     nonlongitudinalNoGroups: {
       status: 200,
       contentType: 'application/json',
-      responseText: `{"records": [{"record_id":"0", "config_array":"${stringifyAndEscape([exampleNoGroupChartDef()])}"}]}`
+      responseText: JSON.stringify({ configArray: [exampleNoGroupChartDef()] })
     },
     longitudinal: {
       status: 200,
       contentType: 'application/json',
-      responseText: `{"records": [{"record_id":"0", "config_array":"${stringifyAndEscape([exampleLongitudinalChartDef()])}"}]}`
+      responseText: JSON.stringify({ configArray: [exampleLongitudinalChartDef()] })
     }
   },
   data: {
@@ -84,7 +77,7 @@ export const exampleResponses = {
     successful: {
       status: 200,
       contentType: 'application/json',
-      responseText: '{"errors":[],"warnings":[],"ids":["0"],"item_count":1}'
+      responseText: '{"item_count":1}'
     }
   }
 };
