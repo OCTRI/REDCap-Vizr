@@ -85,9 +85,9 @@ export function errorMessage(message) {
  *
  * @return {String} HTML fragment
  */
-export function exampleChart() {
+export function exampleChart(imgSrc = vizrExample) {
   return figure({class: 'pull-right vizr-example hide'},
-    img({src: vizrExample, class: 'img-thumbnail', title: messages.example.imgTitle}),
+    img({src: imgSrc, class: 'img-thumbnail', title: messages.example.imgTitle}),
     // Example - Screened In Subjects per Week ...
     figcaption(
       strong(messages.example.captionIntro),
