@@ -1,7 +1,7 @@
 {
-  "name": "REDCap Vizr",
+  "name": "Vizr - Visualizer for temporal summary reporting",
   "namespace": "Octri\\Vizr",
-  "description": "Vizr was created by the Oregon Clinical & Translational Research Institute's (OCTRI) Clinical Research Informatics (CRI) Application team at Oregon Health & Science University (OHSU) with the aim to visualize data contained within a REDCap project.",
+  "description": "Create temporal bar charts that visualize the collection, over time, of specific data points captured in a project's individual records, and optionally, compare that data to projected targets",
   "authors": [
     {
       "name": "Erik Benton",
@@ -16,6 +16,11 @@
     {
       "name": "Matthew Lawhead",
       "email": "lawhead@ohsu.edu",
+      "institution": "OHSU"
+    },
+    {
+      "name": "Liz Moyer",
+      "email": "moyerel@ohsu.edu",
       "institution": "OHSU"
     },
     {
