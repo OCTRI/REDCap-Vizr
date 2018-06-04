@@ -149,6 +149,21 @@ describe('chartForm', () => {
     expect(newChartDef.chartEnd).toEqual('2017-05-12');
   });
 
+  it('strips HTML tags on save', () => {
+    let newChartDef = {};
+    const form = chartForm(exampleMetadata, chartDef, (arg) => {
+      newChartDef = arg;
+    });
+
+    // add HTML to title and description
+    form.find(selector.titleField).val('Chart Title <a href="#">Boop</a>').change();
+    form.find(selector.descriptionField).val('<script>alert("hello");</script>').change();
+    form.find(selector.saveButton).click();
+
+    expect(newChartDef.title).toEqual('Chart Title Boop');
+    expect(newChartDef.description).toEqual('alert("hello");');
+  });
+
   it('resets the form on cancel', () => {
     // create an initialized form
     const withData = chartForm(exampleMetadata, chartDef);
