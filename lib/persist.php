@@ -43,6 +43,34 @@ function inputIsValid($input) {
   return FALSE;
 }
 
+/**
+ * Recursively processes the given object and runs all its string-valued properties
+ * through `REDCap::escapeHtml`. The original object is mutated.
+ *
+ * @param object $obj - the object to sanitize
+ */
+function sanitizeStringProperties($obj) {
+  $props = get_object_vars($obj);
+  foreach ($props as $prop => $val) {
+    if (is_object($val)) {
+      sanitizeStringProperties($val);
+    } else if (is_string($val)) {
+      $obj->{$prop} = REDCap::filterHtml($val);
+    }
+  }
+}
+
+/**
+ * Sanitize the properties of each chart in the charts array. Charts are sanitized in place.
+ *
+ * @param array $charts - an array of chart objects
+ */
+function sanitizeChartConfig($charts) {
+  foreach ($charts as $chart) {
+    sanitizeStringProperties($chart);
+  }
+}
+
 // pid in query ensures that the user has access to this project; this is also required for the
 // REDCap::getUserRights() call.
 
@@ -57,6 +85,7 @@ $data = json_decode(file_get_contents('php://input'));
 
 if (inputIsValid($data)) {
   try {
+    sanitizeChartConfig($data->charts);
     $module->setProjectSetting('chart-definitions', $data->charts);
     $response->item_count = 1;
   } catch (Exception $e) {
