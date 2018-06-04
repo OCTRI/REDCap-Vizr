@@ -439,7 +439,6 @@ function attachEventHandlers(element, chartForm) {
 
     if (fieldName) {
       // Update the model.
-      // chartForm.setField(fieldName, input.val(), input.attr('data-type'));
       chartForm.setField(fieldName, striptags(input.val()), input.attr('data-type'));
     }
 
