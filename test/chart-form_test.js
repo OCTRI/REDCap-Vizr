@@ -42,11 +42,11 @@ describe('chartForm', () => {
 
   it('creates the expected date interval options', () => {
     const dateIntervalOptions = chart.find('select[name=date_interval] > option');
-    expect(dateIntervalOptions.length).toEqual(4); // 4 options
-    expect(dateIntervalOptions.eq(0).text().trim()).toEqual('Days');
-    expect(dateIntervalOptions.eq(1).text().trim()).toEqual('Weeks');
-    expect(dateIntervalOptions.eq(2).text().trim()).toEqual('Months');
-    expect(dateIntervalOptions.eq(3).text().trim()).toEqual('Years');
+    expect(dateIntervalOptions.length).toEqual(5); // 4 options plus prompt
+    expect(dateIntervalOptions.eq(1).text().trim()).toEqual('Days');
+    expect(dateIntervalOptions.eq(2).text().trim()).toEqual('Weeks');
+    expect(dateIntervalOptions.eq(3).text().trim()).toEqual('Months');
+    expect(dateIntervalOptions.eq(4).text().trim()).toEqual('Years');
   });
 
   it('creates the expected grouping field options', () => {
