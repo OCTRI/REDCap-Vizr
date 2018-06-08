@@ -119,6 +119,9 @@ export const formTemplate = `
         <div class="form-group">
           <label for="date_interval" class="control-label">Date Interval</label>
           <select class="form-control" name="date_interval" required="required" data-field='dateInterval'>
+            <option value="">
+              Select an interval
+            </option>
             {{#dateIntervals}}
             {{> option}}
             {{/dateIntervals}}
