@@ -71,14 +71,7 @@ foreach ($imageFilePaths as $imageFilePath) {
 $jsonAssetUrls = json_encode($assetUrls);
 ?>
 
-<div class="vizr-container">
-  <h1>Vizr Charts</h1>
-
-  <div id="vizr-instructions"></div>
-
-  <div class="vizr-charts">
-  </div>
-</div>
+<div class="vizr-container"></div>
 
 <?php
 echo(implode("\n", array_map(function($jsUrl) {
@@ -94,7 +87,7 @@ $(document).ready(function(){
   }, $cssUrls)));
   ?>
 
-  Vizr.run(<?php echo $project_id ?>, <?php echo ($can_edit ? "true" : "false") ?>, '<?php echo $jsonAssetUrls ?>');
+  //Vizr.run(<?php echo $project_id ?>, <?php echo ($can_edit ? "true" : "false") ?>, '<?php echo $jsonAssetUrls ?>');
 });
 </script>
 
