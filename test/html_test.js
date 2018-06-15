@@ -1,6 +1,4 @@
-/* eslint-env jasmine */
-import {ul, li} from '../js/html';
-
+import { ul, li } from '../js/html';
 
 describe('html generation', () => {
 

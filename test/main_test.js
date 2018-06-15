@@ -1,4 +1,3 @@
-/* eslint-env jasmine */
 import 'jasmine-ajax';
 import 'jasmine-jquery';
 
