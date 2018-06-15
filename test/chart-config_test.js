@@ -1,4 +1,3 @@
-/* eslint-env jasmine */
 import {
   makeChart, makeStackedChart, labelOpts
 } from '../js/chart-config';

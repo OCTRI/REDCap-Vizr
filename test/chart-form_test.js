@@ -1,4 +1,3 @@
-/* eslint-env jasmine */
 import $ from 'jquery';
 
 import { newChartDefinition } from '../js/util';
