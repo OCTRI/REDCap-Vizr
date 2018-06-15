@@ -6,6 +6,7 @@ const packageJson = require('./package.json');
 const repoInfo = require('git-repo-info')();
 
 const { DefinePlugin } = webpack;
+const { VueLoaderPlugin } = require('vue-loader');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
@@ -17,18 +18,28 @@ module.exports = {
   entry: {
     app: [
       __dirname + '/node_modules/babel-polyfill/dist/polyfill.js',
-      './js/main.js'
+      './js/vue-main.js'
     ]
+  },
+  resolve: {
+    alias: {
+      'vue$': 'vue/dist/vue.esm.js'
+    },
+    extensions: ['.js', '.vue', '.json']
   },
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'assets/bundle.[chunkhash].js',
-    libraryTarget: 'var',
-    library: 'Vizr'
+    filename: 'assets/bundle.[chunkhash].js'//,
+    // libraryTarget: 'var',
+    // library: 'Vizr'
   },
   module: {
     noParse: [/\/babel-polyfill\/dist\/polyfill\.js$/],
     rules: [
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader'
+      },
       {
         test: /\.js$/,
         exclude: /node_modules/,
@@ -59,6 +70,7 @@ module.exports = {
       VIZR_VERSION: JSON.stringify(packageJson.version),
       VIZR_GIT_HASH: JSON.stringify(repoInfo.abbreviatedSha)
     }),
+    new VueLoaderPlugin(),
     new CopyWebpackPlugin([
       '*.md',
       'LICENSE',
