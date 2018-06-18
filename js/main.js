@@ -486,7 +486,8 @@ function validateResponse(response, config, chartDef) {
   if (response.filterEvents && response.filterEvents.length > 1) {
     warnings.push(messages.warnings.multipleEvents);
     $(`#chart-${chartDef.id} > .vizr-event-select`).append(
-      eventSelect(response.filterEvents, config, chartDef, response.data));
+      eventSelect(response.filterEvents, config, chartDef,
+          response.data.filter(r => r[chartDef.field] !== '')));
   }
 
   let blankDates = 0;
