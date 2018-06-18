@@ -119,6 +119,7 @@ function reloadLink(metadata, config, chartDef) {
   reloadLink.on('click', () => {
     $(`#chart-${chartDef.id}`).find(".vizr-chart-summary").empty();
     $(`#chart-${chartDef.id}`).find('.error').empty();
+    $(`#chart-${chartDef.id}`).find('.vizr-event-select').empty();
     getChartData(config, null, chartDef, metadata.recordIdField)
   });
 
