@@ -5,6 +5,7 @@ import $ from 'jquery';
 import { shallowMount, mount } from '@vue/test-utils';
 
 import { exampleResponses } from '../example-ajax-responses';
+import { exampleMetadata, exampleLongitudinalMetadata } from '../example-metadata';
 import { chartId, exampleChartDef, exampleLongitudinalChartDef } from '../example-chart-def';
 
 import Vizr from '@/components/Vizr';
@@ -17,11 +18,12 @@ describe('Vizr.vue', () => {
       }
     });
 
-    const heading = wrapper.find('h1');    expect(heading.text()).toBe('Vizr Charts');
+    const heading = wrapper.find('h1');
+    expect(heading.text()).toBe('Vizr Charts');
   });
 
   // Tests for elements visible to all users
-  xdescribe('when plugin is started', function() {
+  describe('when plugin is started', function() {
     let originalDatepicker;
 
     beforeEach(function() {
@@ -35,20 +37,22 @@ describe('Vizr.vue', () => {
       $.fn.datepicker = originalDatepicker;
     });
 
-    xdescribe('unconfigured plugin', function() {
-      let metadataRequest, configRequest;
-
-      beforeEach(function() {
-        metadataRequest = jasmine.Ajax.requests.mostRecent();
-        metadataRequest.respondWith(exampleResponses.metadata.nonlongitudinal);
-        configRequest = jasmine.Ajax.requests.mostRecent();
-        configRequest.respondWith(exampleResponses.config.unconfigured);
-      });
-
+    describe('unconfigured plugin', function() {
       it('emits error', function() {
-        expect($('.error')).toContainText('The plugin is not configured');
-      });
+        const config = { error: 'The plugin is not configured' };
+        const wrapper = shallowMount(Vizr, {
+          data() {
+            return {
+              metadata: exampleMetadata,
+              config
+            };
+          }
+        });
 
+        const errorElement = wrapper.find('.error');
+        expect(errorElement.exists()).toBe(true);
+        expect(errorElement.text()).toContain('The plugin is not configured');
+      });
     });
 
     xdescribe('and charts are defined', function(){
@@ -242,12 +246,9 @@ describe('Vizr.vue', () => {
         wrapper = mount(Vizr, {
           propsData: {
             canEdit: true
-          },
-
-          data: {
-            config: exampleResponses.metadata.nonlongitudinal
           }
-        })
+        });
+        wrapper.setData({ config: exampleResponses.metadata.nonlongitudinal });
       });
 
       it('shows example', function() {
