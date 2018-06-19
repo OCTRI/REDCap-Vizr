@@ -1,9 +1,13 @@
 <template>
-  <div>
+  <div id="vizr-container">
     <h1>Vizr Charts</h1>
 
     <ExampleChart v-show="noCharts"/>
     <Instructions :can-edit="canEdit" :has-charts="hasCharts"/>
+
+    <div class="error" v-if="hasConfigError">
+      {{ config.error }}
+    </div>
 
     <div class="vizr-charts">
     </div>
@@ -59,14 +63,20 @@ export default {
   data() {
     return {
       messages,
-      config: {},
+      metadata: {},
+      config: {}
     };
   },
 
   computed: {
+    hasConfigError() {
+      const { config } = this;
+      return Boolean(config.error);
+    },
+
     hasCharts() {
-      const config = this.config;
-      return !!(config.charts && config.charts.length);
+      const { config } = this;
+      return Boolean(config.charts && config.charts.length);
     },
 
     noCharts() {
