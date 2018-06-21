@@ -30,9 +30,8 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'assets/bundle.[chunkhash].js'//,
-    // libraryTarget: 'var',
-    // library: 'Vizr'
+    filename: 'assets/bundle.[chunkhash].js',
+    library: 'Vizr'
   },
   module: {
     noParse: [/\/babel-polyfill\/dist\/polyfill\.js$/],
