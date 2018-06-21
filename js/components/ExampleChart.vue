@@ -1,6 +1,6 @@
 <template>
   <figure class="pull-right vizr-example">
-    <img src="lib/vizr_example.png" :alt="messages.imgTitle" class="img-thumbnail" :title="messages.imgTitle">
+    <img :src="imgSrc" :alt="messages.imgTitle" class="img-thumbnail" :title="messages.imgTitle">
     <figcaption>
       <strong>{{ messages.captionIntro }}</strong> {{ messages.captionTitle }}
     </figcaption>
@@ -8,8 +8,11 @@
 </template>
 
 <script>
+import exampleImage from '../../lib/vizr_example.png';
+
 export default {
   name: 'ExampleChart',
+  inject: ['assetUrls'],
 
   data() {
     return {
@@ -19,6 +22,13 @@ export default {
         imgTitle: 'Example Vizr Chart - Screened In Results'
       }
     };
+  },
+
+  computed: {
+    imgSrc() {
+      const { assetUrls = {} } = this;
+      return assetUrls[exampleImage] || exampleImage;
+    }
   }
 }
 </script>
