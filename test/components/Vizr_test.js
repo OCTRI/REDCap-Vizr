@@ -11,11 +11,16 @@ import { chartId, exampleChartDef, exampleLongitudinalChartDef } from '../exampl
 import Vizr from '@/components/Vizr';
 
 describe('Vizr.vue', () => {
+  const mockProvide = {
+    assetUrls: {}
+  };
+
   it('renders', () => {
     const wrapper = shallowMount(Vizr, {
       propsData: {
         canEdit: false
-      }
+      },
+      provide: mockProvide
     });
 
     const heading = wrapper.find('h1');
@@ -41,6 +46,7 @@ describe('Vizr.vue', () => {
       it('emits error', function() {
         const config = { error: 'The plugin is not configured' };
         const wrapper = shallowMount(Vizr, {
+          provide: mockProvide,
           data() {
             return {
               metadata: exampleMetadata,
@@ -244,6 +250,7 @@ describe('Vizr.vue', () => {
         // configRequest.respondWith(exampleResponses.config.noChartDefs);
 
         wrapper = mount(Vizr, {
+          provide: mockProvide,
           propsData: {
             canEdit: true
           }
