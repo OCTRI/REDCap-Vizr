@@ -14,19 +14,22 @@ import Vizr from './components/Vizr';
  *   external module URL like `http://localhost/redcap/api/?type=module&prefix=vizr&page=lib%2Fdata&pid=14`
  */
 export function run(pid, canEdit, jsonAssetUrls) {
-  const parsedAssetUrls = JSON.parse(jsonAssetUrls);
-
   /**
    * Instantiate the Vue component tree.
    */
   new Vue({
     el: '.vizr-container',
+    components: { Vizr },
+    template: '<Vizr :pid="pid" :can-edit="canEdit"/>',
     data: {
       pid,
       canEdit,
-      jsonAssetUrls: parsedAssetUrls
+      assetUrls: JSON.parse(jsonAssetUrls)
     },
-    components: { Vizr },
-    template: '<Vizr :pid="pid" :can-edit="canEdit"/>'
+    provide() {
+      return {
+        assetUrls: this.assetUrls
+      };
+    }
   });
 }
