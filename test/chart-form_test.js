@@ -35,7 +35,7 @@ describe('chartForm', () => {
 
   it('creates the expected date field options', () => {
     const dateFieldOptions = chart.find('select[name=record_date] > option');
-    expect(dateFieldOptions.length).toEqual(4); // 3 options plus prompt
+    expect(dateFieldOptions.length).toEqual(5); // 4 options plus prompt
     expect(dateFieldOptions.eq(1).text().trim()).toEqual('enroll_date (Enrollment date)'); // sorted by label
   });
 
@@ -290,7 +290,7 @@ describe('longitudinalChartForm', () => {
   it('changes date field options when event is changed and removes selection', () => {
     chart.find(selector.dateFieldEventSelect).val('enrollment').change();
     const dateFieldOptions = chart.find('select[name=record_date] > option');
-    expect(dateFieldOptions.length).toEqual(3); // 2 options plus prompt
+    expect(dateFieldOptions.length).toEqual(4); // 3 options plus prompt
     const selected = chart.find('select[name=record_date] :selected').val();
     expect(selected).toEqual(''); // default is selected
     expect(dateFieldOptions.eq(1).text().trim()).toEqual('enroll_date (Enrollment date)'); // sorted by label

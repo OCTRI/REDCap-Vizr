@@ -183,6 +183,26 @@ const exampleDictionary = [
     matrix_group_name: "",
     matrix_ranking: "",
     field_annotation: ""
+  },
+  {
+    branching_logic: "",
+    custom_alignment: "LV",
+    field_annotation: "",
+    field_label: "My Datetime Field",
+    field_name: "my_dt_field",
+    field_note: "",
+    field_type: "text",
+    form_name: "study_status",
+    identifier: "",
+    matrix_group_name: "",
+    matrix_ranking: "",
+    question_number: "",
+    required_field: "",
+    section_header: "",
+    select_choices_or_calculations: "",
+    text_validation_max: "",
+    text_validation_min: "",
+    text_validation_type_or_show_slider_number: "datetime_dmy"
   }
 ];
 

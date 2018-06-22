@@ -26,12 +26,14 @@ describe('isDateField', () => {
     expect(isDateField({[validationProperty]: "date_mdy"})).toBe(true);
     expect(isDateField({[validationProperty]: "date_mdy"})).toBe(true);
     expect(isDateField({[validationProperty]: "date_something"})).toBe(true);
+    expect(isDateField({[validationProperty]: "datetime_dmy"})).toBe(true);
   });
 });
 
 describe('getDateFields', () => {
   it('returns fields with date validation', () => {
-    const dateFields = [exampleDictionary[2], exampleDictionary[4], exampleDictionary[8]];
+    const dateFields = [exampleDictionary[2], exampleDictionary[4], 
+      exampleDictionary[8], exampleDictionary[9]];
     expect(getDateFields(exampleDictionary)).toEqual(dateFields);
   });
 });
@@ -52,7 +54,7 @@ describe('isCategoricalField', () => {
       expect(isCategoricalField(field)).toBe(true);
     });
 
-    const expectedMapResult = [false, true, false, true, false, true, true, true, false ];
+    const expectedMapResult = [false, true, false, true, false, true, true, true, false, false ];
     expect(exampleDictionary.map(isCategoricalField)).toEqual(expectedMapResult);
   });
 });
