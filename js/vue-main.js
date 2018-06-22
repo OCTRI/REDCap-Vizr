@@ -2,6 +2,7 @@ import Vue from 'vue';
 
 import '../lib/vizr.css';
 import Vizr from './components/Vizr';
+import createDataService from './services/data-service';
 
 /**
  * Main method that will create all the charts and populate them with data.
@@ -14,6 +15,9 @@ import Vizr from './components/Vizr';
  *   external module URL like `http://localhost/redcap/api/?type=module&prefix=vizr&page=lib%2Fdata&pid=14`
  */
 export function run(pid, canEdit, jsonAssetUrls) {
+  const assetUrls = JSON.parse(jsonAssetUrls);
+  const dataService = createDataService(assetUrls);
+
   /**
    * Instantiate the Vue component tree.
    */
@@ -23,12 +27,12 @@ export function run(pid, canEdit, jsonAssetUrls) {
     template: '<Vizr :pid="pid" :can-edit="canEdit"/>',
     data: {
       pid,
-      canEdit,
-      assetUrls: JSON.parse(jsonAssetUrls)
+      canEdit
     },
     provide() {
       return {
-        assetUrls: this.assetUrls
+        assetUrls,
+        dataService
       };
     }
   });
