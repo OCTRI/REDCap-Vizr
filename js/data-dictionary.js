@@ -22,7 +22,10 @@ export function findField(dataDictionary, fieldName) {
 export function isDateField(field) {
   const validationProperty = 'text_validation_type_or_show_slider_number';
   const datePrefix = 'date_';
-  return !!(field[validationProperty] && field[validationProperty].startsWith(datePrefix));
+  const datetimePrefix = 'datetime_';
+  const fieldValidation = field[validationProperty];
+  return Boolean(fieldValidation && (fieldValidation.startsWith(datePrefix) ||
+    fieldValidation.startsWith(datetimePrefix)));
 }
 
 /**
@@ -121,9 +124,9 @@ export function getChoices(field) {
       case 'dropdown':
         return parseChoices(field.select_choices_or_calculations);
       case 'truefalse':
-        return [{label: 'True', value: '1'}, {label: 'False', value: '0'}];
+        return [{ label: 'True', value: '1' }, { label: 'False', value: '0' }];
       case 'yesno':
-        return [{label: 'Yes', value: '1'}, {label: 'No', value: '0'}];
+        return [{ label: 'Yes', value: '1' }, { label: 'No', value: '0' }];
       default:
         // should never get here
         throw new Error(`Unhandled categorical field type "${field.field_type}"`);
