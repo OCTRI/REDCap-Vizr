@@ -50,7 +50,9 @@
     "webpack": "^3.8.1"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
+    "qs": "^6.5.2",
     "striptags": "^2.2.1",
     "uuid": "^3.1.0",
     "vue": "^2.5.16"
