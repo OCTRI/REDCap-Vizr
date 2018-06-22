@@ -70,6 +70,30 @@ describe('data service', () => {
       });
     });
 
+    it('getProjectConfig', (done) => {
+      const metadataUrl = mockUrls[ENDPOINTS.METADATA];
+      const configUrl = mockUrls[ENDPOINTS.CONFIG];
+
+      jasmine.Ajax.stubRequest(metadataUrl)
+        .andReturn(exampleResponses.metadata.longitudinal);
+      jasmine.Ajax.stubRequest(configUrl)
+        .andReturn(exampleResponses.config.longitudinal);
+
+      service.getProjectConfig().then(projectConfig => {
+        const [ metadata, chartConfig ] = projectConfig;
+
+        // first entry in the response is metadata
+        expect(metadata).toBeDefined();
+        expect(metadata.dataDictionary).toBeDefined();
+
+        // second entry in the response is chart config
+        expect(chartConfig).toBeDefined();
+        expect(chartConfig.charts).toBeDefined();
+
+        done();
+      })
+    });
+
     it('getChartData', (done) => {
       const expectedUrl = mockUrls[ENDPOINTS.CHART_DATA];
       const expectedContentType = 'application/x-www-form-urlencoded';

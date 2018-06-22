@@ -11,7 +11,8 @@ module.exports = {
   },
   globals: {
     'Map': true,
-    'Set': true
+    'Set': true,
+    'Promise': true
   },
   rules: {
     'eqeqeq': ['error', 'always'],

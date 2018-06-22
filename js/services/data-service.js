@@ -53,6 +53,18 @@ export default function createDataService(assetUrls) {
     },
 
     /**
+     * Convenience method that fetches both project metadata and chart configuration.
+     *
+     * @return {Promise->Object[]} returns a promise that resolves to an array, where the
+     *   first entry is the metadata object and the second entry is the chart configuration
+     * @see getMetadata
+     * @see getChartConfig
+     */
+    getProjectConfig() {
+      return Promise.all([ this.getMetadata(), this.getChartConfig() ]);
+    },
+
+    /**
      * Gets the metadata for the current project.
      *
      * @return {Promise-> {recordIdField: string, dataDictionary: Object, charts: Object[]}}
