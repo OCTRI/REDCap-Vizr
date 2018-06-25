@@ -67,7 +67,7 @@ export default function createDataService(assetUrls) {
     /**
      * Gets the metadata for the current project.
      *
-     * @return {Promise-> {recordIdField: string, dataDictionary: Object, charts: Object[]}}
+     * @return {Promise-> {recordIdField: string, dataDictionary: Object, events: Object[]}}
      *   Returns a promise that resolves to a configuraton object containing the project's
      *   recordIdField, dataDictionary, and events.
      */
