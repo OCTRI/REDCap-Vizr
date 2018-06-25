@@ -79,9 +79,8 @@ export default function createDataService(assetUrls) {
     /**
      * Gets the current project's chart definitions from the external module settings.
      *
-     * @return {Promise -> {error: String} | {charts: Object[]}} -
-     *   Returns a promise that configuration object with either the single key 'error' or
-     *   an array of chart configuration objects.
+     * @return {Promise -> {charts: Object[]}} - Returns a promise that resolves to an array
+     *   of chart configuration objects.
      */
     getChartConfig() {
       return axios(this.configUrl)
