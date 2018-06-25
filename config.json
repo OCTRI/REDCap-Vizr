@@ -37,6 +37,13 @@
   "permissions": [
     "select_data"
   ],
+  "project-settings": [
+    {
+      "key": "chart-definitions",
+      "type": "json-array",
+      "value": "[]"
+    }
+  ],
   "links": {
     "project": [
       {
