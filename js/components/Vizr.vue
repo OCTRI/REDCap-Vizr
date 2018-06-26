@@ -11,7 +11,11 @@
       </div>
 
       <div class="vizr-charts">
-        <Chart v-for="chart in charts" :key="chart.id" :metadata="metadata" :config="chart"/>
+        <Chart v-for="chart in charts"
+               :key="chart.id"
+               :can-edit="canEdit"
+               :metadata="metadata"
+               :chart-def="chart"/>
       </div>
 
       <div class="spacious" v-if="canEdit">
