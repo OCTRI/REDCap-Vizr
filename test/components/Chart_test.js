@@ -1,6 +1,8 @@
 import { shallowMount } from '@vue/test-utils';
 
 import Chart from '@/components/Chart';
+import ChartSummary from '@/components/ChartSummary';
+
 import { exampleChartDef, exampleLongitudinalChartDef } from '../example-chart-def';
 import { exampleMetadata, exampleLongitudinalMetadata } from '../example-metadata';
 import { exampleResponses } from '../example-ajax-responses';
@@ -55,14 +57,8 @@ describe('Chart.vue', () => {
       });
 
       it('shows a chart summary', () => {
-        expect(wrapper.contains('.vizr-chart-summary')).toBe(true);
+        expect(wrapper.contains(ChartSummary)).toBe(true);
       });
-
-      // TODO #16 chart summary component
-      // it('summary contains 2 tables with copy links', () => {
-      //   expect($('.vizr-chart-summary table')).toHaveLength(2);
-      //   expect($('.vizr-chart-summary .copy-link')).toHaveLength(2);
-      // });
 
       it('shows a chart', () => {
         expect(wrapper.contains('.vizr-chart canvas')).toBe(true);
@@ -147,14 +143,8 @@ describe('Chart.vue', () => {
       });
 
       it('shows a chart summary', () => {
-        expect(wrapper.contains('.vizr-chart-summary')).toBe(true);
+        expect(wrapper.contains(ChartSummary)).toBe(true);
       });
-
-      // TODO #16 chart summary component
-      // it('summary contains 2 tables with copy links', () => {
-      //   expect($('.vizr-chart-summary table')).toHaveLength(2);
-      //   expect($('.vizr-chart-summary .copy-link')).toHaveLength(2);
-      // });
 
       it('shows a chart', () => {
         expect(wrapper.contains('.vizr-chart canvas')).toBe(true);
