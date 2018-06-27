@@ -5,8 +5,11 @@
         <a :href="formId" data-toggle="collapse" data-description="edit" v-if="canEdit">{{ messages.actions.edit }}</a>
       </h3>
       <p v-if="hasDescription" data-description="description"><em>{{ chartDef.description }}</em></p>
-      <!-- TODO #26 display errors -->
-      <div class="error"></div>
+      <div class="error">
+        <ul v-if="hasWarnings">
+          <li v-for="warning in warnings" :key="warning.key">{{ warning.message }}</li>
+        </ul>
+      </div>
     </div>
 
     <!-- TODO #27 reload event handler -->
@@ -63,10 +66,6 @@ const messages = {
     toggleLegend: 'Hide/Show Legend'
   },
   warnings: {
-    blankDateFields: ((count) => `Ignored ${count} records with blank date field.`),
-    multipleEvents: 'The filter returned multiple events per record.',
-    noData: 'The filter returned 0 records.',
-    repeatingInstruments: 'Charts may not work as expected with repeating instruments.',
     responseError: 'Unable to generate a chart.'
   }
 };
@@ -95,6 +94,7 @@ export default {
       chartData: null,
       chartEnd: null,
       dateInterval: null,
+      warnings: [],
       filterEvents: null,
       grouped: null,
       summary: null,
@@ -111,10 +111,9 @@ export default {
 
   methods: {
     fetchData() {
-      const { dataService } = this;
+      const { dataService, chartDef } = this;
       const requestOptions = this.makeRequestOptions();
-      return dataService.getChartData(requestOptions)
-        // TODO #26: validate data to display errors
+      return dataService.getChartData(chartDef.field, requestOptions)
         .then(this._captureData)
         .then(this._summarizeData)
         .then(this._calculateTotals)
@@ -123,12 +122,12 @@ export default {
     },
 
     _captureData(dataResponse) {
-      const { filterEvents, data } = dataResponse;
+      const { filterEvents, data, warnings } = dataResponse;
       const { chartDef } = this;
 
-      // TODO #26: filter data with missing dates
       this.chartData = data;
       this.filterEvents = filterEvents;
+      this.warnings = warnings;
 
       this.chartEnd = chartDef.chartEnd ? chartDef.chartEnd : new Date();
       this.dateInterval = chartDef.dateInterval || 'week';
@@ -200,6 +199,11 @@ export default {
     hasDescription() {
       const { chartDef } = this;
       return Boolean(chartDef && chartDef.description);
+    },
+
+    hasWarnings() {
+      const { warnings } = this;
+      return Boolean(warnings && warnings.length);
     }
   }
 };

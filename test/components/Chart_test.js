@@ -87,22 +87,36 @@ describe('Chart.vue', () => {
       });
     });
 
-    // TODO #26 data validation
-    // describe('when repeating instrument data is received', () => {
-    //   it('displays error', () => {
-    //     dataRequest = jasmine.Ajax.requests.mostRecent();
-    //     dataRequest.respondWith(exampleResponses.data.nonlongitudinalRepeating);
-    //     expect($('.error')).not.toBeEmpty();
-    //   });
-    // })
-    //
-    // describe('when no data is received', () => {
-    //   it('displays error', () => {
-    //     dataRequest = jasmine.Ajax.requests.mostRecent();
-    //     dataRequest.respondWith(exampleResponses.data.noData);
-    //     expect($('.error')).not.toBeEmpty();
-    //   });
-    // });
+    describe('when the response contains warnings', () => {
+      const response = JSON.parse(exampleResponses.data.noData.responseText);
+      response.warnings = [{ key: 'noData', message: 'The filter returned 0 records.' }]
+      let wrapper;
+
+      beforeEach((done) => {
+        wrapper = shallowMount(Chart, {
+          propsData: {
+            canEdit: true,
+            chartDef: exampleChart,
+            metadata: exampleMetadata
+          },
+          provide: {
+            dataService: {
+              getChartData() {
+                return Promise.resolve(response);
+              }
+            }
+          }
+        });
+
+        wrapper.vm.dataPromise.then(() => done());
+      });
+
+      it('displays the warnings', () => {
+        const errorElement = wrapper.find('.error');
+        expect(errorElement.isEmpty()).toBe(false);
+        expect(errorElement.text()).toMatch(response.warnings[0].message);
+      });
+    });
   });
 
   describe('when chart is longitudinal', () => {
@@ -173,7 +187,38 @@ describe('Chart.vue', () => {
       });
     });
 
-    // TODO #26 data validation
+    describe('when the response contains warnings', () => {
+      const response = JSON.parse(exampleResponses.data.longitudinalRepeating.responseText);
+      response.warnings = [{ key: 'repeatingInstruments', message: 'Charts may not work as expected with repeating instruments.' }];
+      let wrapper;
+
+      beforeEach((done) => {
+        wrapper = shallowMount(Chart, {
+          propsData: {
+            canEdit: true,
+            chartDef: exampleChart,
+            metadata: exampleMetadata
+          },
+          provide: {
+            dataService: {
+              getChartData() {
+                return Promise.resolve(response);
+              }
+            }
+          }
+        });
+
+        wrapper.vm.dataPromise.then(() => done());
+      });
+
+      it('displays the warnings', () => {
+        const errorElement = wrapper.find('.error');
+        expect(errorElement.isEmpty()).toBe(false);
+        expect(errorElement.text()).toMatch(response.warnings[0].message);
+      });
+    });
+
+    // TODO #28 live event filter
     // describe('when data for multiple events is received', () => {
     //   beforeEach(() => {
     //     dataRequest = jasmine.Ajax.requests.mostRecent();
@@ -196,14 +241,6 @@ describe('Chart.vue', () => {
     //     // Select all events again - data should revert
     //     $('select[name=filter_event]').val('').change();
     //     expect($('.vizr-chart-data-container').html()).toEqual(oldChartDataContainer.html());
-    //   });
-    // });
-
-    // describe('when data for repeating instruments is received', () => {
-    //   it('shows errors', () => {
-    //     dataRequest = jasmine.Ajax.requests.mostRecent();
-    //     dataRequest.respondWith(exampleResponses.data.longitudinalRepeating);
-    //     expect($('.error')).not.toBeEmpty();
     //   });
     // });
   });
