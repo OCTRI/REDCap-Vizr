@@ -25,8 +25,13 @@
 
     <div class="vizr-chart-data-container">
       <div class="row">
-        <!-- TODO #16 ChartSummary component -->
-        <div class="vizr-chart-summary col-md-4"></div>
+        <ChartSummary
+          class="vizr-chart-summary col-md-4"
+          :total-count="totalCount"
+          :total-target="totalTarget"
+          :group="chartDef.group"
+          :group-data="summary"/>
+
         <div class="vizr-chart col-md-8">
           <!-- TODO #25 click handler for legend toggle -->
           <a href="#"
@@ -46,6 +51,8 @@
 <script>
 import { groupedByInterval, summarizeGroups, trendPoints } from '@/bucket';
 import { makeStackedChart } from '@/chart-config';
+
+import ChartSummary from '@/components/ChartSummary';
 
 const messages = {
   actions : {
@@ -75,6 +82,10 @@ export default {
     canEdit: Boolean,
     chartDef: Object,
     metadata: Object
+  },
+
+  components: {
+    ChartSummary
   },
 
   data() {
