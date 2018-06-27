@@ -148,7 +148,7 @@ export default {
         // Group target must exist and be non-zero to display
         const targetDisplay = this.targetString(target); // optional form field
         const countStr = (count !== undefined && count !== null) ? count.toString() : "";
-        // return [groupLabel, countStr, targetDisplay, this.pct(count, target), this.pct(count, total)];
+
         return {
           label: groupLabel,
           count: countStr,
