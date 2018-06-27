@@ -64,7 +64,7 @@ export function copyLink(targetNode) {
  * http://stackoverflow.com/questions/2044616/select-a-complete-table-with-javascript-to-be-copied-to-clipboard
  * http://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
  */
-function copyContents(el) {
+export function copyContents(el) {
   var body = document.body, range, sel;
   if (document.createRange && window.getSelection) {
     range = document.createRange();
