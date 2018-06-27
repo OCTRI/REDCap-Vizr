@@ -9,6 +9,35 @@ export const ENDPOINTS = {
   PERSISTENCE: 'lib/persist.php'
 };
 
+const warnings = {
+  blankDateFields: ((count) => `Ignored ${count} records with blank date field.`),
+  multipleEvents: 'The filter returned multiple events per record.',
+  noData: 'The filter returned 0 records.',
+  repeatingInstruments: 'Charts may not work as expected with repeating instruments.'
+};
+
+/**
+ * Constructs a warning message object.
+ * @param {String} key - unique message key in the `warnings` object. Required; must be
+ *   present in `warnings`.
+ * @param {Array} rest - any other parameters. Used as arguments when `warnings[key]` is
+ *   a function.
+ * @return {key: String, message: String} an object where the key is the input key and
+ *   message is the descriptive message for the warning.
+ */
+function makeWarning(key, ...rest) {
+  assert(warnings[key], `Warning ${key} is not defined`);
+  let message;
+
+  if (typeof warnings[key] === 'function') {
+    message = warnings[key].apply(rest);
+  } else {
+    message = warnings[key];
+  }
+
+  return { key, message };
+}
+
 /**
  * Constructs a service that fetches data for the current project from REDCap.
  *
@@ -53,6 +82,63 @@ export default function createDataService(assetUrls) {
     },
 
     /**
+     * Inspects chart data and collects warnings.
+     * @param {String} dateField - the name of the date field used by the chart.
+     * @param {Promise->{data: Object[], filterEvents: String[]}} responseData - REDCap record
+     *   data extracted from the request.
+     * @return {Promise->{data: Object[], filterEvents: String[], warnings: Object[]}} the
+     *   REDCap data response, with an array of warnings added if problematic data are found.
+     */
+    _validateChartData(dateField, responseData) {
+      let { data, filterEvents } = responseData;
+      data = data || [];
+      filterEvents = filterEvents || [];
+
+      let blankDates = 0;
+      let repeatingInstruments = false;
+
+      data.forEach(record => {
+        if (record[dateField] === '') {
+          blankDates++;
+        }
+
+        if (record.redcap_repeat_instance !== undefined) {
+          repeatingInstruments = true;
+        }
+      });
+
+      const warnings = [
+        data.length === 0 ? makeWarning('noData') : null,
+        filterEvents.length > 1 ? makeWarning('multipleEvents') : null,
+        blankDates > 0 ? makeWarning('blankDateFields', blankDates) : null,
+        repeatingInstruments ? makeWarning('repeatingInstruments') : null
+      ].filter(Boolean);
+
+      return {
+        data,
+        filterEvents,
+        warnings
+      };
+    },
+
+    /**
+     * Removes records with blank dates from the data.
+     * @param {String} dateField - the name of the date field used by the chart.
+     * @param {Promise->{data: Object[], filterEvents: String[], warnings: Object[]}} validatedData -
+     *   REDCap record data passed through `_validateChartData`.
+     * @return {Promise->{data: Object[], filterEvents: String[], warnings: Object[]}} the
+     *   REDCap record data, with records with blank dates removed.
+     */
+    _filterBlankDates(dateField, responseData) {
+      const { data, filterEvents, warnings } = responseData;
+      return {
+        data: data.filter(record => record[dateField] !== ''),
+        filterEvents,
+        warnings
+      };
+    },
+
+    /**
      * Convenience method that fetches both project metadata and chart configuration.
      *
      * @return {Promise->Object[]} returns a promise that resolves to an array, where the
@@ -67,7 +153,7 @@ export default function createDataService(assetUrls) {
     /**
      * Gets the metadata for the current project.
      *
-     * @return {Promise-> {recordIdField: string, dataDictionary: Object, events: Object[]}}
+     * @return {Promise->{recordIdField: String, dataDictionary: Object, events: Object[]}}
      *   Returns a promise that resolves to a configuraton object containing the project's
      *   recordIdField, dataDictionary, and events.
      */
@@ -79,7 +165,7 @@ export default function createDataService(assetUrls) {
     /**
      * Gets the current project's chart definitions from the external module settings.
      *
-     * @return {Promise -> {charts: Object[]}} - Returns a promise that resolves to an array
+     * @return {Promise ->{charts: Object[]}} - Returns a promise that resolves to an array
      *   of chart configuration objects.
      */
     getChartConfig() {
@@ -96,15 +182,23 @@ export default function createDataService(assetUrls) {
     /**
      * Gets data from the REDCap project for constructing a chart.
      *
-     * @param {{recordIdField: string, filter: string, events: string[], fields: string[] }} -
+     * @param {String} dateField - the name of the field containing the date used for the
+     *   chart's x axis. Used to filter out records with blank dates.
+     * @param {{recordIdField: String, filter: String, events: String[], fields: String[] }} -
      *   an object with metadata and chart configuraton needed to perform the data request.
-     * @return {Promise-> {data: Object, filterEvents: string[]}} A promise that resolves to
-     *   an object with a key for 'data' and 'filterEvents' if the  project is longitudinal.
+     * @return {Promise->{data: Object[], filterEvents: String[], warnings: Object[]}} A
+     *   promise that resolves to an object with the following keys:
+     *
+     *   - data: An array of REDCap record data objects
+     *   - filterEvents: An array of event names if the project is longitudinal and records
+     *     were returned from multiple events
+     *   - warnings: An array of warning message objects (@see makeWarning)
      */
-    getChartData(requestBody) {
-      // TODO validate / filter response data (main.js line 460)
+    getChartData(dateField, requestBody) {
       return axios.post(this.dataUrl, qs.stringify(requestBody))
-        .then(this._extractData);
+        .then(this._extractData)
+        .then(responseData => this._validateChartData(dateField, responseData))
+        .then(validatedData => this._filterBlankDates(dateField, validatedData));
     }
   };
 }
