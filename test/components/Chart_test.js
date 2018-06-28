@@ -324,4 +324,59 @@ describe('Chart.vue', () => {
       expect(wrapper.emitted('delete-chart')[0]).toEqual([ exampleLongitudinalChart.id ]);
     });
   });
+
+  describe('legend toggle link', () => {
+    const response = JSON.parse(exampleResponses.data.longitudinal.responseText);
+    const legendToggleSelector = '[data-description=toggle-legend]';
+    let wrapper, chartDef;
+
+    beforeEach((done) => {
+      chartDef = exampleLongitudinalChartDef();
+      wrapper = shallowMount(Chart, {
+        propsData: {
+          chartDef,
+          canEdit: true,
+          metadata: exampleLongitudinalMetadata
+        },
+        provide: {
+          dataService: {
+            getChartData() {
+              return Promise.resolve(response);
+            }
+          }
+        }
+      });
+
+      wrapper.vm.dataPromise.then(() => {
+        spyOn(wrapper.vm.chart, 'update').and.returnValue(undefined);
+        done()
+      });
+    });
+
+    it('toggles the legend flag in the chart config', () => {
+      const chart = wrapper.vm.chart;
+      expect(chart.config.options.legend.display).toBe(true);
+
+      wrapper.find(legendToggleSelector).trigger('click');
+      expect(chart.config.options.legend.display).toBe(false);
+    });
+
+    it('updates the chart', () => {
+      const chart = wrapper.vm.chart;
+      wrapper.find(legendToggleSelector).trigger('click');
+      expect(chart.update).toHaveBeenCalled();
+    });
+
+    it('does not emit an event if the user cannot edit', () => {
+      wrapper.setProps({ canEdit: false });
+      wrapper.find(legendToggleSelector).trigger('click');
+      expect(wrapper.emitted('toggle-legend')).toBeFalsy();
+    });
+
+    it('emits an event with the chart ID when user can edit', () => {
+      wrapper.find(legendToggleSelector).trigger('click');
+      expect(wrapper.emitted('toggle-legend')).toBeTruthy();
+      expect(wrapper.emitted('toggle-legend')[0]).toEqual([ chartDef.id ]);
+    });
+  });
 });

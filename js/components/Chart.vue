@@ -35,11 +35,10 @@
           :group-data="summary"/>
 
         <div class="vizr-chart col-md-8">
-          <!-- TODO #25 click handler for legend toggle -->
           <a href="#"
              class="vizr-chart-legend-toggle pull-right"
              data-description="toggle-legend"
-             v-if="canEdit"
+             @click.prevent="toggleLegend"
           >{{ messages.actions.toggleLegend }}</a>
           <canvas :id="id"></canvas>
         </div>
@@ -218,6 +217,20 @@ export default {
      */
     reloadChart() {
       this.dataPromise = this.fetchData();
+    },
+
+    /**
+     * Click event handler for the legend toggle link.
+     */
+    toggleLegend() {
+      const { canEdit, chart, chartDef, id } = this;
+      chart.config.options.legend.display = !chart.config.options.legend.display;
+      chart.update();
+
+      if (canEdit) {
+        chartDef.hide_legend = !chartDef.hide_legend;
+        this.$emit('toggle-legend', id);
+      }
     }
   },
 
