@@ -52,6 +52,11 @@ export const exampleResponses = {
       contentType: 'application/json',
       responseText: '{"filterEvents": ["visit_1"], "data": [{"record_id":0, "screen_date": "2016-11-01", "study_clinic": "Portland", "redcap_event_name": "visit_1"}]}'
     },
+    longitudinalBlankDates: {
+      status: 200,
+      contentType: 'application/json',
+      responseText: '{"filterEvents": ["visit_1"], "data": [{"record_id":0, "screen_date": "2016-11-01", "study_clinic": "Portland", "redcap_event_name": "visit_1"}, {"record_id":1, "screen_date": "", "study_clinic": "Portland", "redcap_event_name": "visit_1"}]}'
+    },
     longitudinalMultipleEvents: {
       status: 200,
       contentType: 'application/json',
