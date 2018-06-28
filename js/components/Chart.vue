@@ -44,8 +44,12 @@
           <canvas :id="id"></canvas>
         </div>
       </div>
-      <!-- TODO #29 click handler for delete link -->
-      <a href="#" class="pull-right" data-description="delete">{{ messages.actions.delete }}</a>
+      <a href="#"
+         class="pull-right"
+         data-description="delete"
+         v-if="canEdit"
+         @click.prevent="deleteChart"
+      >{{ messages.actions.delete }}</a>
     </div>
   </div>
 </template>
@@ -197,6 +201,16 @@ export default {
         events: [chartDef.dateFieldEvent, chartDef.groupFieldEvent].filter(Boolean),
         fields: [chartDef.field, chartDef.group].filter(Boolean)
       };
+    },
+
+    /**
+     * Click event handler for the delete link.
+     */
+    deleteChart() {
+      const { chartDef, id, messages } = this;
+      if (confirm(`${messages.actions.confirmDelete}: ${chartDef.title}?`)) {
+        this.$emit('delete-chart', id);
+      }
     },
 
     /**
