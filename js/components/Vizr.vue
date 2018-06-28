@@ -15,7 +15,9 @@
                :key="chart.id"
                :can-edit="canEdit"
                :metadata="metadata"
-               :chart-def="chart"/>
+               :chart-def="chart"
+               @delete-chart="deleteChart"
+               @toggle-legend="saveChart"/>
       </div>
 
       <div class="spacious" v-if="canEdit">
@@ -102,6 +104,20 @@ export default {
         .finally(() => {
           this.loading = false;
         });
+    },
+
+    /**
+     * Handles deleting a chart.
+     */
+    deleteChart(id) {
+      console.log(`delete chart ${id}`);
+    },
+
+    /**
+     * Handles saving an updated chart.
+     */
+    saveChart(id) {
+      console.log(`save chart ${id}`);
     }
   },
 
