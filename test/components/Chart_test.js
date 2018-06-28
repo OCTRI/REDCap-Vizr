@@ -244,4 +244,39 @@ describe('Chart.vue', () => {
     //   });
     // });
   });
+
+  describe('chart reload link', () => {
+    const response = JSON.parse(exampleResponses.data.longitudinal.responseText);
+    let wrapper, dataService;
+
+    beforeEach((done) => {
+      dataService = {
+        getChartData() {
+          return Promise.resolve(response);
+        }
+      };
+
+      wrapper = shallowMount(Chart, {
+        propsData: {
+          canEdit: true,
+          chartDef: exampleLongitudinalChart,
+          metadata: exampleLongitudinalMetadata
+        },
+        provide: {
+          dataService
+        }
+      });
+
+      wrapper.vm.dataPromise.then(() => done());
+    });
+
+    it('refreshes chart data', (done) => {
+      spyOn(dataService, 'getChartData').and.callThrough();
+      wrapper.find('[data-description=reload]').trigger('click');
+      wrapper.vm.dataPromise.then(() => {
+        expect(dataService.getChartData).toHaveBeenCalled();
+        done();
+      });
+    });
+  });
 });

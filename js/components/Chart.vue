@@ -12,8 +12,7 @@
       </div>
     </div>
 
-    <!-- TODO #27 reload event handler -->
-    <a :href="reloadId" data-description="reload">{{ messages.actions.reload }}
+    <a href="#" data-description="reload" role="button" @click.prevent="reloadChart">{{ messages.actions.reload }}
       <span class="glyphicon glyphicon-refresh" aria-hidden="true" :title="messages.actions.reload"></span>
     </a>
 
@@ -94,13 +93,13 @@ export default {
       chartData: null,
       chartEnd: null,
       dateInterval: null,
-      warnings: [],
       filterEvents: null,
       grouped: null,
       summary: null,
       totalCount: 0,
       totalTarget: 0,
-      trendPoints: null
+      trendPoints: null,
+      warnings: []
     };
   },
 
@@ -112,13 +111,14 @@ export default {
   methods: {
     fetchData() {
       const { dataService, chartDef } = this;
-      const requestOptions = this.makeRequestOptions();
+      const requestOptions = this._makeRequestOptions();
       return dataService.getChartData(chartDef.field, requestOptions)
         .then(this._captureData)
         .then(this._summarizeData)
         .then(this._calculateTotals)
         .then(this._makeTrendPoints)
-        .then(this._makeChart);
+        .then(this._makeChart)
+        .catch(this._showFetchError);
     },
 
     _captureData(dataResponse) {
@@ -161,10 +161,35 @@ export default {
 
     _makeChart() {
       const { chartDef, grouped, trendPoints } = this;
+      if (this.chart) {
+        this.chart.destroy();
+      }
       this.chart = makeStackedChart(grouped, chartDef, trendPoints);
     },
 
-    makeRequestOptions() {
+    _clearChart() {
+      this.chartData = null;
+      this.chartEnd = null;
+      this.dateInterval = null;
+      this.filterEvents = null;
+      this.grouped = null;
+      this.summary = null;
+      this.totalCount = 0;
+      this.totalTarget = 0;
+      this.trendPoints = null;
+
+      if (this.chart) {
+        this.chart.destroy();
+      }
+    },
+
+    _showFetchError() {
+      const { responseError } = this;
+      this._clearChart();
+      this.warnings = [ responseError ];
+    },
+
+    _makeRequestOptions() {
       const { chartDef, metadata } = this;
       return {
         recordIdField: metadata.recordIdField,
@@ -172,6 +197,13 @@ export default {
         events: [chartDef.dateFieldEvent, chartDef.groupFieldEvent].filter(Boolean),
         fields: [chartDef.field, chartDef.group].filter(Boolean)
       };
+    },
+
+    /**
+     * Click event handler for the reload link.
+     */
+    reloadChart() {
+      this.dataPromise = this.fetchData();
     }
   },
 
@@ -191,9 +223,8 @@ export default {
       return `form-${id}`;
     },
 
-    reloadId() {
-      const { id } = this;
-      return `reload-${id}`;
+    responseError() {
+      return { key: 'responseError', message: messages.warnings.responseError };
     },
 
     hasDescription() {
