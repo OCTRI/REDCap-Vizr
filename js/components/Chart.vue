@@ -22,8 +22,12 @@
       </div>
     </div>
 
-    <!-- TODO #28 event select -->
-    <div class="vizr-event-select pull-right"></div>
+    <div class="vizr-event-select pull-right">
+      <select class="form-control" name="filter-event" v-if="hasMultipleEvents" v-model="selectedEvent" @change="chartFilterChanged" required>
+        <option :value="allEventsSentinel">All Events</option>
+        <option v-for="filterEvent in filterEvents" :key="filterEvent" :value="filterEvent">{{ filterEvent }}</option>
+      </select>
+    </div>
 
     <div class="vizr-chart-data-container">
       <div class="row">
@@ -59,6 +63,9 @@ import { makeStackedChart } from '@/chart-config';
 
 import ChartSummary from '@/components/ChartSummary';
 
+const ALL_EVENTS = 'ALL_EVENTS';
+
+const defaultChartEnd = new Date();
 const messages = {
   actions : {
     confirmDelete: 'Permanently delete chart',
@@ -92,16 +99,11 @@ export default {
   data() {
     return {
       messages,
+      allEventsSentinel: ALL_EVENTS,
       chart: null,
-      chartData: null,
-      chartEnd: null,
-      dateInterval: null,
-      filterEvents: null,
-      grouped: null,
-      summary: null,
-      totalCount: 0,
-      totalTarget: 0,
-      trendPoints: null,
+      chartData: [],
+      filterEvents: [],
+      selectedEvent: ALL_EVENTS,
       warnings: []
     };
   },
@@ -117,9 +119,6 @@ export default {
       const requestOptions = this._makeRequestOptions();
       return dataService.getChartData(chartDef.field, requestOptions)
         .then(this._captureData)
-        .then(this._summarizeData)
-        .then(this._calculateTotals)
-        .then(this._makeTrendPoints)
         .then(this._makeChart)
         .catch(this._showFetchError);
     },
@@ -131,35 +130,6 @@ export default {
       this.chartData = data;
       this.filterEvents = filterEvents;
       this.warnings = warnings;
-
-      this.chartEnd = chartDef.chartEnd ? chartDef.chartEnd : new Date();
-      this.dateInterval = chartDef.dateInterval || 'week';
-    },
-
-    _summarizeData() {
-      const { chartData, chartDef, chartEnd, dateInterval } = this;
-      this.grouped = groupedByInterval(chartData, chartDef.field, chartDef.start, chartEnd,
-        dateInterval, chartDef.group);
-      this.summary = summarizeGroups(this.grouped, chartDef.targets);
-    },
-
-    _calculateTotals() {
-      const { summary } = this;
-      let totalCount = 0;
-      let totalTarget = 0;
-
-      Object.keys(summary).forEach(g => {
-        totalCount = totalCount + summary[g].count;
-        totalTarget = totalTarget + summary[g].target;
-      });
-
-      this.totalCount = totalCount;
-      this.totalTarget = totalTarget;
-    },
-
-    _makeTrendPoints() {
-      const { chartDef, dateInterval, totalTarget } = this;
-      this.trendPoints = trendPoints(chartDef.start, chartDef.end, dateInterval, totalTarget);
     },
 
     _makeChart() {
@@ -172,15 +142,9 @@ export default {
     },
 
     _clearChart() {
-      this.chartData = null;
-      this.chartEnd = null;
-      this.dateInterval = null;
-      this.filterEvents = null;
-      this.grouped = null;
-      this.summary = null;
-      this.totalCount = 0;
-      this.totalTarget = 0;
-      this.trendPoints = null;
+      this.chartData = [];
+      this.filterEvents = [];
+      this.selectedEvent = ALL_EVENTS;
 
       if (this.chart) {
         this.chart.destroy();
@@ -214,7 +178,7 @@ export default {
     },
 
     /**
-     * Click event handler for the reload link.
+     * Click event handler for the reload link. Fetches chart data again.
      */
     reloadChart() {
       this.dataPromise = this.fetchData();
@@ -232,6 +196,13 @@ export default {
         chartDef.hide_legend = !chartDef.hide_legend;
         this.$emit('toggle-legend', id);
       }
+    },
+
+    /**
+     * Refreshes the chart after the event filter changes.
+     */
+    chartFilterChanged() {
+      this._makeChart();
     }
   },
 
@@ -263,6 +234,53 @@ export default {
     hasWarnings() {
       const { warnings } = this;
       return Boolean(warnings && warnings.length);
+    },
+
+    hasMultipleEvents() {
+      const { filterEvents } = this;
+      return Boolean(filterEvents && filterEvents.length > 1);
+    },
+
+    chartEnd() {
+      const { chartDef } = this;
+      return chartDef.chartEnd ? chartDef.chartEnd : defaultChartEnd;
+    },
+
+    dateInterval() {
+      const { chartDef } = this;
+      return chartDef.dateInterval ? chartDef.dateInterval : 'week';
+    },
+
+    filteredData() {
+      const { allEventsSentinel, selectedEvent, chartData } = this;
+      const eventFilter = record => record.redcap_event_name === selectedEvent;
+      return selectedEvent === allEventsSentinel ? chartData : chartData.filter(eventFilter);
+    },
+
+    grouped() {
+      const { filteredData, chartDef, chartEnd, dateInterval } = this;
+      return groupedByInterval(filteredData, chartDef.field, chartDef.start, chartEnd,
+        dateInterval, chartDef.group);
+    },
+
+    summary() {
+      const { grouped, chartDef } = this;
+      return summarizeGroups(grouped, chartDef.targets);
+    },
+
+    totalCount() {
+      const { summary } = this;
+      return summary ? Object.keys(summary).reduce((total, k) => total + summary[k].count, 0) : 0;
+    },
+
+    totalTarget() {
+      const { summary } = this;
+      return summary ? Object.keys(summary).reduce((total, k) => total + summary[k].target, 0) : 0;
+    },
+
+    trendPoints() {
+      const { chartDef, dateInterval, totalTarget } = this;
+      return trendPoints(chartDef.start, chartDef.end, dateInterval, totalTarget);
     }
   }
 };

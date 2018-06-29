@@ -218,31 +218,54 @@ describe('Chart.vue', () => {
       });
     });
 
-    // TODO #28 live event filter
-    // describe('when data for multiple events is received', () => {
-    //   beforeEach(() => {
-    //     dataRequest = jasmine.Ajax.requests.mostRecent();
-    //     dataRequest.respondWith(exampleResponses.data.longitudinalMultipleEvents);
-    //   });
-    //
-    //   it('shows errors', () => {
-    //     expect($('.error')).not.toBeEmpty();
-    //   });
-    //
-    //   it('shows live event filter', () => {
-    //     expect($('.vizr-event-select')).not.toBeEmpty();
-    //   });
-    //
-    //   it('changes the data when event is selected', () => {
-    //     const oldChartDataContainer = $('.vizr-chart-data-container');
-    //     // Select an event - data should change
-    //     $('select[name=filter_event]').val('visit_1').change();
-    //     expect($('.vizr-chart-data-container').html()).not.toEqual(oldChartDataContainer.html());
-    //     // Select all events again - data should revert
-    //     $('select[name=filter_event]').val('').change();
-    //     expect($('.vizr-chart-data-container').html()).toEqual(oldChartDataContainer.html());
-    //   });
-    // });
+    describe('when data for multiple events is received', () => {
+      const response = JSON.parse(exampleResponses.data.longitudinalMultipleEvents.responseText);
+      let wrapper;
+
+      beforeEach((done) => {
+        wrapper = shallowMount(Chart, {
+          propsData: {
+            canEdit: true,
+            chartDef: exampleLongitudinalChart,
+            metadata: exampleLongitudinalMetadata
+          },
+          provide: {
+            dataService: {
+              getChartData() {
+                return Promise.resolve(response);
+              }
+            }
+          }
+        });
+
+        wrapper.vm.dataPromise.then(() => done());
+      });
+
+      it('shows live event filter', () => {
+        expect(wrapper.find('.vizr-event-select').isEmpty()).toBe(false);
+      });
+
+      it('filters the data when event is selected', () => {
+        const allEventData = wrapper.vm.chartData;
+        const allEventGrouped = wrapper.vm.grouped;
+        const allEventSummary = wrapper.vm.summary;
+
+        // Initially shows data for all events
+        expect(wrapper.vm.filteredData).toEqual(allEventData);
+
+        // Select an event - data should change
+        wrapper.find('option[value=visit_1]').setSelected();
+        expect(wrapper.vm.filteredData).not.toEqual(allEventData);
+        expect(wrapper.vm.grouped).not.toEqual(allEventGrouped);
+        expect(wrapper.vm.summary).not.toEqual(allEventSummary);
+
+        // Select all events again - data should revert
+        wrapper.findAll('option').at(0).setSelected();
+        expect(wrapper.vm.filteredData).toEqual(allEventData);
+        expect(wrapper.vm.grouped).toEqual(allEventGrouped);
+        expect(wrapper.vm.summary).toEqual(allEventSummary);
+      });
+    });
   });
 
   describe('chart reload link', () => {
