@@ -234,6 +234,7 @@ function legendToggleLink(config, chartDef) {
  */
 function addSummary(config, chartDef, data) {
   const container = $(`#chart-${chartDef.id}`);
+  const canvas = container.find('canvas');
   const chartEnd = chartDef.chartEnd ? chartDef.chartEnd : new Date(); // today
   const dateInterval = chartDef.dateInterval || 'week'; // Set a default for backward compatibility
   const grouped = groupedByInterval(data, chartDef.field, chartDef.start, chartEnd,
@@ -255,7 +256,7 @@ function addSummary(config, chartDef, data) {
 
   $(container).find('.vizr-chart-summary').append(...summaryTables);
   const pts = trendPoints(chartDef.start, chartDef.end, dateInterval, totalTarget);
-  let chart = makeStackedChart(grouped, chartDef, pts);
+  let chart = makeStackedChart(canvas, grouped, chartDef, pts);
 
   // Add click handler to the Toggle Legend link which toggles the chart legend
   $(container).find('.vizr-chart-legend-toggle').on('click', () => {

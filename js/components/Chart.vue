@@ -40,7 +40,7 @@
              data-description="toggle-legend"
              @click.prevent="toggleLegend"
           >{{ messages.actions.toggleLegend }}</a>
-          <canvas :id="id"></canvas>
+          <canvas ref="canvas" :id="id"></canvas>
         </div>
       </div>
       <a href="#"
@@ -164,10 +164,11 @@ export default {
 
     _makeChart() {
       const { chartDef, grouped, trendPoints } = this;
+      const { canvas } = this.$refs;
       if (this.chart) {
         this.chart.destroy();
       }
-      this.chart = makeStackedChart(grouped, chartDef, trendPoints);
+      this.chart = makeStackedChart(canvas, grouped, chartDef, trendPoints);
     },
 
     _clearChart() {
