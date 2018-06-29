@@ -30,8 +30,9 @@ const data = {
 describe('chart creation', () => {
   const chartId = 'screenedChart';
   $('body').append($(`<div class="vizr-chart-container"><canvas id="${chartId}"></canvas></div`));
+  const canvas = $('canvas');
 
-  const chart = makeChart(data, chartId, 'Screened Participants');
+  const chart = makeChart(canvas, data, chartId, 'Screened Participants');
 
   it('should create a chart object', () => {
     expect(chart).toBeDefined();
@@ -60,15 +61,16 @@ const trendpts = [
 describe('stacked chart creation', () => {
   const chartId = 'screenedChart';
   $('body').append($(`<div class="vizr-chart-container"><canvas id="${chartId}"></canvas></div`));
+  const canvas = $('canvas');
 
-  const chart = makeStackedChart(groupedData, {id: chartId, title: 'Screened Participants by Group'}, trendpts);
+  const chart = makeStackedChart(canvas, groupedData, {id: chartId, title: 'Screened Participants by Group'}, trendpts);
 
   it('should create a stacked chart object with trend points', () => {
     expect(chart
     ).toBeDefined();
   });
 
-  const chartNoTrendpts = makeStackedChart(groupedData, {id: chartId, title: 'Screened Participants by Group'});
+  const chartNoTrendpts = makeStackedChart(canvas, groupedData, {id: chartId, title: 'Screened Participants by Group'});
 
   it('should create a stacked chart object without trend points', () => {
     expect(chartNoTrendpts).toBeDefined();

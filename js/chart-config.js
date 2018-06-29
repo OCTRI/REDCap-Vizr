@@ -1,22 +1,21 @@
 import Chart from 'chart.js';
-import $ from "jquery";
 import { notAnsweredLabel } from './util.js';
 
 // Color scheme for qualitative data, where color is used primarily to distinguish
 // between categories, rather than indicate relative values. (see colorbrewer2)
 const colors = [
-'rgba(166,206,227, 0.75)',
-'rgba(31,120,180, 0.75)',
-'rgba(178,223,138, 0.75)',
-'rgba(51,160,44, 0.75)',
-'rgba(251,154,153, 0.75)',
-'rgba(227,26,28, 0.75)',
-'rgba(253,191,111, 0.75)',
-'rgba(255,127,0, 0.75)',
-'rgba(202,178,214, 0.75)',
-'rgba(106,61,154, 0.75)',
-'rgba(255,255,153, 0.75)',
-'rgba(177,89,40, 0.75)'
+  'rgba(166,206,227, 0.75)',
+  'rgba(31,120,180, 0.75)',
+  'rgba(178,223,138, 0.75)',
+  'rgba(51,160,44, 0.75)',
+  'rgba(251,154,153, 0.75)',
+  'rgba(227,26,28, 0.75)',
+  'rgba(253,191,111, 0.75)',
+  'rgba(255,127,0, 0.75)',
+  'rgba(202,178,214, 0.75)',
+  'rgba(106,61,154, 0.75)',
+  'rgba(255,255,153, 0.75)',
+  'rgba(177,89,40, 0.75)'
 ];
 
 /**
@@ -46,12 +45,11 @@ export function labelOpts(labelCount) {
    }).use;
 }
 
-function newChart(chartdata, chartDef) {
-  let {id, title, hide_legend} = chartDef;
-  var ctx = $("#" + id);
+function newChart(canvas, chartdata, chartDef) {
+  let { title, hide_legend } = chartDef;
   let lblOpts = chartdata.datasets ? labelOpts(chartdata.datasets.length) : {}
 
-  let chart = new Chart(ctx, {
+  let chart = new Chart(canvas, {
     type: 'bar',
     data: chartdata,
     options: {
@@ -99,6 +97,7 @@ function newChart(chartdata, chartDef) {
 /**
  * Creates a stacked bar chart (with optional trend line) and adds it to the canvas.
  *
+ * @param {Element} canvas - HTML canvas element, captured using jQuery or DOM API.
  * @param {} data - grouped data; ex. {group1: {"2016-10-02": 2, "2016-10-09": 3, ...}, group2: ...}
  * @param {Object} chartDef - chart definition; contains canvas element id and
  *   chart title.
@@ -106,7 +105,7 @@ function newChart(chartdata, chartDef) {
  *   draw a trendline.
  * @return {Chart}
  */
-export function makeStackedChart(groupedData, chartDef, trendPoints) {
+export function makeStackedChart(canvas, groupedData, chartDef, trendPoints) {
   let groups = Object.keys(groupedData);
 
   let labels = null;
@@ -147,17 +146,18 @@ export function makeStackedChart(groupedData, chartDef, trendPoints) {
     datasets : datasets
   };
 
-  return newChart(chartdata, chartDef);
+  return newChart(canvas, chartdata, chartDef);
 }
 
 /**
  * Constructs a chart.js chart
  *
+ * @param {Element} canvas - HTML canvas element, captured using jQuery or DOM API.
  * @param {} data - chart data; {"2016-10-02": 2, "2016-10-09": 3, ...}
  * @param {Object} chartDef - chart definition; contains canvas element id and
  *   chart title.
  */
-export function makeChart(data, chartDef) {
+export function makeChart(canvas, data, chartDef) {
 
   let x = Object.keys(data);
   let y = x.map(k => { return data[k]; });
@@ -175,5 +175,5 @@ export function makeChart(data, chartDef) {
     ]
   };
 
-  return newChart(chartdata, chartDef);
+  return newChart(canvas, chartdata, chartDef);
 }
