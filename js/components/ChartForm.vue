@@ -20,7 +20,7 @@
           <div class="form-group">
             <label for="start_date" class="control-label">{{ messages.startDateLabel }}</label>
             <div class="input-group">
-              <input ref="startDateInput" type="text" class="form-control vizr-date" name="start_date" data-field="start" data-type="date" data-validate="date,targetDate" v-model="startDate">
+              <input ref="startDateInput" type="text" class="form-control vizr-date" name="start_date" data-field="start" data-v-model="startDate" data-validate="date,targetDate" v-model="startDate" @input="dateFieldChanged">
               <span class="input-group-addon" @click="showDatePicker($refs.startDateInput)">
                 <span class="glyphicon glyphicon-calendar"></span>
               </span>
@@ -30,7 +30,7 @@
           <div class="form-group">
             <label for="chart_end_date" class="control-label">{{ messages.endDateLabel }}</label>
             <div class="input-group">
-              <input ref="endDateInput" type="text" class="form-control vizr-date" name="chart_end_date" data-validate="date" data-field="chartEnd" data-type="date" v-model="endDate">
+              <input ref="endDateInput" type="text" class="form-control vizr-date" name="chart_end_date" data-field="chartEnd" data-v-model="endDate" data-validate="date" v-model="endDate" @input="dateFieldChanged">
               <span class="input-group-addon" @click="showDatePicker($refs.endDateInput)">
                 <span class="glyphicon glyphicon-calendar"></span>
               </span>
@@ -118,7 +118,7 @@
           <div class="form-group">
             <label class="control-label" for="target_date">{{ messages.targetEndDateLabel }}</label>
             <div class="input-group">
-              <input ref="targetEndDateInput" type="text" class="form-control vizr-date" name="target_date" data-validate="date,targetDate" data-field="end" data-type="date" v-model="targetEndDate">
+              <input ref="targetEndDateInput" type="text" class="form-control vizr-date" name="target_date" data-field="end" data-v-model="targetEndDate" data-validate="date,targetDate" v-model="targetEndDate" @input="dateFieldChanged">
               <span class="input-group-addon" @click="showDatePicker($refs.targetEndDateInput)">
                 <span class="glyphicon glyphicon-calendar"></span>
               </span>
@@ -277,7 +277,14 @@ export default {
           yearRange: '-100:+10',
           changeMonth: true,
           changeYear: true,
-          dateFormat: 'mm/dd/yy'
+          dateFormat: 'mm/dd/yy',
+          onSelect() {
+            const inputEvent = new Event('input', {
+              bubbles: true,
+              cancelable: false
+            });
+            this.dispatchEvent(inputEvent);
+          }
         };
 
         $($el).find('input.vizr-date').datepicker(pickerConfig);
@@ -329,6 +336,23 @@ export default {
     groupFieldEventChanged() {
       const { model } = this;
       model.group = '';
+    },
+
+    /**
+     * Keeps model in sync with date input values.
+     */
+    dateFieldChanged(evt) {
+      const { target } = evt;
+      const { model } = this;
+
+      const field = target.getAttribute('data-field');
+      const vModelField = target.getAttribute('data-v-model');
+
+      // set ISO date in the model
+      model[field] = userToIsoDate(target.value);
+
+      // manually update the v-model for changes from date picker
+      this[vModelField] = target.value;
     },
 
     /**

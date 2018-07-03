@@ -140,17 +140,16 @@ describe('ChartForm.vue', () => {
     //   expect(newChartDef.targets).toEqual({[noGroupsLabel]: 60});
     // });
 
-    // it('converts dates to ISO format on save', () => {
-    //   // save updated dates
-    //   wrapper.find(selector.startDateField).val('03/04/2016').change();
-    //   wrapper.find(selector.targetDateField).val('04/05/2017').change();
-    //   wrapper.find('input[name=chart_end_date]').val('05/12/2017').change();
-    //   wrapper.find(selector.saveButton).click();
-    //
-    //   expect(newChartDef.start).toEqual('2016-03-04');
-    //   expect(newChartDef.end).toEqual('2017-04-05');
-    //   expect(newChartDef.chartEnd).toEqual('2017-05-12');
-    // });
+    it('converts dates to ISO format when updating the model', () => {
+      // save updated dates
+      wrapper.find(selector.startDateField).setValue('03/04/2016');
+      wrapper.find(selector.targetDateField).setValue('04/05/2017');
+      wrapper.find(selector.endDateField).setValue('05/12/2017');
+
+      expect(wrapper.vm.model.start).toEqual('2016-03-04');
+      expect(wrapper.vm.model.end).toEqual('2017-04-05');
+      expect(wrapper.vm.model.chartEnd).toEqual('2017-05-12');
+    });
 
     // it('strips HTML tags on save', () => {
     //   let newChartDef = {};
