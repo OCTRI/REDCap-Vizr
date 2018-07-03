@@ -99,7 +99,7 @@
 
           <div class="form-group">
             <label class="control-label" for="group_field">{{ messages.groupingFieldLabel }}</label>
-            <select v-model="model.group" class="form-control" name="group_field" data-validate="group" data-field="group">
+            <select v-model="model.group" class="form-control" name="group_field" data-validate="group" data-field="group" @change="groupFieldChanged">
               <option value="">
                 {{ messages.noGrouping }}
               </option>
@@ -112,8 +112,21 @@
         </fieldset>
         <fieldset>
           <legend><span class="label label-default">{{ messages.targetLabel }}</span></legend>
-          <div class="form-group targets">
-            <!-- TODO targets -->
+          <div class="form-group targets" v-if="noGroup">
+            <label class="control-label" for="target_count">{{ messages.targetCountLabel }}</label>
+            <input type="text" class="form-control" name="target_count" data-validate="targetDate" data-field='targets.No Groups' v-model.number="model.targets['No Groups']">
+          </div>
+          <div class="form-group targets" v-else>
+            <label>{{ messages.targetCountsLabel }}</label> <a data-toggle="collapse" role="button" :href="groupTargetsIdSelector" aria-expanded="true">{{ messages.actions.hideShow }}</a>
+            <div class="collapse in" :id="groupTargetsId">
+              <div class="well group-targets">
+                <div class="form-group form-group-sm" v-for="target in groupTargets">
+                  <label class="control-label" :for="target.name">{{ target.label }}</label>
+                  <input type="text" class="form-control col-sm-10" :name="target.name" data-validate="targetDate" data-type='int' v-model.number="model.targets[target.label]">
+                </div>
+                <span class="target-total"><em>{{ messages.targetTotal }} {{ targetTotal }}</em></span>
+              </div>
+            </div>
           </div>
           <div class="form-group">
             <label class="control-label" for="target_date">{{ messages.targetEndDateLabel }}</label>
@@ -159,6 +172,8 @@ import {
 } from '@/data-dictionary';
 
 import {
+  defaultTargetsObject,
+  targetsObjectWithGroups,
   isoToUserDate,
   userToIsoDate,
   fieldLabel
@@ -189,6 +204,7 @@ export const selector = {
 const messages = {
   actions: {
     cancel: 'Cancel',
+    hideShow: 'Hide/Show',
     save: 'Save'
   },
   dataConfigurationHeading: 'Data Configuration',
@@ -214,10 +230,13 @@ const messages = {
   selectEvent: 'Select an event',
   selectInterval: 'Select Interval',
   startDateLabel: 'Start Date',
+  targetCountLabel: 'Target Count',
+  targetCountsLabel: 'Target Counts',
   targetEndDateLabel: 'Target End Date',
   targetLabel: 'Target (optional)',
+  targetTotal: 'Total: ',
   timeConfigHeading: 'Time Configuration',
-  titleLabel: 'Chart Title'
+  titleLabel: 'Chart Title',
 };
 
 export default {
@@ -260,6 +279,7 @@ export default {
      * @return {ChartDefinition} new Object.
      */
     copyModel(chartDef) {
+      // TODO: handle old charts where Vue replaces the empty targets object with an array
       const model = Object.assign({}, chartDef);
       model.targets = Object.assign({}, chartDef.targets);
       return model;
@@ -339,6 +359,22 @@ export default {
     },
 
     /**
+     * Resets the targets the field used to group records changes.
+     */
+    groupFieldChanged() {
+      const { dataDictionary, model } = this;
+      const { group } = model;
+
+      if (group === '') {
+        model.targets = defaultTargetsObject();
+      } else {
+        const groupField = dataDictionary.find(field => field.field_name === group);
+        const groups = getChoices(groupField).map(choice => choice.label);
+        model.targets = targetsObjectWithGroups(groups);
+      }
+    },
+
+    /**
      * Keeps model in sync with date input values.
      */
     dateFieldChanged(evt) {
@@ -373,6 +409,16 @@ export default {
     idSelector() {
       const { id } = this;
       return `#${id}`;
+    },
+
+    groupTargetsId() {
+      const { id } = this;
+      return `collapseGroupTargets_${id}`;
+    },
+
+    groupTargetsIdSelector() {
+      const { groupTargetsId } = this;
+      return `#${groupTargetsId}`;
     },
 
     dataDictionary() {
@@ -444,6 +490,34 @@ export default {
       return getCategoricalFields(dataDictionary, groupForms)
         .sort(fieldComparator)
         .map(f => ({ label: fieldLabel(f), value: f.field_name }));
+    },
+
+    hasGroup() {
+      const { model } = this;
+      return Boolean(model.group);
+    },
+
+    noGroup() {
+      const { hasGroup } = this;
+      return !hasGroup;
+    },
+
+    targets() {
+      const { model } = this;
+      return model.targets;
+    },
+
+    groupTargets() {
+      const { targets } = this;
+      return Object.keys(targets)
+        .map(key => ({ label: key, name: `group_target__${key}` }));
+    },
+
+    targetTotal() {
+      const { targets } = this;
+      return Object.keys(targets)
+        .filter(key => Number.isFinite(targets[key]))
+        .reduce((acc, key) => acc + targets[key], 0);
     },
 
     groupFieldErrors() {
