@@ -2,8 +2,11 @@ import {
   isoToUserDate,
   title,
   newChartDefinition,
-  userToIsoDate
-} from '../js/util';
+  userToIsoDate,
+  fieldLabel
+} from '@/util';
+
+import exampleDictionary from './example-data-dictionary';
 
 describe('title', () => {
   it('should convert an underscore string to title case', () => {
@@ -46,5 +49,13 @@ describe('userToIsoDate', () => {
 
   it('converts unknown values to blanks', () => {
     expect(userToIsoDate('201818/01/23')).toEqual('');
+  });
+});
+
+describe('fieldLabel', () => {
+  it('displays the field name followed by the field label', () => {
+    exampleDictionary.forEach(field => {
+      expect(fieldLabel(field)).toEqual(`${field.field_name} (${field.field_label})`);
+    });
   });
 });

@@ -27,17 +27,17 @@ export function title(str) {
  */
 export function newChartDefinition() {
   return {
-    field: null,
-    dateFieldEvent: null,
-    dateInterval: null,
-    filter: null,
-    group: null,
-    groupFieldEvent: null,
+    field: '',
+    dateFieldEvent: '',
+    dateInterval: '',
+    filter: '',
+    group: '',
+    groupFieldEvent: '',
     id: uuid(),
-    title: null,
-    start: null,
-    end: null, // target end
-    chartEnd: null,
+    title: '',
+    start: '',
+    end: '', // target end
+    chartEnd: '',
     targets: null
   };
 }
@@ -111,4 +111,13 @@ export function isoToUserDate(dateString) {
 export function userToIsoDate(dateString) {
   const converted = moment(dateString, userDateFormat, true);
   return converted.isValid() ? converted.format(isoDateFormat) : '';
+}
+
+/**
+ * Label displayed to end users for a dataDictionary field.
+ * @param {Field} field - dataDictionary entry.
+ * @return String to display to user
+ */
+export function fieldLabel(f) {
+  return `${f.field_name} (${f.field_label})`;
 }
