@@ -1,7 +1,7 @@
 <template>
   <transition name="fade">
     <div id="vizr-container" v-if="!loading">
-      <h1>Vizr Charts</h1>
+      <h1>{{ messages.heading }}</h1>
 
       <ExampleChart v-show="noCharts"/>
       <Instructions :can-edit="canEdit" :has-charts="hasCharts"/>
@@ -33,7 +33,12 @@
         </button>
       </div>
 
-      <!-- TODO new chart form -->
+      <ChartForm
+        class="add-chart-form col-md-12 collapse"
+        :metadata="metadata"
+        :chart-def="newChart"
+        v-if="canEdit"
+        @save-chart="saveChart"/>
 
       <VizrVersion/>
     </div>
@@ -45,11 +50,15 @@ import Chart from './Chart';
 import ExampleChart from './ExampleChart';
 import Instructions from './Instructions';
 import VizrVersion from './VizrVersion';
+import ChartForm from './ChartForm';
+
+import { newChartDefinition } from '@/util';
 
 const messages = {
   actions : {
     create: 'Build a Chart',
   },
+  heading: 'Vizr Charts',
   warnings: {
     configError: 'Project configuration could not be loaded due to an error: '
   }
@@ -70,6 +79,7 @@ export default {
 
   components: {
     Chart,
+    ChartForm,
     ExampleChart,
     Instructions,
     VizrVersion
@@ -78,9 +88,10 @@ export default {
   data() {
     return {
       messages,
+      config: {},
       loading: true,
       metadata: {},
-      config: {}
+      newChart: newChartDefinition()
     };
   },
 
@@ -111,13 +122,28 @@ export default {
      */
     deleteChart(id) {
       console.log(`delete chart ${id}`);
+      const { config } = this;
+      const index = config.charts.findIndex(c => c.id === id);
+      if (index >= 0) {
+        config.charts.splice(index, 1);
+      }
     },
 
     /**
-     * Handles saving an updated chart.
+     * Handles saving a new or updated chart.
      */
-    saveChart(id) {
-      console.log(`save chart ${id}`);
+    saveChart(chartDef) {
+      const { config } = this;
+      const { id } = chartDef;
+      const index = config.charts.findIndex(c => c.id === id);
+      if (index >= 0) {
+        console.log(`found existing chart at index ${index}`);
+        config.charts[index] = chartDef;
+      } else {
+        console.log(`chart ${id} is a new chart`);
+        config.charts.push(chartDef);
+        this.newChart = newChartDefinition();
+      }
     }
   },
 
@@ -139,6 +165,11 @@ export default {
     charts() {
       const { config } = this;
       return config && config.charts ? config.charts : [];
+    },
+
+    newChartFormId() {
+      const { newChart } = this;
+      return `form-${newChart.id}`;
     }
   }
 }

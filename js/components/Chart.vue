@@ -2,7 +2,7 @@
   <div :id="chartId" class="vizr-chart-container">
     <div class="vizr-chart-header">
       <h3 data-description="title">{{ chartDef.title }}
-        <a :href="formId" data-toggle="collapse" data-description="edit" v-if="canEdit">{{ messages.actions.edit }}</a>
+        <a :href="formIdSelector" role="button" data-toggle="collapse" data-description="edit" v-if="canEdit">{{ messages.actions.edit }}</a>
       </h3>
       <p v-if="hasDescription" data-description="description"><em>{{ chartDef.description }}</em></p>
       <div class="error">
@@ -17,9 +17,12 @@
     </a>
 
     <div class="vizr-chart-form row">
-      <div class="col-md-12 collapse" :id="formId">
-        <!-- TODO #18 ChartForm component -->
-      </div>
+      <ChartForm
+        class="col-md-12 collapse"
+        :metadata="metadata"
+        :chart-def="chartDef"
+        v-if="canEdit"
+        @save-chart="saveChart"/>
     </div>
 
     <div class="vizr-event-select pull-right">
@@ -61,6 +64,7 @@
 import { groupedByInterval, summarizeGroups, trendPoints } from '@/bucket';
 import { makeStackedChart } from '@/chart-config';
 
+import ChartForm from '@/components/ChartForm';
 import ChartSummary from '@/components/ChartSummary';
 
 const ALL_EVENTS = 'ALL_EVENTS';
@@ -93,6 +97,7 @@ export default {
   },
 
   components: {
+    ChartForm,
     ChartSummary
   },
 
@@ -168,6 +173,13 @@ export default {
     },
 
     /**
+     * Save handler for the chart form.
+     */
+    saveChart(chartDef) {
+      this.$emit('save-chart', chartDef);
+    },
+
+    /**
      * Click event handler for the delete link.
      */
     deleteChart() {
@@ -220,6 +232,11 @@ export default {
     formId() {
       const { id } = this;
       return `form-${id}`;
+    },
+
+    formIdSelector() {
+      const { formId } = this;
+      return `#${formId}`;
     },
 
     responseError() {
