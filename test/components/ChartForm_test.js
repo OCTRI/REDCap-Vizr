@@ -84,17 +84,17 @@ describe('ChartForm.vue', () => {
       });
     });
 
-    // it('attaches the save callback to the save button', () => {
-    //   let spyObj = {
-    //     save() {}
-    //   };
-    //
-    //   spyOn(spyObj, 'save');
-    //
-    //   const withCallback = chartForm(exampleMetadata, chartDef, (arg) => spyObj.save(arg));
-    //   withCallback.find(selector.saveButton).click();
-    //   expect(spyObj.save).toHaveBeenCalledWith(chartDef);
-    // });
+    it('emits an event with chart config when the save button is clicked', () => {
+      const withValidData = shallowMount(ChartForm, {
+        propsData: {
+          chartDef: exampleChart,
+          metadata: exampleMetadata
+        }
+      });
+      withValidData.find('button[type=submit]').trigger('click');
+      expect(withValidData.emitted()['save-chart']).toBeDefined();
+      expect(withValidData.emitted()['save-chart'][0]).toEqual([ exampleChart ]);
+    });
 
     // it('updates a group target', () => {
     //   let newChartDef = {};

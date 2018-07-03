@@ -127,8 +127,24 @@
           </div>
         </fieldset>
 
-        <button type="submit" class="btn btn-primary" name="submit_vizr_form" data-toggle="collapse" :data-target="idSelector" :disabled="submitDisabled" aria-expanded="true">{{ messages.actions.save }}</button>
-        <button type="cancel" class="btn btn-link" data-toggle="collapse" :data-target="idSelector" aria-expanded="true" @click="reset">{{ messages.actions.cancel }}</button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          name="submit_vizr_form"
+          data-toggle="collapse"
+          :data-target="idSelector"
+          :disabled="submitDisabled"
+          aria-expanded="true"
+          @click="save"
+        >{{ messages.actions.save }}</button>
+        <button
+          type="cancel"
+          class="btn btn-link"
+          data-toggle="collapse"
+          :data-target="idSelector"
+          aria-expanded="true"
+          @click="reset"
+        >{{ messages.actions.cancel }}</button>
       </div>
     </div>
   </div>
@@ -313,6 +329,14 @@ export default {
     groupFieldEventChanged() {
       const { model } = this;
       model.group = '';
+    },
+
+    /**
+     * Emits an event with the updated chart configuration.
+     */
+    save() {
+      const { model } = this;
+      this.$emit('save-chart', this.copyModel(model));
     }
   },
 
