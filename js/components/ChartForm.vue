@@ -212,6 +212,7 @@ export default {
   },
 
   data() {
+    const { chartDef } = this;
     return {
       messages,
       dateIntervals: [
@@ -220,15 +221,14 @@ export default {
         { label: 'Months', value: 'month' },
         { label:'Years', value:'year' }
       ],
-      model: {},
-      startDate: '',
-      endDate: '',
-      targetEndDate: ''
+      model: this.copyModel(chartDef),
+      startDate: isoToUserDate(chartDef.start),
+      endDate: isoToUserDate(chartDef.chartEnd),
+      targetEndDate: isoToUserDate(chartDef.end)
     };
   },
 
   mounted() {
-    this.initializeState();
     this.attachDatePickers();
   },
 
@@ -237,15 +237,6 @@ export default {
   },
 
   methods: {
-    initializeState() {
-      const { chartDef } = this;
-      const model = this.copyModel(chartDef);
-      this.model = model;
-      this.startDate = isoToUserDate(model.start);
-      this.endDate = isoToUserDate(model.chartEnd);
-      this.targetEndDate = isoToUserDate(model.end);
-    },
-
     /**
      * Constructs a copy of the chartDef object.
      * @param {ChartDefinition} chartDef - object to be copied
@@ -300,7 +291,11 @@ export default {
      * Resets the model on cancel.
      */
     reset() {
-      this.initializeState();
+      const { chartDef } = this;
+      this.model = this.copyModel(chartDef);
+      this.startDate = isoToUserDate(chartDef.start);
+      this.endDate = isoToUserDate(chartDef.chartEnd);
+      this.targetEndDate = isoToUserDate(chartDef.end);
     }
   },
 
