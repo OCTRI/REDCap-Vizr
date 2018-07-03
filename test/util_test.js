@@ -3,7 +3,9 @@ import {
   title,
   newChartDefinition,
   userToIsoDate,
-  fieldLabel
+  fieldLabel,
+  defaultTargetsObject,
+  targetsObjectWithGroups
 } from '@/util';
 
 import exampleDictionary from './example-data-dictionary';
@@ -57,5 +59,18 @@ describe('fieldLabel', () => {
     exampleDictionary.forEach(field => {
       expect(fieldLabel(field)).toEqual(`${field.field_name} (${field.field_label})`);
     });
+  });
+});
+
+describe('defaultTargetsObject', () => {
+  it('returns configuration for ungrouped targets', () => {
+    expect(defaultTargetsObject()).toEqual({ 'No Groups': null });
+  });
+});
+
+describe('targetsObjectWithGroups', () => {
+  it('adds a target for each string in the input array', () => {
+    const groups = ['Bend', 'Portland', 'Eugene'];
+    expect(targetsObjectWithGroups(groups)).toEqual({ Bend: null, Portland: null, Eugene: null });
   });
 });

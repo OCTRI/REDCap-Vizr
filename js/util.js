@@ -38,7 +38,7 @@ export function newChartDefinition() {
     start: '',
     end: '', // target end
     chartEnd: '',
-    targets: null
+    targets: defaultTargetsObject()
   };
 }
 
@@ -120,4 +120,26 @@ export function userToIsoDate(dateString) {
  */
 export function fieldLabel(f) {
   return `${f.field_name} (${f.field_label})`;
+}
+
+/**
+ * Returns target configuration for charts without grouping.
+ * @return {Object}
+ */
+export function defaultTargetsObject() {
+  return { [noGroupsLabel]: null };
+}
+
+/**
+ * Returns target configuration for charts with a grouping field.
+ * @param {String[]} groups - array of group labels, such as obtained from `getChoices`.
+ * @return {Object} target configuration with a key for each group in `groups`. For example,
+ *    if `groups = ['g1', 'g2']`, then `{ g1: null, g2: null}` is returned.
+ * @see data-dictionary.js particularly `getChoices`
+ */
+export function targetsObjectWithGroups(groups) {
+  return groups.reduce((acc, group) => {
+    acc[group] = null;
+    return acc;
+  }, {});
 }
