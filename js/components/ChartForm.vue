@@ -40,7 +40,7 @@
 
           <div class="form-group" v-if="hasEvents">
             <label for="date_field_event" class="control-label">{{ messages.dateFieldEventLabel }}</label>
-            <select v-model="model.dateFieldEvent" class="form-control" name="date_field_event" required="required" data-field="dateFieldEvent">
+            <select v-model="model.dateFieldEvent" class="form-control" name="date_field_event" required="required" data-field="dateFieldEvent" @change="dateFieldEventChanged">
               <option value="">
                 {{ messages.selectEvent }}
               </option>
@@ -86,7 +86,7 @@
 
           <div class="form-group" v-if="hasEvents">
             <label for="group_field_event" class="control-label">{{ messages.groupingFieldEventLabel }}</label>
-            <select v-model="model.groupFieldEvent" class="form-control" name="group_field_event" data-field="groupFieldEvent">
+            <select v-model="model.groupFieldEvent" class="form-control" name="group_field_event" data-field="groupFieldEvent" @change="groupFieldEventChanged">
               <option value="">
                 {{ messages.selectEvent }}
               </option>
@@ -155,6 +155,7 @@ export const selector = {
   endDateField: 'input[name=chart_end_date]',
   dateFieldEventSelect: 'select[name=date_field_event]',
   dateFieldSelect: 'select[name=record_date]',
+  dateIntervalSelect: 'select[name=date_interval]',
   groupFieldEventSelect: 'select[name=group_field_event]',
   groupingFieldSelect: 'select[name=group_field]',
   targetCountField: 'input[name=target_count]',
@@ -296,6 +297,22 @@ export default {
       this.startDate = isoToUserDate(chartDef.start);
       this.endDate = isoToUserDate(chartDef.chartEnd);
       this.targetEndDate = isoToUserDate(chartDef.end);
+    },
+
+    /**
+     * Clears the date field selection when the date field event changes.
+     */
+    dateFieldEventChanged() {
+      const { model } = this;
+      model.field = '';
+    },
+
+    /**
+     * Clears the grouping field selection when the grouping field event changes.
+     */
+    groupFieldEventChanged() {
+      const { model } = this;
+      model.group = '';
     }
   },
 
@@ -352,7 +369,8 @@ export default {
     },
 
     dateForms() {
-      const { events, hasEvents, dateFieldEvent } = this;
+      const { events, hasEvents, model } = this;
+      const { dateFieldEvent } = model;
       return hasEvents ? events[dateFieldEvent] : null;
     },
 
@@ -368,7 +386,8 @@ export default {
     },
 
     groupForms() {
-      const { hasEvents, events, groupFieldEvent } = this;
+      const { hasEvents, events, model } = this;
+      const { groupFieldEvent } = model;
       return hasEvents ? events[groupFieldEvent] : null;
     },
 

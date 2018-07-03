@@ -22,7 +22,7 @@ describe('ChartForm.vue', () => {
       });
     });
 
-    it('returns elements', () => {
+    it('renders elements', () => {
       expect(wrapper).toBeDefined();
       expect(wrapper.findAll('fieldset').length).toBeGreaterThan(0);
     });
@@ -33,13 +33,13 @@ describe('ChartForm.vue', () => {
     });
 
     it('creates the expected date field options', () => {
-      const dateFieldOptions = wrapper.findAll('select[name=record_date] > option');
+      const dateFieldOptions = wrapper.findAll(`${selector.dateFieldSelect} > option`);
       expect(dateFieldOptions.length).toEqual(5); // 4 options plus prompt
       expect(dateFieldOptions.at(1).text().trim()).toEqual('enroll_date (Enrollment date)'); // sorted by label
     });
 
     it('creates the expected date interval options', () => {
-      const dateIntervalOptions = wrapper.findAll('select[name=date_interval] > option');
+      const dateIntervalOptions = wrapper.findAll(`${selector.dateIntervalSelect} > option`);
       expect(dateIntervalOptions.length).toEqual(5); // 4 options plus prompt
       expect(dateIntervalOptions.at(1).text().trim()).toEqual('Days');
       expect(dateIntervalOptions.at(2).text().trim()).toEqual('Weeks');
@@ -48,7 +48,7 @@ describe('ChartForm.vue', () => {
     });
 
     it('creates the expected grouping field options', () => {
-      const groupFieldOptions = wrapper.findAll('select[name=group_field] > option');
+      const groupFieldOptions = wrapper.findAll(`${selector.groupingFieldSelect} > option`);
       expect(groupFieldOptions.length).toEqual(6); // 5 options plus prompt
       expect(groupFieldOptions.at(1).text().trim()).toEqual('dropdown (Dropdown field)'); // sorted by label
     });
@@ -271,6 +271,7 @@ describe('ChartForm.vue', () => {
 
       spyOn(spyObj, 'datepicker');
 
+      // eslint-disable-next-line no-undef
       $.fn.datepicker = spyObj.datepicker;
 
       shallowMount(ChartForm, {
@@ -284,7 +285,7 @@ describe('ChartForm.vue', () => {
     });
   });
 
-  xdescribe('with longitudinal project', () => {
+  describe('with longitudinal project', () => {
     let wrapper;
 
     beforeEach(() => {
@@ -302,9 +303,9 @@ describe('ChartForm.vue', () => {
     });
 
     it('creates the expected date field options for the selected event', () => {
-      const dateFieldOptions = wrapper.findAll('select[name=record_date] > option');
-      expect(dateFieldOptions.length).toEqual(5); // 4 options plus prompt
-      expect(dateFieldOptions.at(4).text().trim()).toEqual('survey_date (Survey date)'); // sorted by label
+      const dateFieldOptions = wrapper.findAll(`${selector.dateFieldSelect} > option`);
+      expect(dateFieldOptions.length).toEqual(2); // 1 options plus prompt
+      expect(dateFieldOptions.at(1).text().trim()).toEqual('survey_date (Survey date)'); // sorted by label
     });
 
     it('changes date field options when event is changed and removes selection', (done) => {
@@ -332,7 +333,7 @@ describe('ChartForm.vue', () => {
 
       wrapper.vm.$nextTick(() => {
         expect(wrapper.vm.model.group).toEqual('');
-        const groupFieldOptions = wrapper.findAll('select[name=group_field] > option');
+        const groupFieldOptions = wrapper.findAll(`${selector.groupingFieldSelect} > option`);
         expect(groupFieldOptions.length).toEqual(3); // 2 options plus prompt
         expect(groupFieldOptions.at(1).text().trim()).toEqual('dropdown (Dropdown field)'); // sorted by label
         done();
