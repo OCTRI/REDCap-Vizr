@@ -236,7 +236,7 @@ const messages = {
   targetLabel: 'Target (optional)',
   targetTotal: 'Total: ',
   timeConfigHeading: 'Time Configuration',
-  titleLabel: 'Chart Title',
+  titleLabel: 'Chart Title'
 };
 
 export default {
@@ -279,14 +279,35 @@ export default {
      * @return {ChartDefinition} new Object.
      */
     copyModel(chartDef) {
-      // TODO: handle old charts where Vue replaces the empty targets object with an array
       const model = Object.assign({}, chartDef);
-      model.targets = Object.assign({}, chartDef.targets);
+
+      // handle old charts where Vue replaces the empty targets object with an array
+      if (Array.isArray(chartDef.targets)) {
+        const { group } = chartDef;
+        model.targets = Object.assign({}, group ? this.createGroupTargets(group) : defaultTargetsObject());
+      } else {
+        model.targets = Object.assign({}, chartDef.targets);
+      }
+
       return model;
     },
 
     /**
-     * Attach date pickers to the date inputs.
+     * Creates a targets object for the selected group field.
+     * @param {String} group - the name of the field to group records by
+     */
+    createGroupTargets(group) {
+      // called before properties are computed, so extract data dictionary manually
+      const { metadata } = this;
+      const { dataDictionary } = metadata;
+
+      const groupField = dataDictionary.find(field => field.field_name === group);
+      const groups = getChoices(groupField).map(choice => choice.label);
+      return targetsObjectWithGroups(groups);
+    },
+
+    /**
+     * Attaches date pickers to the date inputs.
      */
     attachDatePickers() {
       const { $el, hasDatePickers, messages } = this;
@@ -359,18 +380,16 @@ export default {
     },
 
     /**
-     * Resets the targets the field used to group records changes.
+     * Resets the targets when the field used to group records changes.
      */
     groupFieldChanged() {
-      const { dataDictionary, model } = this;
+      const { model } = this;
       const { group } = model;
 
       if (group === '') {
         model.targets = defaultTargetsObject();
       } else {
-        const groupField = dataDictionary.find(field => field.field_name === group);
-        const groups = getChoices(groupField).map(choice => choice.label);
-        model.targets = targetsObjectWithGroups(groups);
+        model.targets = this.createGroupTargets(group);
       }
     },
 
