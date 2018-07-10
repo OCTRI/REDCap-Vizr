@@ -91,6 +91,7 @@ describe('ChartForm.vue', () => {
           metadata: exampleMetadata
         }
       });
+      withValidData.vm.isDirty = true;
       withValidData.find('button[type=submit]').trigger('click');
       expect(withValidData.emitted()['save-chart']).toBeDefined();
       expect(withValidData.emitted()['save-chart'][0]).toEqual([ exampleChart ]);
@@ -201,7 +202,7 @@ describe('ChartForm.vue', () => {
       })
     });
 
-    xdescribe('validation', () => {
+    describe('validation', () => {
       let form;
 
       beforeEach(() => {
@@ -209,60 +210,69 @@ describe('ChartForm.vue', () => {
           propsData: {
             chartDef: exampleChart,
             metadata: exampleMetadata
+          },
+
+          // stub out the use of debounce so tests run synchronously
+          methods: {
+            validateChanges(evt) {
+              const { target } = evt;
+              this.validateInput(target);
+            }
           }
         });
       });
 
       it('disables saving when required fields are missing', () => {
         // delete the title
-        form.find(selector.titleField).val('').change();
+        const titleInput = form.find(selector.titleField);
+        titleInput.setValue('');
 
-        expect(form.find('.has-error').length).toEqual(1);
-        expect(form.find(selector.saveButton).prop('disabled')).toBe(true);
+        expect(form.findAll(selector.validationError).length).toEqual(1);
+        expect(form.find(selector.saveButton).attributes().disabled).toBeTruthy();
       });
 
       it('validates date formats', () => {
         // enter an invalid date
-        form.find(selector.startDateField).val('02/30/2017').change();
+        form.find(selector.startDateField).setValue('02/30/2017');
 
-        expect(form.find('.has-error').length).toEqual(1);
+        expect(form.findAll(selector.validationError).length).toEqual(1);
         expect(form.text()).toMatch('Dates must be MM/DD/YYYY format.');
-        expect(form.find(selector.saveButton).prop('disabled')).toBe(true);
+        expect(form.find(selector.saveButton).attributes().disabled).toBeTruthy();
       });
 
       it('validates chart end date formats', () => {
         // enter an invalid date
-        form.find('input[name=chart_end_date]').val('02/30/2017').change();
+        form.find('input[name=chart_end_date]').setValue('02/30/2017');
 
-        expect(form.find('.has-error').length).toEqual(1);
+        expect(form.findAll(selector.validationError).length).toEqual(1);
         expect(form.text()).toMatch('Dates must be MM/DD/YYYY format.');
-        expect(form.find(selector.saveButton).prop('disabled')).toBe(true);
+        expect(form.find(selector.saveButton).attributes().disabled).toBeTruthy();
       });
 
       it('disables saving when target date validation fails', () => {
         // make a change to enable save button
-        form.find(selector.titleField).val('Test Title').change();
-        expect(form.find(selector.saveButton).prop('disabled')).toBe(false);
+        form.find(selector.titleField).setValue('Test Title');
+        expect(form.find(selector.saveButton).attributes().disabled).toBeFalsy();
 
         // delete the start date, which is required when target is present
-        form.find(selector.startDateField).val('').change();
+        form.find(selector.startDateField).setValue('');
 
         // errors should disable save button
-        expect(form.find('.has-error').length).toEqual(1);
-        expect(form.find(selector.saveButton).prop('disabled')).toBe(true);
+        expect(form.findAll(selector.validationError).length).toEqual(1);
+        expect(form.find(selector.saveButton).attributes().disabled).toBeTruthy();
       });
 
       it('clears errors on cancel', () => {
         // delete the title
-        form.find(selector.titleField).val('').change();
+        form.find(selector.titleField).setValue('');
 
-        expect(form.find('.has-error').length).toEqual(1);
-        expect(form.find(selector.saveButton).prop('disabled')).toBe(true);
+        expect(form.findAll(selector.validationError).length).toEqual(1);
+        expect(form.find(selector.saveButton).attributes().disabled).toBeTruthy();
 
         // click the cancel button
-        form.find(selector.cancelButton).click();
+        form.find(selector.cancelButton).trigger('click');
 
-        expect(form.find('.has-error').length).toEqual(0);
+        expect(form.findAll(selector.validationError).length).toEqual(0);
       });
     });
 
@@ -342,7 +352,7 @@ describe('ChartForm.vue', () => {
       });
     });
 
-    xdescribe('longitudinalValidation', () => {
+    describe('longitudinalValidation', () => {
       let form;
 
       beforeEach(() => {
@@ -350,36 +360,45 @@ describe('ChartForm.vue', () => {
           propsData: {
             chartDef: exampleLongitudinalChart,
             metadata: exampleLongitudinalMetadata
+          },
+
+          // stub out the use of debounce so tests run synchronously
+          methods: {
+            validateChanges(evt) {
+              const { target } = evt;
+              this.validateInput(target);
+            }
           }
         });
       });
 
       it('disables saving when date field event is missing', () => {
         // unselect the event
-        form.find(selector.dateFieldEventSelect).val('').change();
+        form.findAll(`${selector.dateFieldEventSelect} > option`).at(0).setSelected();
 
-        expect(form.find('.has-error').length).toEqual(2); // date event and date field are invalid
-        expect(form.find(selector.saveButton).prop('disabled')).toBe(true);
+        expect(form.findAll(selector.validationError).length).toEqual(1); // date event is invalid
+        expect(form.vm.model.field).toEqual(''); // date field is cleared
+        expect(form.find(selector.saveButton).attributes().disabled).toBeTruthy();
       });
 
       it('validates date field event selected if date field selected', () => {
         // Unselect date field event - select date field
-        form.find(selector.dateFieldEventSelect).val('').change();
-        form.find(selector.dateFieldSelect).val('screen_date').change();
+        form.findAll(`${selector.dateFieldEventSelect} > option`).at(0).setSelected();
+        form.findAll(`${selector.dateFieldSelect} > option`).at(1).setSelected();
 
-        expect(form.find('.has-error').length).toEqual(2); // date event and date field are invalid
+        expect(form.findAll(selector.validationError).length).toEqual(2); // date event and date field are invalid
         expect(form.text()).toMatch('An event must be selected before selecting a date field');
-        expect(form.find(selector.saveButton).prop('disabled')).toBe(true);
+        expect(form.find(selector.saveButton).attributes().disabled).toBeTruthy();
       });
 
       it('validates group event selected if group selected', () => {
         // Unselect group event - select group field
-        form.find(selector.groupFieldEventSelect).val('').change();
-        form.find(selector.groupingFieldSelect).val('study_clinic').change();
+        form.findAll(`${selector.groupFieldEventSelect} > option`).at(0).setSelected();
+        form.findAll(`${selector.groupingFieldSelect} > option`).at(1).setSelected();
 
-        expect(form.find('.has-error').length).toEqual(1);
+        expect(form.findAll(selector.validationError).length).toEqual(1);
         expect(form.text()).toMatch('An event must be selected before selecting a grouping field');
-        expect(form.find(selector.saveButton).prop('disabled')).toBe(true);
+        expect(form.find(selector.saveButton).attributes().disabled).toBeTruthy();
       });
     });
   });

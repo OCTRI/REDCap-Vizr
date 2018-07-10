@@ -7,7 +7,7 @@
     "clean": "rm -rf dist junit",
     "prebuild": "npm install",
     "build": "webpack --optimize-minimize",
-    "test": "karma start karma.conf.js",
+    "test": "karma start karma.conf.js --single-run",
     "test-jenkins": "karma start karma.conf.js --single-run --reporters junit --browsers Chrome_Headless",
     "test-single-run": "karma start karma.conf.js --single-run",
     "start": "WATCHING=1 webpack --progress --colors --watch"
@@ -52,6 +52,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
+    "lodash": "^4.17.10",
     "qs": "^6.5.2",
     "striptags": "^2.2.1",
     "uuid": "^3.1.0",
