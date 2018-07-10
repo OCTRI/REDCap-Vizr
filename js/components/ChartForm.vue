@@ -1,46 +1,46 @@
 <template>
-  <div :id="id" aria-expanded="true">
+  <div :id="id" aria-expanded="true" @input="validateChanges" @change="validateChanges">
     <div class="vizr-form-panel panel panel-primary">
       <div class="panel-heading">
         <strong>{{ messages.heading }}</strong>
         <span class="glyphicon glyphicon-remove pull-right" aria-hidden="true" data-toggle="collapse" :data-target="idSelector" aria-expanded="true" role="button" @click="reset"></span>
       </div>
       <div class="panel-body">
-        <div class="form-group">
+        <div class="form-group" :class="{ 'has-error': errors.titleError }">
           <label for="chart_title" class="control-label">{{ messages.titleLabel }}</label>
-          <input type="text" class="form-control" name="chart_title" required="required" data-field="title" v-model="model.title">
-          <div class="help-block error-help">{{ titleError }}</div>
+          <input type="text" class="form-control" name="chart_title" required="required" data-field="title" v-model.trim="model.title">
+          <div class="help-block error-help">{{ errors.titleError }}</div>
         </div>
         <div class="form-group">
           <label for="chart_description" class="control-label">{{ messages.descriptionLabel }}</label>
-          <input type="text" class="form-control" name="chart_description" data-field="description" v-model="model.description">
+          <input type="text" class="form-control" name="chart_description" data-field="description" v-model.trim="model.description">
         </div>
         <fieldset>
           <legend><span class="label label-default">{{ messages.timeConfigHeading }}</span></legend>
-          <div class="form-group">
+          <div class="form-group" :class="{ 'has-error': errors.startError }">
             <label for="start_date" class="control-label">{{ messages.startDateLabel }}</label>
             <div class="input-group">
-              <input ref="startDateInput" type="text" class="form-control vizr-date" name="start_date" data-field="start" data-v-model="startDate" data-validate="date,targetDate" v-model="startDate" @input="dateFieldChanged">
+              <input ref="startDateInput" type="text" class="form-control vizr-date" name="start_date" data-field="start" data-v-model="startDate" data-validate="validateDate,validateTargetDate" v-model="startDate" @input="dateFieldChanged">
               <span class="input-group-addon" @click="showDatePicker($refs.startDateInput)">
                 <span class="glyphicon glyphicon-calendar"></span>
               </span>
             </div>
-            <div class="help-block error-help">{{ startDateErrors }}</div>
+            <div class="help-block error-help">{{ errors.startError }}</div>
           </div>
-          <div class="form-group">
+          <div class="form-group" :class="{ 'has-error': errors.chartEndError }">
             <label for="chart_end_date" class="control-label">{{ messages.endDateLabel }}</label>
             <div class="input-group">
-              <input ref="endDateInput" type="text" class="form-control vizr-date" name="chart_end_date" data-field="chartEnd" data-v-model="endDate" data-validate="date" v-model="endDate" @input="dateFieldChanged">
+              <input ref="endDateInput" type="text" class="form-control vizr-date" name="chart_end_date" data-field="chartEnd" data-v-model="endDate" data-validate="validateDate" v-model="endDate" @input="dateFieldChanged">
               <span class="input-group-addon" @click="showDatePicker($refs.endDateInput)">
                 <span class="glyphicon glyphicon-calendar"></span>
               </span>
             </div>
-            <div class="help-block error-help">{{ endDateErrors }}</div>
+            <div class="help-block error-help">{{ errors.chartEndError }}</div>
           </div>
 
-          <div class="form-group" v-if="hasEvents">
+          <div class="form-group" :class="{ 'has-error': errors.dateFieldEventError }" v-if="hasEvents">
             <label for="date_field_event" class="control-label">{{ messages.dateFieldEventLabel }}</label>
-            <select v-model="model.dateFieldEvent" class="form-control" name="date_field_event" required="required" data-field="dateFieldEvent" @change="dateFieldEventChanged">
+            <select ref="dateFieldEventSelect" v-model="model.dateFieldEvent" class="form-control" name="date_field_event" required="required" data-field="dateFieldEvent" @change="dateFieldEventChanged">
               <option value="">
                 {{ messages.selectEvent }}
               </option>
@@ -48,12 +48,12 @@
                 {{ choice.label }}
               </option>
             </select>
-            <div class="help-block error-help"></div>
+            <div class="help-block error-help">{{ errors.dateFieldEventError }}</div>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" :class="{ 'has-error': errors.fieldError }">
             <label for="record_date" class="control-label">{{ messages.dateFieldLabel }}</label>
-            <select v-model="model.field" class="form-control" name="record_date" required="required" data-validate="dateEvent" data-field="field">
+            <select v-model="model.field" class="form-control" name="record_date" required="required" data-validate="validateDateEvent" data-field="field">
               <option value="">
                 {{ messages.selectDateField }}
               </option>
@@ -61,9 +61,9 @@
                 {{ choice.label }}
               </option>
             </select>
-            <div class="help-block error-help"></div>
+            <div class="help-block error-help">{{ errors.fieldError }}</div>
           </div>
-          <div class="form-group">
+          <div class="form-group" :class="{ 'has-error': errors.dateIntervalError }">
             <label for="date_interval" class="control-label">{{ messages.dateIntervalLabel }}</label>
             <select v-model="model.dateInterval" class="form-control" name="date_interval" required="required" data-field="dateInterval">
               <option value="">
@@ -73,20 +73,20 @@
                 {{ choice.label }}
               </option>
             </select>
-            <div class="help-block error-help">{{ dateIntervalErrors }}</div>
+            <div class="help-block error-help">{{ errors.dateIntervalError }}</div>
           </div>
         </fieldset>
         <fieldset>
           <legend><span class="label label-default">{{ messages.dataConfigurationHeading }}</span></legend>
           <div class="form-group">
             <label for="filter" class="control-label">{{ messages.filterLogicLabel }} <span class="sub-label">{{ messages.filterLogicSubLabel }}</span></label>
-              <textarea class="form-control" rows="3" name="filter" data-field="filter" v-model="model.filter"></textarea>
+              <textarea class="form-control" rows="3" name="filter" data-field="filter" v-model.trim="model.filter"></textarea>
             <small>{{ messages.filterLogicExample }}</small>
           </div>
 
           <div class="form-group" v-if="hasEvents">
             <label for="group_field_event" class="control-label">{{ messages.groupingFieldEventLabel }}</label>
-            <select v-model="model.groupFieldEvent" class="form-control" name="group_field_event" data-field="groupFieldEvent" @change="groupFieldEventChanged">
+            <select class="form-control" name="group_field_event" data-field="groupFieldEvent" ref="groupFieldEventSelect" v-model="model.groupFieldEvent" @change="groupFieldEventChanged">
               <option value="">
                 {{ messages.selectEvent }}
               </option>
@@ -94,12 +94,11 @@
                 {{ choice.label }}
               </option>
             </select>
-            <div class="help-block error-help"></div>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" :class="{ 'has-error': errors.groupError }">
             <label class="control-label" for="group_field">{{ messages.groupingFieldLabel }}</label>
-            <select v-model="model.group" class="form-control" name="group_field" data-validate="group" data-field="group" @change="groupFieldChanged">
+            <select v-model="model.group" class="form-control" name="group_field" data-validate="validateGroup" data-field="group" @change="groupFieldChanged">
               <option value="">
                 {{ messages.noGrouping }}
               </option>
@@ -107,14 +106,14 @@
                 {{ choice.label }}
               </option>
             </select>
-            <div class="help-block error-help">{{ groupFieldErrors }}</div>
+            <div class="help-block error-help">{{ errors.groupError }}</div>
           </div>
         </fieldset>
         <fieldset>
           <legend><span class="label label-default">{{ messages.targetLabel }}</span></legend>
           <div class="form-group targets" v-if="noGroup">
             <label class="control-label" for="target_count">{{ messages.targetCountLabel }}</label>
-            <input type="text" class="form-control" name="target_count" data-validate="targetDate" data-field='targets.No Groups' v-model.number="model.targets['No Groups']">
+            <input type="text" class="form-control" name="target_count" data-validate="validateTargetDate" data-field='targets.No Groups' v-model.number="model.targets['No Groups']">
           </div>
           <div class="form-group targets" v-else>
             <label>{{ messages.targetCountsLabel }}</label> <a data-toggle="collapse" role="button" :href="groupTargetsIdSelector" aria-expanded="true">{{ messages.actions.hideShow }}</a>
@@ -122,23 +121,29 @@
               <div class="well group-targets">
                 <div class="form-group form-group-sm" v-for="target in groupTargets">
                   <label class="control-label" :for="target.name">{{ target.label }}</label>
-                  <input type="text" class="form-control col-sm-10" :name="target.name" data-validate="targetDate" data-type='int' v-model.number="model.targets[target.label]">
+                  <input type="text" class="form-control col-sm-10" :name="target.name" data-validate="validateTargetDate" v-model.number="model.targets[target.label]">
                 </div>
                 <span class="target-total"><em>{{ messages.targetTotal }} {{ targetTotal }}</em></span>
               </div>
             </div>
           </div>
-          <div class="form-group">
+          <div class="form-group" :class="{ 'has-error': errors.endError }">
             <label class="control-label" for="target_date">{{ messages.targetEndDateLabel }}</label>
             <div class="input-group">
-              <input ref="targetEndDateInput" type="text" class="form-control vizr-date" name="target_date" data-field="end" data-v-model="targetEndDate" data-validate="date,targetDate" v-model="targetEndDate" @input="dateFieldChanged">
+              <input ref="targetEndDateInput" type="text" class="form-control vizr-date" name="target_date" data-field="end" data-v-model="targetEndDate" data-validate="validateDate,validateTargetDate" v-model="targetEndDate" @input="dateFieldChanged">
               <span class="input-group-addon" @click="showDatePicker($refs.targetEndDateInput)">
                 <span class="glyphicon glyphicon-calendar"></span>
               </span>
             </div>
-            <div class="help-block error-help">{{ targetEndDateErrors }}</div>
+            <div class="help-block error-help">{{ errors.endError }}</div>
           </div>
         </fieldset>
+
+        <div class="form-group has-error save-warning" v-if="hasErrors">
+          <div class="help-block error-help">
+            {{ messages.validation.cannotSave }}
+          </div>
+        </div>
 
         <button
           type="submit"
@@ -164,6 +169,9 @@
 </template>
 
 <script>
+import moment from 'moment';
+import debounce from 'lodash/debounce';
+
 import {
   fieldComparator,
   getDateFields,
@@ -178,6 +186,8 @@ import {
   userToIsoDate,
   fieldLabel
 } from '@/util';
+
+const userDateFormat = 'MM/DD/YYYY';
 
 export const selector = {
   titleField: 'input[name=chart_title]',
@@ -198,7 +208,8 @@ export const selector = {
   targetsDiv: 'div.targets',
   groupTargetsDiv: 'div.group-targets',
   groupTargetFields: 'input[name^=group_target]',
-  validatedInputs: 'input[data-validate],[required]'
+  validatedInputs: 'input[data-validate],[required]',
+  validationError: '.has-error:not(.save-warning)'
 };
 
 const messages = {
@@ -213,9 +224,6 @@ const messages = {
   dateIntervalLabel: 'Date Interval',
   descriptionLabel: 'Chart Notes (optional)',
   endDateLabel: 'End Date',
-  errors: {
-    fieldRequired: 'Field is required.'
-  },
   filterLogicExample: 'Example: [screened]=\'1\'',
   filterLogicLabel: 'Filter Logic',
   filterLogicSubLabel: '(filter the results returned for the chart based on conditional logic)',
@@ -236,7 +244,15 @@ const messages = {
   targetLabel: 'Target (optional)',
   targetTotal: 'Total: ',
   timeConfigHeading: 'Time Configuration',
-  titleLabel: 'Chart Title'
+  titleLabel: 'Chart Title',
+  validation: {
+    cannotSave: 'Your chart configuration cannot be saved due to errors.',
+    dateEventError: 'An event must be selected before selecting a date field',
+    dateFormatError: `Dates must be ${userDateFormat} format.`,
+    groupError: 'An event must be selected before selecting a grouping field',
+    requiredError: 'Field is required.',
+    targetDateError: 'Field is required when there is a target.'
+  }
 };
 
 export default {
@@ -257,10 +273,12 @@ export default {
         { label: 'Months', value: 'month' },
         { label:'Years', value:'year' }
       ],
+      isDirty: false,
       model: this.copyModel(chartDef),
       startDate: isoToUserDate(chartDef.start),
       endDate: isoToUserDate(chartDef.chartEnd),
-      targetEndDate: isoToUserDate(chartDef.end)
+      targetEndDate: isoToUserDate(chartDef.end),
+      errors: this.createErrorObject()
     };
   },
 
@@ -304,6 +322,22 @@ export default {
       const groupField = dataDictionary.find(field => field.field_name === group);
       const groups = getChoices(groupField).map(choice => choice.label);
       return targetsObjectWithGroups(groups);
+    },
+
+    /**
+     * Creates an object for storing the component's error state.
+     */
+    createErrorObject() {
+      return {
+        chartEndError: '',
+        dateFieldEventError: '',
+        dateIntervalError: '',
+        endError: '',
+        fieldError: '',
+        groupError: '',
+        startError: '',
+        titleError: ''
+      };
     },
 
     /**
@@ -358,9 +392,11 @@ export default {
     reset() {
       const { chartDef } = this;
       this.model = this.copyModel(chartDef);
+      this.errors = this.createErrorObject();
       this.startDate = isoToUserDate(chartDef.start);
       this.endDate = isoToUserDate(chartDef.chartEnd);
       this.targetEndDate = isoToUserDate(chartDef.end);
+      this.isDirty = false;
     },
 
     /**
@@ -411,11 +447,153 @@ export default {
     },
 
     /**
-     * Emits an event with the updated chart configuration.
+     * Validates the form on input and change events. Closely-spaced events are coalesced.
      */
-    save() {
+    validateChanges: debounce(function(evt) {
+      const { target } = evt;
+      this.validateInput(target);
+    }, 300),
+
+    /**
+     * Validates all the form inputs prior to saving.
+     */
+    validateForm() {
+      const { $el } = this;
+      const inputs = $el.querySelectorAll(selector.validatedInputs);
+      for (let i = 0; i < inputs.length; i++) {
+        this.validateInput(inputs[i]);
+      }
+    },
+
+    /**
+     * Validates the value of an input.
+     * @param {Element} el - the element to check
+     */
+    validateInput(el) {
+      // return early if the event didn't have a target
+      if (!el) {
+        return;
+      }
+
+      this.isDirty = true;
+      const { errors } = this;
+      const errorField = `${el.getAttribute('data-field')}Error`;
+      const validations = this.getValidations(el);
+      const inputErrors = validations.map(name =>
+        (typeof this[name] === 'function') ? this[name].call(this, el) : null
+      );
+
+      errors[errorField] = inputErrors.filter(Boolean).join(' ');
+    },
+
+    /**
+     * Gets the list of validation methods that should be run for the given field.
+     * @param {Element} el - the input element to validate
+     * @return {String[]} an array of validation method names
+     */
+    getValidations(el) {
+      const isRequired = el.hasAttribute('required');
+      const hasDataValidations = el.hasAttribute('data-validate');
+      const validations = [];
+
+      if (isRequired) {
+        validations.push('validateRequiredInput');
+      }
+
+      if (hasDataValidations) {
+        const validationNames = el.getAttribute('data-validate')
+          .split(',');
+        validations.push(...validationNames);
+      }
+
+      return validations;
+    },
+
+    /**
+     * Validates that the given element has a value.
+     * @param {Element} el - the element to check
+     * @return {String} an error message if the input is invalid
+     */
+    validateRequiredInput(el) {
+      return !el.value.trim() ? messages.validation.requiredError : null;
+    },
+
+    /**
+     * Validates that the value of the given element is a date string.
+     * @param {Element} el - the element to check
+     * @return {String} an error message if the input is invalid
+     */
+    validateDate(el) {
+      const value = el.value.trim();
+      if (value && !moment(value, userDateFormat, true).isValid()) {
+        return messages.validation.dateFormatError;
+      }
+    },
+
+    /**
+     * Validates that a date field event is selected if the project is longitudinal and
+     * a date field is selected.
+     * @param {Element} el - the date field select list
+     * @return {String} an error message if the input is invalid
+     */
+    validateDateEvent(el) {
       const { model } = this;
-      this.$emit('save-chart', this.copyModel(model));
+      const { dateFieldEventSelect } = this.$refs;
+      if (el.value && dateFieldEventSelect && !model.dateFieldEvent) {
+        return messages.validation.dateEventError;
+      }
+    },
+
+    /**
+     * Validates that start and end dates have been chosen if targets are present.
+     * @param {Element} el - a target input or date input
+     * @return {String} an error message if the input is invalid
+     */
+    validateTargetDate(el) {
+      const { targets } = this;
+      const { startDateInput, targetEndDateInput } = this.$refs;
+      const inputName = el.getAttribute('name');
+
+      if (inputName === 'target_count' || inputName.startsWith('group_target')) {
+        // count changed, re-validate target dates
+        this.validateInput(startDateInput);
+        this.validateInput(targetEndDateInput);
+      } else {
+        // validating date input; check that if target(s) present, dates exist
+        const targetValues = Object.values(targets).filter(Number.isFinite);
+        if (targetValues.length > 0 && !el.value.trim()) {
+          return messages.validation.targetDateError;
+        }
+      }
+    },
+
+    /**
+     * Validates that a group field event is selected if the project is longitudinal and
+     * a grouping field is selected.
+     * @param {Element} el - the grouping field select list
+     * @return {String} an error message if the input is invalid
+     */
+    validateGroup(el) {
+      const { model } = this;
+      const { groupFieldEventSelect } = this.$refs;
+      if (el.value && groupFieldEventSelect && !model.groupFieldEvent) {
+        return messages.validation.groupError;
+      }
+    },
+
+    /**
+     * Emits an event with the updated chart configuration.
+     * @param {Event} evt - event triggered by the save button
+     */
+    save(evt) {
+      const { model } = this;
+
+      this.validateForm();
+      if (this.hasErrors) {
+        evt.stopPropagation();
+      } else {
+        this.$emit('save-chart', this.copyModel(model));
+      }
     }
   },
 
@@ -464,18 +642,6 @@ export default {
       return Boolean(window.$ && window.$.fn && window.$.fn.datepicker);
     },
 
-    titleError() {
-      return '';
-    },
-
-    startDateErrors() {
-      return '';
-    },
-
-    endDateErrors() {
-      return '';
-    },
-
     eventChoices() {
       const { eventNames } = this;
       return eventNames.map(name => ({ label: name, value: name }));
@@ -492,10 +658,6 @@ export default {
       return getDateFields(dataDictionary, dateForms)
           .sort(fieldComparator)
           .map(f => ({ label: fieldLabel(f), value: f.field_name }));
-    },
-
-    dateIntervalErrors() {
-      return '';
     },
 
     groupForms() {
@@ -539,16 +701,21 @@ export default {
         .reduce((acc, key) => acc + targets[key], 0);
     },
 
-    groupFieldErrors() {
-      return '';
+    errorCount() {
+      const { errors } = this;
+      return Object.values(errors)
+        .filter(Boolean)
+        .length;
     },
 
-    targetEndDateErrors() {
-      return '';
+    hasErrors() {
+      const { errorCount } = this;
+      return errorCount > 0;
     },
 
     submitDisabled() {
-      return false;
+      const { isDirty, hasErrors } = this;
+      return !isDirty || hasErrors;
     }
   }
 }
