@@ -3,7 +3,7 @@ import { shallowMount } from '@vue/test-utils';
 import ChartForm, { selector } from '@/components/ChartForm';
 import { exampleChartDef, exampleLongitudinalChartDef } from '../example-chart-def';
 import { exampleMetadata, exampleLongitudinalMetadata } from '../example-metadata';
-import { newChartDefinition } from '@/util';
+import { newChartDefinition, defaultTargetsObject, noGroupsLabel } from '@/util';
 
 const emptyChart = newChartDefinition();
 const exampleChart = exampleChartDef();
@@ -76,9 +76,9 @@ describe('ChartForm.vue', () => {
         expect(withData.find(selector.targetDateField).element.value).toEqual('02/25/2017');
 
         // group targets are initialized
-        // expect(withData.find('input[name=group_target__Bend]').val()).toEqual('20');
-        // expect(withData.find('input[name=group_target__Eugene]').val()).toEqual('20');
-        // expect(withData.find('input[name=group_target__Portland]').val()).toEqual('20');
+        expect(withData.find('input[name=group_target__Bend]').element.value).toEqual('20');
+        expect(withData.find('input[name=group_target__Eugene]').element.value).toEqual('20');
+        expect(withData.find('input[name=group_target__Portland]').element.value).toEqual('20');
 
         done();
       });
@@ -96,49 +96,52 @@ describe('ChartForm.vue', () => {
       expect(withValidData.emitted()['save-chart'][0]).toEqual([ exampleChart ]);
     });
 
-    // it('updates a group target', () => {
-    //   let newChartDef = {};
-    //   const form = chartForm(exampleMetadata, chartDef, (arg) => {
-    //     newChartDef = arg;
-    //   });
-    //
-    //   expect(form.find(selector.targetTotalSpan).html()).toEqual("<em>Total: 60</em>");
-    //
-    //   // change the target
-    //   form.find('input[name=group_target__Bend]').val('30').change();
-    //   form.find(selector.saveButton).click();
-    //
-    //   expect(newChartDef.targets).toEqual({'Portland': 20, 'Bend': 30, 'Eugene': 20});
-    //   expect(form.find(selector.targetTotalSpan).html()).toEqual("<em>Total: 70</em>");
-    // });
-    //
-    // it('nullifies the targets when group is changed', () => {
-    //   let newChartDef = {};
-    //   const form = chartForm(exampleMetadata, chartDef, (arg) => {
-    //     newChartDef = arg;
-    //   });
-    //
-    //   // change the group
-    //   form.find(selector.groupingFieldSelect).val('').change();
-    //   form.find(selector.saveButton).click();
-    //
-    //   expect(newChartDef.group).toEqual('');
-    //   expect(newChartDef.targets).toEqual({});
-    // });
+    it('updates a group target', () => {
+      const form = shallowMount(ChartForm, {
+        propsData: {
+          chartDef: exampleChart,
+          metadata: exampleMetadata
+        }
+      });
 
-    // it('handles a target without groups', () => {
-    //   let newChartDef = {};
-    //   const form = chartForm(exampleMetadata, chartDef, (arg) => {
-    //     newChartDef = arg;
-    //   });
-    //
-    //   // change the group and target
-    //   form.find(selector.groupingFieldSelect).val('').change();
-    //   form.find('input[name=target_count]').val('60').change();
-    //   form.find(selector.saveButton).click();
-    //
-    //   expect(newChartDef.targets).toEqual({[noGroupsLabel]: 60});
-    // });
+      expect(form.find(selector.targetTotalSpan).text()).toMatch(/Total:\s+60/);
+
+      // change the target
+      form.find('input[name=group_target__Bend]').setValue('30');
+
+      expect(form.vm.model.targets).toEqual({ 'Portland': 20, 'Bend': 30, 'Eugene': 20 });
+      expect(form.find(selector.targetTotalSpan).text()).toMatch(/Total:\s+70/);
+    });
+
+    it('nullifies the targets when group is changed', () => {
+      const form = shallowMount(ChartForm, {
+        propsData: {
+          chartDef: exampleChart,
+          metadata: exampleMetadata
+        }
+      });
+
+      // change the group
+      form.findAll(`${selector.groupingFieldSelect} > option`).at(0).setSelected();
+
+      expect(form.vm.model.group).toEqual('');
+      expect(form.vm.model.targets).toEqual(defaultTargetsObject());
+    });
+
+    it('handles a target without groups', () => {
+      const form = shallowMount(ChartForm, {
+        propsData: {
+          chartDef: exampleChart,
+          metadata: exampleMetadata
+        }
+      });
+
+      // change the group and target
+      form.findAll(`${selector.groupingFieldSelect} > option`).at(0).setSelected();
+      form.find('input[name=target_count]').setValue('60');
+
+      expect(form.vm.model.targets).toEqual({ [noGroupsLabel]: 60 });
+    });
 
     it('converts dates to ISO format when updating the model', () => {
       // save updated dates
