@@ -515,7 +515,7 @@ export default {
      * @return {String} an error message if the input is invalid
      */
     validateRequiredInput(el) {
-      return !el.value ? messages.validation.requiredError : null;
+      return !el.value.trim() ? messages.validation.requiredError : null;
     },
 
     /**
@@ -524,7 +524,7 @@ export default {
      * @return {String} an error message if the input is invalid
      */
     validateDate(el) {
-      const value = el.value;
+      const value = el.value.trim();
       if (value && !moment(value, userDateFormat, true).isValid()) {
         return messages.validation.dateFormatError;
       }
@@ -561,7 +561,7 @@ export default {
       } else {
         // validating date input; check that if target(s) present, dates exist
         const targetValues = Object.values(targets).filter(Number.isFinite);
-        if (targetValues.length > 0 && !el.value) {
+        if (targetValues.length > 0 && !el.value.trim()) {
           return messages.validation.targetDateError;
         }
       }
