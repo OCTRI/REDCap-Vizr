@@ -387,7 +387,7 @@ export default {
     },
 
     /**
-     * Resets the model on cancel.
+     * Resets the model. Used on cancel and when the `chartDef` prop is replaced.
      */
     reset() {
       const { chartDef } = this;
@@ -716,6 +716,15 @@ export default {
     submitDisabled() {
       const { isDirty, hasErrors } = this;
       return !isDirty || hasErrors;
+    }
+  },
+
+  watch: {
+    /**
+     * Watches the `chartDef` prop for changes, indicating that it was replaced by a save.
+     */
+    chartDef() {
+      this.reset();
     }
   }
 }

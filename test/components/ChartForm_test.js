@@ -199,7 +199,23 @@ describe('ChartForm.vue', () => {
         expect(titleInput.element.value).toEqual(exampleChart.title);
         expect(descriptionInput.element.value).toEqual(exampleChart.description);
         done();
-      })
+      });
+    });
+
+    it('resets the form when chartDef is replaced', () => {
+      const form = shallowMount(ChartForm, {
+        propsData: {
+          chartDef: exampleChart,
+          metadata: exampleMetadata
+        }
+      });
+
+      expect(form.find(selector.titleField).element.value).toEqual(exampleChart.title);
+
+      // replace the chart definition
+      form.setProps({ chartDef: emptyChart });
+
+      expect(form.find(selector.titleField).element.value).toEqual(emptyChart.title);
     });
 
     describe('validation', () => {
