@@ -82,7 +82,17 @@ export const exampleResponses = {
     successful: {
       status: 200,
       contentType: 'application/json',
-      responseText: '{"item_count":1}'
+      responseText: '{"item_count": 1}'
+    },
+    failure: {
+      status: 200,
+      contentType: 'application/json',
+      responseText: '{"item_count": 0, "errors": ["Something bad happened"]}'
+    },
+    unexpected: {
+      status: 200,
+      contentType: 'application/json',
+      responseText: '{"item_count": 2}'
     }
   }
 };
