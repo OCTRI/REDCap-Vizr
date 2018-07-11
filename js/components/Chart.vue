@@ -105,6 +105,7 @@ export default {
     return {
       messages,
       allEventsSentinel: ALL_EVENTS,
+      loaded: false,
       chart: null,
       chartData: [],
       filterEvents: [],
@@ -135,6 +136,7 @@ export default {
       this.chartData = data;
       this.filterEvents = filterEvents;
       this.warnings = warnings;
+      this.loaded = true;
     },
 
     _makeChart() {
@@ -275,9 +277,9 @@ export default {
     },
 
     grouped() {
-      const { filteredData, chartDef, chartEnd, dateInterval } = this;
-      return groupedByInterval(filteredData, chartDef.field, chartDef.start, chartEnd,
-        dateInterval, chartDef.group);
+      const { loaded, filteredData, chartDef, chartEnd, dateInterval } = this;
+      return loaded ? groupedByInterval(filteredData, chartDef.field, chartDef.start, chartEnd,
+        dateInterval, chartDef.group) : {};
     },
 
     summary() {
