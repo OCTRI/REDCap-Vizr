@@ -218,7 +218,7 @@ describe('data service', () => {
           service.getChartData('screen_date', { a: 'b' }).then(chartData => {
             expect(chartData.warnings).toBeDefined();
             expect(chartData.warnings.length).toEqual(1);
-            expect(chartData.warnings[0].message).toMatch('blank date field');
+            expect(chartData.warnings[0].message).toMatch('Ignored 1 record with blank date field');
 
             done();
           });

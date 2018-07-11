@@ -10,7 +10,7 @@ export const ENDPOINTS = {
 };
 
 const warnings = {
-  blankDateFields: ((count) => `Ignored ${count} records with blank date field.`),
+  blankDateFields: ((count) => `Ignored ${count} ${count > 1 ? 'records' : 'record'} with blank date field.`),
   multipleEvents: 'The filter returned multiple events per record.',
   noData: 'The filter returned 0 records.',
   repeatingInstruments: 'Charts may not work as expected with repeating instruments.'
@@ -30,7 +30,7 @@ function makeWarning(key, ...rest) {
   let message;
 
   if (typeof warnings[key] === 'function') {
-    message = warnings[key].apply(rest);
+    message = warnings[key].apply(null, rest);
   } else {
     message = warnings[key];
   }
