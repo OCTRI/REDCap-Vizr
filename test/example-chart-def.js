@@ -32,7 +32,7 @@ export function exampleNoGroupChartDef(id) {
   };
 }
 
-export function exampleLongitudinalChartDef() {
+export function exampleLongitudinalChartDef(id) {
   return {
     field: "screen_date",
     dateInterval: "week",
@@ -40,7 +40,7 @@ export function exampleLongitudinalChartDef() {
     filter: "[visit_1][dropdown]=1",
     groupFieldEvent: "enrollment",
     group: "study_clinic",
-    id: `${chartId}`,
+    id: id ? `${id}` : `${chartId}`,
     title: "Visit 1 Survey by Study Clinic",
     start: "2016-10-04",
     chartEnd: "",

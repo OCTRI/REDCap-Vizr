@@ -299,6 +299,15 @@ export default {
       const { chartDef, dateInterval, totalTarget } = this;
       return trendPoints(chartDef.start, chartDef.end, dateInterval, totalTarget);
     }
+  },
+
+  watch: {
+    /**
+     * Watches the `chartDef` prop for changes, indicating that it was replaced by a save.
+     */
+    chartDef() {
+      this.reloadChart();
+    }
   }
 };
 </script>
