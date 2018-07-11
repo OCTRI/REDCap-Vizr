@@ -434,10 +434,10 @@ describe('Chart.vue', () => {
       expect(wrapper.emitted('toggle-legend')).toBeFalsy();
     });
 
-    it('emits an event with the chart ID when user can edit', () => {
+    it('emits an event with the chart definition when user can edit', () => {
       wrapper.find(legendToggleSelector).trigger('click');
       expect(wrapper.emitted('toggle-legend')).toBeTruthy();
-      expect(wrapper.emitted('toggle-legend')[0]).toEqual([ chartDef.id ]);
+      expect(wrapper.emitted('toggle-legend')[0]).toEqual([ chartDef ]);
     });
   });
 });

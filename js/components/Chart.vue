@@ -202,13 +202,13 @@ export default {
      * Click event handler for the legend toggle link.
      */
     toggleLegend() {
-      const { canEdit, chart, chartDef, id } = this;
+      const { canEdit, chart, chartDef } = this;
       chart.config.options.legend.display = !chart.config.options.legend.display;
       chart.update();
 
       if (canEdit) {
         chartDef.hide_legend = !chartDef.hide_legend;
-        this.$emit('toggle-legend', id);
+        this.$emit('toggle-legend', chartDef);
       }
     },
 
