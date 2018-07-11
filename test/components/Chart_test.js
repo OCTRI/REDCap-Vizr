@@ -378,11 +378,11 @@ describe('Chart.vue', () => {
       expect(wrapper.emitted('delete-chart')).toBeFalsy();
     });
 
-    it('emits an event with the chart ID when confirmed', () => {
+    it('emits an event with the chart definition when confirmed', () => {
       spyOn(window, 'confirm').and.returnValue(true);
       wrapper.find(deleteSelector).trigger('click');
       expect(wrapper.emitted('delete-chart')).toBeTruthy();
-      expect(wrapper.emitted('delete-chart')[0]).toEqual([ exampleLongitudinalChart.id ]);
+      expect(wrapper.emitted('delete-chart')[0]).toEqual([ exampleLongitudinalChart ]);
     });
   });
 

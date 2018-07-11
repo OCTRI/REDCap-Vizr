@@ -185,9 +185,9 @@ export default {
      * Click event handler for the delete link.
      */
     deleteChart() {
-      const { chartDef, id, messages } = this;
+      const { chartDef, messages } = this;
       if (confirm(`${messages.actions.confirmDelete}: ${chartDef.title}?`)) {
-        this.$emit('delete-chart', id);
+        this.$emit('delete-chart', chartDef);
       }
     },
 
