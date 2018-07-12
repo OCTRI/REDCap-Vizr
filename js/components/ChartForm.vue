@@ -169,6 +169,9 @@
 </template>
 
 <script>
+// provided externally by REDCap; doesn't add anything to the bundle
+import $ from 'jquery';
+
 import moment from 'moment';
 import debounce from 'lodash/debounce';
 
@@ -362,7 +365,6 @@ export default {
           }
         };
 
-        // eslint-disable-next-line no-undef
         $($el).find('input.vizr-date').datepicker(pickerConfig);
       }
     },
@@ -373,7 +375,6 @@ export default {
     destroyDatePickers() {
       const { $el, hasDatePickers } = this;
       if (hasDatePickers) {
-        // eslint-disable-next-line no-undef
         $($el).find('input.vizr-date').datepicker('destroy');
       }
     },
@@ -384,7 +385,6 @@ export default {
     showDatePicker(element) {
       const { hasDatePickers } = this;
       if (hasDatePickers) {
-        // eslint-disable-next-line no-undef
         $(element).datepicker('show');
       }
     },
