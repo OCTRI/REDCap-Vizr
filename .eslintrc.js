@@ -2,10 +2,14 @@
 module.exports = {
   root: true,
   parserOptions: {
-    ecmaVersion: 6,
-    sourceType: 'module'
+    parser: 'babel-eslint'
   },
-  extends: 'eslint:recommended',
+  extends: [
+    'eslint:recommended',
+    // https://github.com/vuejs/eslint-plugin-vue#priority-a-essential-error-prevention
+    // consider switching to `plugin:vue/strongly-recommended` or `plugin:vue/recommended` for stricter rules.
+    'plugin:vue/essential'
+  ],
   env: {
     browser: true
   },
@@ -14,6 +18,9 @@ module.exports = {
     'Set': true,
     'Promise': true
   },
+  plugins: [
+    'vue'
+  ],
   rules: {
     'eqeqeq': ['error', 'always'],
     'no-console': ['error', { allow: ['warn', 'error'] }],
