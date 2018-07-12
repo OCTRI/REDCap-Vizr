@@ -119,7 +119,7 @@
             <label>{{ messages.targetCountsLabel }}</label> <a data-toggle="collapse" role="button" :href="groupTargetsIdSelector" aria-expanded="true">{{ messages.actions.hideShow }}</a>
             <div class="collapse in" :id="groupTargetsId">
               <div class="well group-targets">
-                <div class="form-group form-group-sm" v-for="target in groupTargets">
+                <div class="form-group form-group-sm" v-for="target in groupTargets" :key="target.name">
                   <label class="control-label" :for="target.name">{{ target.label }}</label>
                   <input type="text" class="form-control col-sm-10" :name="target.name" data-validate="validateTargetDate" v-model.number="model.targets[target.label]">
                 </div>
@@ -362,6 +362,7 @@ export default {
           }
         };
 
+        // eslint-disable-next-line no-undef
         $($el).find('input.vizr-date').datepicker(pickerConfig);
       }
     },
@@ -372,6 +373,7 @@ export default {
     destroyDatePickers() {
       const { $el, hasDatePickers } = this;
       if (hasDatePickers) {
+        // eslint-disable-next-line no-undef
         $($el).find('input.vizr-date').datepicker('destroy');
       }
     },
@@ -382,6 +384,7 @@ export default {
     showDatePicker(element) {
       const { hasDatePickers } = this;
       if (hasDatePickers) {
+        // eslint-disable-next-line no-undef
         $(element).datepicker('show');
       }
     },

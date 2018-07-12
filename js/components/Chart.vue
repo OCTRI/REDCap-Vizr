@@ -131,7 +131,6 @@ export default {
 
     _captureData(dataResponse) {
       const { filterEvents, data, warnings } = dataResponse;
-      const { chartDef } = this;
 
       this.chartData = data;
       this.filterEvents = filterEvents;
