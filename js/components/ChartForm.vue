@@ -173,6 +173,7 @@
 import $ from 'jquery';
 
 import moment from 'moment';
+import striptags from 'striptags';
 import debounce from 'lodash/debounce';
 
 import {
@@ -311,6 +312,24 @@ export default {
       }
 
       return model;
+    },
+
+    /**
+     * Recursively strips HTML from string-valued properties of the provided model object.
+     * NOTE: This will mutate the input object.
+     * @param {Object} model - the object to sanitize
+     */
+    sanitizeModel(model) {
+      Object.keys(model).forEach(key => {
+        const value = model[key];
+        if (typeof value === 'string') {
+          model[key] = striptags(value);
+        }
+
+        if (typeof value === 'object') {
+          this.sanitizeModel(value);
+        }
+      });
     },
 
     /**
@@ -595,7 +614,9 @@ export default {
       if (this.hasErrors) {
         evt.stopPropagation();
       } else {
-        this.$emit('save-chart', this.copyModel(model));
+        const newModel = this.copyModel(model);
+        this.sanitizeModel(newModel);
+        this.$emit('save-chart', newModel);
       }
     }
   },

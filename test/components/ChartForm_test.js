@@ -92,9 +92,37 @@ describe('ChartForm.vue', () => {
         }
       });
       withValidData.vm.isDirty = true;
-      withValidData.find('button[type=submit]').trigger('click');
+      withValidData.find(selector.saveButton).trigger('click');
       expect(withValidData.emitted()['save-chart']).toBeDefined();
       expect(withValidData.emitted()['save-chart'][0]).toEqual([ exampleChart ]);
+    });
+
+    it('strips HTML tags on save', () => {
+      const form = shallowMount(ChartForm, {
+        propsData: {
+          chartDef: exampleChart,
+          metadata: exampleMetadata
+        },
+
+        // stub out the use of debounce so test runs synchronously
+        methods: {
+          validateChanges(evt) {
+            const { target } = evt;
+            this.validateInput(target);
+          }
+        }
+      });
+
+      // add HTML to title and description
+      form.find(selector.titleField).setValue('Chart Title <a href="#">Boop</a>');
+      form.find(selector.descriptionField).setValue('<script>alert("hello");</script>');
+      form.find(selector.saveButton).trigger('click');
+
+      expect(form.emitted()['save-chart']).toBeDefined();
+
+      const newChartDef = form.emitted()['save-chart'][0][0];
+      expect(newChartDef.title).toEqual('Chart Title Boop');
+      expect(newChartDef.description).toEqual('alert("hello");');
     });
 
     it('updates a group target', () => {
@@ -154,21 +182,6 @@ describe('ChartForm.vue', () => {
       expect(wrapper.vm.model.end).toEqual('2017-04-05');
       expect(wrapper.vm.model.chartEnd).toEqual('2017-05-12');
     });
-
-    // it('strips HTML tags on save', () => {
-    //   let newChartDef = {};
-    //   const form = chartForm(exampleMetadata, chartDef, (arg) => {
-    //     newChartDef = arg;
-    //   });
-    //
-    //   // add HTML to title and description
-    //   form.find(selector.titleField).val('Chart Title <a href="#">Boop</a>').change();
-    //   form.find(selector.descriptionField).val('<script>alert("hello");</script>').change();
-    //   form.find(selector.saveButton).click();
-    //
-    //   expect(newChartDef.title).toEqual('Chart Title Boop');
-    //   expect(newChartDef.description).toEqual('alert("hello");');
-    // });
 
     it('resets the form on cancel', (done) => {
       const withData = shallowMount(ChartForm, {
