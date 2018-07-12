@@ -17,7 +17,6 @@ module.exports = {
   },
   entry: {
     app: [
-      __dirname + '/node_modules/babel-polyfill/dist/polyfill.js',
       './js/vue-main.js'
     ]
   },
@@ -34,7 +33,6 @@ module.exports = {
     library: 'Vizr'
   },
   module: {
-    noParse: [/\/babel-polyfill\/dist\/polyfill\.js$/],
     rules: [
       {
         test: /\.vue$/,
