@@ -105,6 +105,7 @@ export default {
     return {
       messages,
       allEventsSentinel: ALL_EVENTS,
+      loaded: false,
       chart: null,
       chartData: [],
       filterEvents: [],
@@ -135,6 +136,7 @@ export default {
       this.chartData = data;
       this.filterEvents = filterEvents;
       this.warnings = warnings;
+      this.loaded = true;
     },
 
     _makeChart() {
@@ -183,9 +185,9 @@ export default {
      * Click event handler for the delete link.
      */
     deleteChart() {
-      const { chartDef, id, messages } = this;
+      const { chartDef, messages } = this;
       if (confirm(`${messages.actions.confirmDelete}: ${chartDef.title}?`)) {
-        this.$emit('delete-chart', id);
+        this.$emit('delete-chart', chartDef);
       }
     },
 
@@ -200,13 +202,13 @@ export default {
      * Click event handler for the legend toggle link.
      */
     toggleLegend() {
-      const { canEdit, chart, chartDef, id } = this;
+      const { canEdit, chart, chartDef } = this;
       chart.config.options.legend.display = !chart.config.options.legend.display;
       chart.update();
 
       if (canEdit) {
         chartDef.hide_legend = !chartDef.hide_legend;
-        this.$emit('toggle-legend', id);
+        this.$emit('toggle-legend', chartDef);
       }
     },
 
@@ -275,9 +277,9 @@ export default {
     },
 
     grouped() {
-      const { filteredData, chartDef, chartEnd, dateInterval } = this;
-      return groupedByInterval(filteredData, chartDef.field, chartDef.start, chartEnd,
-        dateInterval, chartDef.group);
+      const { loaded, filteredData, chartDef, chartEnd, dateInterval } = this;
+      return loaded ? groupedByInterval(filteredData, chartDef.field, chartDef.start, chartEnd,
+        dateInterval, chartDef.group) : {};
     },
 
     summary() {
@@ -298,6 +300,15 @@ export default {
     trendPoints() {
       const { chartDef, dateInterval, totalTarget } = this;
       return trendPoints(chartDef.start, chartDef.end, dateInterval, totalTarget);
+    }
+  },
+
+  watch: {
+    /**
+     * Watches the `chartDef` prop for changes, indicating that it was replaced by a save.
+     */
+    chartDef() {
+      this.reloadChart();
     }
   }
 };

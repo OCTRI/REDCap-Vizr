@@ -1,5 +1,6 @@
 import 'jasmine-ajax';
 import { exampleResponses } from '../example-ajax-responses';
+import { exampleChartDef } from '../example-chart-def';
 import createDataService, { ENDPOINTS } from '@/services/data-service';
 
 const mockUrls = {};
@@ -218,7 +219,71 @@ describe('data service', () => {
           service.getChartData('screen_date', { a: 'b' }).then(chartData => {
             expect(chartData.warnings).toBeDefined();
             expect(chartData.warnings.length).toEqual(1);
-            expect(chartData.warnings[0].message).toMatch('blank date field');
+            expect(chartData.warnings[0].message).toMatch('Ignored 1 record with blank date field');
+
+            done();
+          });
+        });
+      });
+    });
+
+    describe('saveChartConfig', () => {
+      const expectedUrl = mockUrls[ENDPOINTS.PERSISTENCE];
+      const chartConfig = [ exampleChartDef() ];
+
+      describe('successful request', () => {
+        beforeEach(() => {
+          jasmine.Ajax.stubRequest(expectedUrl)
+            .andReturn(exampleResponses.persistence.successful);
+        })
+
+        it('constructs the expected request', (done) => {
+          service.saveChartConfig(chartConfig).then(saveResponse => {
+            const request = jasmine.Ajax.requests.mostRecent();
+            expect(request.method).toEqual('POST');
+            expect(request.url).toEqual(expectedUrl);
+            expect(request.params).toEqual(JSON.stringify({ charts: chartConfig }));
+
+            // it extracts the number of records saved
+            expect(saveResponse.item_count).toEqual(1);
+            expect(saveResponse.errors).not.toBeDefined();
+
+            done();
+          });
+        });
+      });
+
+      describe('error responses', () => {
+        it('throws an error if an unexpected number of records change', (done) => {
+          jasmine.Ajax.stubRequest(expectedUrl)
+            .andReturn(exampleResponses.persistence.unexpected);
+
+          service.saveChartConfig(chartConfig).catch(reason => {
+            // it throws an error with the expected reason
+            expect(reason.message).toEqual('Expected to change 1 record, but 2 records changed.');
+
+            // it includes the REDCap errors in the error object
+            expect(reason.redcapErrors).toBeDefined();
+
+            // it provides a default errors array
+            expect(reason.redcapErrors).toEqual([]);
+
+            done();
+          });
+        });
+
+        it('throws an error if the REDCap response has errors', (done) => {
+          const failureBody = JSON.parse(exampleResponses.persistence.failure.responseText);
+          jasmine.Ajax.stubRequest(expectedUrl)
+            .andReturn(exampleResponses.persistence.failure);
+
+          service.saveChartConfig(chartConfig).catch(reason => {
+            // it throws an error with the expected reason
+            expect(reason.message).toEqual('Expected to change 1 record, but 0 records changed.');
+
+            // it includes the REDCap errors in the error object
+            expect(reason.redcapErrors).toBeDefined();
+            expect(reason.redcapErrors).toEqual(failureBody.errors)
 
             done();
           });

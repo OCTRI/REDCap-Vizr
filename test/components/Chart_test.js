@@ -303,6 +303,44 @@ describe('Chart.vue', () => {
     });
   });
 
+  describe('chartDef watcher', () => {
+    const response = JSON.parse(exampleResponses.data.longitudinal.responseText);
+    let wrapper, dataService;
+
+    beforeEach((done) => {
+      dataService = {
+        getChartData() {
+          return Promise.resolve(response);
+        }
+      };
+
+      wrapper = shallowMount(Chart, {
+        propsData: {
+          canEdit: true,
+          chartDef: exampleLongitudinalChart,
+          metadata: exampleLongitudinalMetadata
+        },
+        provide: {
+          dataService
+        }
+      });
+
+      wrapper.vm.dataPromise.then(() => done());
+    });
+
+    it('refreshes chart data when chartDef is replaced', (done) => {
+      const newChart = exampleLongitudinalChartDef('different');
+
+      spyOn(dataService, 'getChartData').and.callThrough();
+      wrapper.setProps({ chartDef: newChart });
+
+      wrapper.vm.dataPromise.then(() => {
+        expect(dataService.getChartData).toHaveBeenCalled();
+        done();
+      });
+    });
+  });
+
   describe('chart delete link', () => {
     const response = JSON.parse(exampleResponses.data.longitudinal.responseText);
     let deleteSelector = '[data-description=delete]';
@@ -340,11 +378,11 @@ describe('Chart.vue', () => {
       expect(wrapper.emitted('delete-chart')).toBeFalsy();
     });
 
-    it('emits an event with the chart ID when confirmed', () => {
+    it('emits an event with the chart definition when confirmed', () => {
       spyOn(window, 'confirm').and.returnValue(true);
       wrapper.find(deleteSelector).trigger('click');
       expect(wrapper.emitted('delete-chart')).toBeTruthy();
-      expect(wrapper.emitted('delete-chart')[0]).toEqual([ exampleLongitudinalChart.id ]);
+      expect(wrapper.emitted('delete-chart')[0]).toEqual([ exampleLongitudinalChart ]);
     });
   });
 
@@ -396,10 +434,10 @@ describe('Chart.vue', () => {
       expect(wrapper.emitted('toggle-legend')).toBeFalsy();
     });
 
-    it('emits an event with the chart ID when user can edit', () => {
+    it('emits an event with the chart definition when user can edit', () => {
       wrapper.find(legendToggleSelector).trigger('click');
       expect(wrapper.emitted('toggle-legend')).toBeTruthy();
-      expect(wrapper.emitted('toggle-legend')[0]).toEqual([ chartDef.id ]);
+      expect(wrapper.emitted('toggle-legend')[0]).toEqual([ chartDef ]);
     });
   });
 });

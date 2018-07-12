@@ -10,7 +10,7 @@ export const ENDPOINTS = {
 };
 
 const warnings = {
-  blankDateFields: ((count) => `Ignored ${count} records with blank date field.`),
+  blankDateFields: ((count) => `Ignored ${count} ${count > 1 ? 'records' : 'record'} with blank date field.`),
   multipleEvents: 'The filter returned multiple events per record.',
   noData: 'The filter returned 0 records.',
   repeatingInstruments: 'Charts may not work as expected with repeating instruments.'
@@ -30,7 +30,7 @@ function makeWarning(key, ...rest) {
   let message;
 
   if (typeof warnings[key] === 'function') {
-    message = warnings[key].apply(rest);
+    message = warnings[key].apply(null, rest);
   } else {
     message = warnings[key];
   }
@@ -139,6 +139,27 @@ export default function createDataService(assetUrls) {
     },
 
     /**
+     * Verifies that a single record was saved and no errors were reported.
+     * @param {Promise->{item_count: Number, errors: String[]}} data - REDCap `saveData`
+     *   response extracted from the response.
+     * @return {Promise->{item_count: Number, errors: String[]}} if successful, the REDCap
+     *   `saveData` response is returned. Otherwise an error is thrown. The `errors` array
+     *   is included in the error's `redcapErrors` property.
+     */
+    _checkSaveResponse(data) {
+      const { item_count, errors } = data;
+      const noErrors = !Array.isArray(errors) || errors.length === 0;
+
+      if (item_count === 1 && noErrors) {
+        return data;
+      } else {
+        const error = new Error(`Expected to change 1 record, but ${item_count} records changed.`);
+        error.redcapErrors = errors || [];
+        throw error;
+      }
+    },
+
+    /**
      * Convenience method that fetches both project metadata and chart configuration.
      *
      * @return {Promise->Object[]} returns a promise that resolves to an array, where the
@@ -199,6 +220,21 @@ export default function createDataService(assetUrls) {
         .then(this._extractData)
         .then(responseData => this._validateChartData(dateField, responseData))
         .then(validatedData => this._filterBlankDates(dateField, validatedData));
+    },
+
+    /**
+     * Saves the project's chart definitions to the external module settings.
+     *
+     * @param {Object[]} charts - an array of chart definition objects.
+     * @return {Promise->{item_count: Number}} on success, resolves with REDCap `saveData`
+     *   response. The number of records changed should always be 1. Otherwise an error
+     *   is thrown. The `errors` array from the REDCap `saveData` response array is saved to
+     *   the error's `redcapErrors` property.
+     */
+    saveChartConfig(charts) {
+      return axios.post(this.persistenceUrl, { charts })
+        .then(this._extractData)
+        .then(this._checkSaveResponse);
     }
   };
 }
