@@ -5,7 +5,7 @@
   "main": "./dist/bundle.js",
   "scripts": {
     "analyze": "webpack --optimize-minimize; webpack --profile --json > bundle-stats.json; webpack-bundle-analyzer bundle-stats.json dist",
-    "clean": "rm -rf dist junit",
+    "clean": "rm -rf dist junit bundle-stats.json",
     "prebuild": "npm install",
     "build": "webpack --optimize-minimize",
     "test": "karma start karma.conf.js --single-run",
