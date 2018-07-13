@@ -24,7 +24,8 @@ module.exports = {
   },
   resolve: {
     alias: {
-      '@': path.join(__dirname, 'js')
+      '@': path.join(__dirname, 'js'),
+      'chart.js': 'chart.js/dist/Chart.js'
     },
     extensions: ['.js', '.vue', '.json']
   },
