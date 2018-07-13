@@ -1,7 +1,5 @@
 import uuid from 'uuid/v4';
 import assert from 'assert';
-import { button, span } from './html';
-import $ from 'jquery';
 import moment from 'moment';
 
 const userDateFormat = 'MM/DD/YYYY';
@@ -40,21 +38,6 @@ export function newChartDefinition() {
     chartEnd: '',
     targets: defaultTargetsObject()
   };
-}
-
-/**
- * @param {Node} - DOM node to copy
- * @return {Element} anchor tag that copies the contents of the given node when clicked.
- */
-export function copyLink(targetNode) {
-  const link = $(button({'class': "copy-link pull-right btn btn-link btn-sm"},
-    span({'class': 'glyphicon glyphicon-copy', 'aria-hidden': 'true',
-          'title': 'Copy table to clipboard'})));
-  link.on('click', () => {
-    copyContents(targetNode);
-    return false;
-  });
-  return link;
 }
 
 /**

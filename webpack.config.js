@@ -17,7 +17,7 @@ module.exports = {
   },
   entry: {
     app: [
-      './js/vue-main.js'
+      './js/main.js'
     ]
   },
   resolve: {
