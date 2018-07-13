@@ -20,7 +20,7 @@ module.exports = function(config) {
     files: [
       'node_modules/jquery/dist/jquery.js',
       'node_modules/babel-polyfill/dist/polyfill.js',
-      'test/*.js'
+      'test/**/*.js'
     ],
 
 
@@ -32,7 +32,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'test/*.js': ['webpack']
+      'test/**/*.js': ['webpack']
     },
 
 

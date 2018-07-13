@@ -1,13 +1,13 @@
 export const chartId = "0361d066-7a88-42f9-96e4-771b4234174b";
 
 // Return example charts from a function, so we always get a new copy
-export function exampleChartDef() {
+export function exampleChartDef(id) {
   return {
     field: "screen_date",
     dateInterval: "week",
     filter: "[screened]=1",
     group: "study_clinic",
-    id: `${chartId}`,
+    id: id ? `${id}` : `${chartId}`,
     title: "Screened Participants",
     description: "Participants that have been screened to date",
     start: "2016-10-04",
@@ -17,13 +17,13 @@ export function exampleChartDef() {
   };
 }
 
-export function exampleNoGroupChartDef() {
+export function exampleNoGroupChartDef(id) {
   return {
     field: "screen_date",
     dateInterval: "week",
     filter: "[screened]=1",
     group: "",
-    id: `${chartId}`,
+    id: id ? `${id}` : `${chartId}`,
     title: "Screened Participants",
     start: "2016-10-04",
     chartEnd: "",
@@ -32,7 +32,7 @@ export function exampleNoGroupChartDef() {
   };
 }
 
-export function exampleLongitudinalChartDef() {
+export function exampleLongitudinalChartDef(id) {
   return {
     field: "screen_date",
     dateInterval: "week",
@@ -40,7 +40,7 @@ export function exampleLongitudinalChartDef() {
     filter: "[visit_1][dropdown]=1",
     groupFieldEvent: "enrollment",
     group: "study_clinic",
-    id: `${chartId}`,
+    id: id ? `${id}` : `${chartId}`,
     title: "Visit 1 Survey by Study Clinic",
     start: "2016-10-04",
     chartEnd: "",

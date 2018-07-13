@@ -1,7 +1,5 @@
 import uuid from 'uuid/v4';
 import assert from 'assert';
-import { button, span } from './html';
-import $ from 'jquery';
 import moment from 'moment';
 
 const userDateFormat = 'MM/DD/YYYY';
@@ -27,34 +25,19 @@ export function title(str) {
  */
 export function newChartDefinition() {
   return {
-    field: null,
-    dateFieldEvent: null,
-    dateInterval: null,
-    filter: null,
-    group: null,
-    groupFieldEvent: null,
+    field: '',
+    dateFieldEvent: '',
+    dateInterval: '',
+    filter: '',
+    group: '',
+    groupFieldEvent: '',
     id: uuid(),
-    title: null,
-    start: null,
-    end: null, // target end
-    chartEnd: null,
-    targets: null
+    title: '',
+    start: '',
+    end: '', // target end
+    chartEnd: '',
+    targets: defaultTargetsObject()
   };
-}
-
-/**
- * @param {Node} - DOM node to copy
- * @return {Element} anchor tag that copies the contents of the given node when clicked.
- */
-export function copyLink(targetNode) {
-  const link = $(button({'class': "copy-link pull-right btn btn-link btn-sm"},
-    span({'class': 'glyphicon glyphicon-copy', 'aria-hidden': 'true',
-          'title': 'Copy table to clipboard'})));
-  link.on('click', () => {
-    copyContents(targetNode);
-    return false;
-  });
-  return link;
 }
 
 /**
@@ -64,7 +47,7 @@ export function copyLink(targetNode) {
  * http://stackoverflow.com/questions/2044616/select-a-complete-table-with-javascript-to-be-copied-to-clipboard
  * http://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
  */
-function copyContents(el) {
+export function copyContents(el) {
   var body = document.body, range, sel;
   if (document.createRange && window.getSelection) {
     range = document.createRange();
@@ -111,4 +94,35 @@ export function isoToUserDate(dateString) {
 export function userToIsoDate(dateString) {
   const converted = moment(dateString, userDateFormat, true);
   return converted.isValid() ? converted.format(isoDateFormat) : '';
+}
+
+/**
+ * Label displayed to end users for a dataDictionary field.
+ * @param {Field} field - dataDictionary entry.
+ * @return String to display to user
+ */
+export function fieldLabel(f) {
+  return `${f.field_name} (${f.field_label})`;
+}
+
+/**
+ * Returns target configuration for charts without grouping.
+ * @return {Object}
+ */
+export function defaultTargetsObject() {
+  return { [noGroupsLabel]: null };
+}
+
+/**
+ * Returns target configuration for charts with a grouping field.
+ * @param {String[]} groups - array of group labels, such as obtained from `getChoices`.
+ * @return {Object} target configuration with a key for each group in `groups`. For example,
+ *    if `groups = ['g1', 'g2']`, then `{ g1: null, g2: null}` is returned.
+ * @see data-dictionary.js particularly `getChoices`
+ */
+export function targetsObjectWithGroups(groups) {
+  return groups.reduce((acc, group) => {
+    acc[group] = null;
+    return acc;
+  }, {});
 }
