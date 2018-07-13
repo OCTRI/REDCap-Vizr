@@ -11,6 +11,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
 
+const buildEnv = process.argv.includes('--optimize-minimize') ? 'production' : 'development';
+
 module.exports = {
   externals: {
     jquery: 'jQuery'
@@ -22,8 +24,8 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js',
-      '@': path.join(__dirname, 'js')
+      '@': path.join(__dirname, 'js'),
+      'chart.js': 'chart.js/dist/Chart.js'
     },
     extensions: ['.js', '.vue', '.json']
   },
@@ -65,6 +67,7 @@ module.exports = {
   devtool: 'cheap-source-map',
   plugins: [
     new DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(buildEnv),
       VIZR_VERSION: JSON.stringify(packageJson.version),
       VIZR_GIT_HASH: JSON.stringify(repoInfo.abbreviatedSha)
     }),

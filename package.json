@@ -4,7 +4,8 @@
   "description": "Visualization tool for REDCap",
   "main": "./dist/bundle.js",
   "scripts": {
-    "clean": "rm -rf dist junit",
+    "analyze": "webpack --optimize-minimize; webpack --profile --json > bundle-stats.json; webpack-bundle-analyzer bundle-stats.json dist",
+    "clean": "rm -rf dist junit bundle-stats.json",
     "prebuild": "npm install",
     "build": "webpack --optimize-minimize",
     "test": "karma start karma.conf.js --single-run",
@@ -49,7 +50,8 @@
     "style-loader": "^0.21.0",
     "vue-loader": "^15.2.4",
     "vue-template-compiler": "^2.5.16",
-    "webpack": "^3.8.1"
+    "webpack": "^3.8.1",
+    "webpack-bundle-analyzer": "^2.13.1"
   },
   "dependencies": {
     "axios": "^0.18.0",

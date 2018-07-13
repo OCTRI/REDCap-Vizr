@@ -26,7 +26,14 @@ export function run(pid, canEdit, jsonAssetUrls) {
   new Vue({
     el: '.vizr-container',
     components: { Vizr },
-    template: '<Vizr :pid="pid" :can-edit="canEdit"/>',
+    render(createElement) {
+      return createElement(Vizr, {
+        props: {
+          pid: this.pid,
+          canEdit: this.canEdit
+        }
+      });
+    },
     data: {
       pid,
       canEdit
