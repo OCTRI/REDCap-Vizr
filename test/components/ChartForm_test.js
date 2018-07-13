@@ -1,9 +1,23 @@
 import { shallowMount } from '@vue/test-utils';
 
 import ChartForm, { selector } from '@/components/ChartForm';
-import { exampleChartDef, exampleLongitudinalChartDef } from '../example-chart-def';
-import { exampleMetadata, exampleLongitudinalMetadata } from '../example-metadata';
-import { newChartDefinition, defaultTargetsObject, noGroupsLabel } from '@/util';
+
+import {
+  exampleChartDef,
+  exampleNoGroupChartDef,
+  exampleLongitudinalChartDef
+} from '../example-chart-def';
+
+import {
+  exampleMetadata,
+  exampleLongitudinalMetadata
+} from '../example-metadata';
+
+import {
+  newChartDefinition,
+  defaultTargetsObject,
+  noGroupsLabel
+} from '@/util';
 
 const emptyChart = newChartDefinition();
 const exampleChart = exampleChartDef();
@@ -429,6 +443,61 @@ describe('ChartForm.vue', () => {
         expect(form.text()).toMatch('An event must be selected before selecting a grouping field');
         expect(form.find(selector.saveButton).attributes().disabled).toBeTruthy();
       });
+    });
+  });
+
+  describe('sanitizeModel', () => {
+    let form;
+
+    beforeEach(() => {
+      form = shallowMount(ChartForm, {
+        propsData: {
+          chartDef: exampleChart,
+          metadata: exampleMetadata
+        }
+      });
+    });
+
+    it('strips HTML from string-valued fields', () => {
+      const withHtml = exampleChartDef();
+      withHtml.description = '<script>alert("hello");</script>';
+      form.vm.sanitizeModel(withHtml);
+      expect(withHtml.description).toEqual('alert("hello");')
+    });
+
+    it('can handle the example chart', () => {
+      const newExample = exampleChartDef();
+      form.vm.sanitizeModel(newExample);
+      expect(newExample).toEqual(exampleChart);
+    });
+
+    it('can handle the example longitudinal chart', () => {
+      const newLongitudinalExample = exampleLongitudinalChartDef();
+      form.vm.sanitizeModel(newLongitudinalExample);
+      expect(newLongitudinalExample).toEqual(exampleLongitudinalChart);
+    });
+
+    it('can handle a chart without groups', () => {
+      const noGroups = exampleNoGroupChartDef();
+      const expectedChart = exampleNoGroupChartDef();
+      form.vm.sanitizeModel(noGroups);
+      expect(noGroups).toEqual(expectedChart);
+    });
+
+    it('can handle a chart without targets', () => {
+      const noTargets = exampleNoGroupChartDef();
+      const expectedChart = exampleNoGroupChartDef();
+      noTargets.targets = defaultTargetsObject();
+      expectedChart.targets = defaultTargetsObject();
+      form.vm.sanitizeModel(noTargets);
+      expect(noTargets).toEqual(expectedChart);
+    });
+
+    it('can handle an empty chart', () => {
+      const newEmpty = newChartDefinition();
+      newEmpty.id = emptyChart.id;
+      form.vm.sanitizeModel(newEmpty);
+      expect(newEmpty).toEqual(emptyChart);
     });
   });
 });

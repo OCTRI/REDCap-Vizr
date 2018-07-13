@@ -326,7 +326,7 @@ export default {
           model[key] = striptags(value);
         }
 
-        if (typeof value === 'object') {
+        if (value && typeof value === 'object') {
           this.sanitizeModel(value);
         }
       });
