@@ -172,9 +172,9 @@
 // provided externally by REDCap; doesn't add anything to the bundle
 import $ from 'jquery';
 
-import moment from 'moment';
 import striptags from 'striptags';
 import debounce from 'lodash/debounce';
+import { DateTime } from 'luxon';
 
 import {
   fieldComparator,
@@ -188,10 +188,9 @@ import {
   targetsObjectWithGroups,
   isoToUserDate,
   userToIsoDate,
+  userDateFormat,
   fieldLabel
 } from '@/util';
-
-const userDateFormat = 'MM/DD/YYYY';
 
 export const selector = {
   titleField: 'input[name=chart_title]',
@@ -252,7 +251,7 @@ const messages = {
   validation: {
     cannotSave: 'Your chart configuration cannot be saved due to errors.',
     dateEventError: 'An event must be selected before selecting a date field',
-    dateFormatError: `Dates must be ${userDateFormat} format.`,
+    dateFormatError: `Dates must be ${userDateFormat.toUpperCase()} format.`,
     groupError: 'An event must be selected before selecting a grouping field',
     requiredError: 'Field is required.',
     targetDateError: 'Field is required when there is a target.'
@@ -547,7 +546,8 @@ export default {
      */
     validateDate(el) {
       const value = el.value.trim();
-      if (value && !moment(value, userDateFormat, true).isValid()) {
+      const converted = DateTime.fromFormat(value, userDateFormat);
+      if (value && !converted.isValid) {
         return messages.validation.dateFormatError;
       }
     },

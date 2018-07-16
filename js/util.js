@@ -2,7 +2,7 @@ import uuid from 'uuid/v4';
 import assert from 'assert';
 import { DateTime } from 'luxon';
 
-const userDateFormat = 'MM/dd/yyyy';
+export const userDateFormat = 'MM/dd/yyyy';
 
 // Global for assertions
 export { assert };
