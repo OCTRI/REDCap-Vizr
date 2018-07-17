@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { DateTime } from 'luxon';
+import { DateTime, Duration } from 'luxon';
 import { assert, noGroupsLabel } from './util.js';
 
 /**
@@ -8,10 +8,11 @@ import { assert, noGroupsLabel } from './util.js';
  */
 
 /**
- * Computes the start of date interval equivalent to Moment.js in the default locale.
+ * Computes the start of a date interval equivalent to Moment.js in the default locale.
  *
- * @param {DateTime} dateTime - a Luxon date time object
- * @param {String} interval -
+ * @param {DateTime} dateTime - a Luxon `DateTime` object
+ * @param {String} interval - the time interval
+ * @return {DateTime} a Luxon `DateTime` representing the start of the interval
  */
 function startOfInterval(dateTime, interval) {
   if (interval === 'week' || interval === 'weeks') {
@@ -19,6 +20,22 @@ function startOfInterval(dateTime, interval) {
     return dateTime.minus({ days: dateTime.weekday % 7 });
   } else {
     return dateTime.startOf(interval);
+  }
+}
+
+/**
+ * Computes the end of a date interval equivalent to Moment.js in the default locale.
+ *
+ * @param {DateTime} dateTime - a Luxon `DateTime` object
+ * @param {String} interval - the time interval
+ * @return {DateTime} a Luxon `DateTime` representing the end of the interval
+ */
+function endOfInterval(dateTime, interval) {
+  if (interval === 'week' || interval === 'weeks') {
+    // return the next Saturday
+    return dateTime.plus({ days: 6 - (dateTime.weekday % 7) });
+  } else {
+    return dateTime.endOf(interval);
   }
 }
 
@@ -81,14 +98,15 @@ export function dateBuckets(jsonData, fieldName, start, end, interval) {
  */
 function startDates(start, end, interval) {
   // Get the start of the first interval and the end of the last
-  const startDate = moment(start).startOf(interval);
-  const endDate = moment(end).endOf(interval);
-  let currentStart = moment(startDate);
+  const startDate = startOfInterval(DateTime.fromISO(start), interval);
+  const endDate = endOfInterval(DateTime.fromISO(end), interval);
+  const duration = Duration.fromObject({ [interval]: 1 });
+  let currentStart = startDate;
   let results = [];
 
-  while (currentStart.isBefore(endDate)) {
-    results.push(currentStart.format("YYYY-MM-DD"));
-    currentStart.add(1, interval);
+  while (currentStart < endDate) {
+    results.push(currentStart.toISODate());
+    currentStart = currentStart.plus(duration);
   }
   return results;
 }
