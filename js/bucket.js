@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { DateTime, Duration } from 'luxon';
 import { assert, noGroupsLabel } from './util.js';
 
@@ -135,16 +134,16 @@ export function trendPoints(start, end, interval, target) {
  * @return {Function(String) -> {x: String, y: Integer}}
  */
 function trendFn(start, end, interval, overallTarget) {
-  const startDate = moment(start).startOf(interval);
-  const endDate = moment(end).endOf(interval);
-  const totalIntervals = endDate.diff(startDate, interval);
+  const startDate = startOfInterval(DateTime.fromISO(start), interval);
+  const endDate = endOfInterval(DateTime.fromISO(end), interval);
+  const totalIntervals = Math.floor(endDate.diff(startDate, interval).as(interval));
   const slope = overallTarget / totalIntervals;
 
   // @return {x: String, y: Integer} target point
   return function(date) {
-    const dt = moment(date).startOf(interval);
-    const currentPeriod = dt.diff(startDate, interval);
-    return { 'x': dt.format("YYYY-MM-DD"), 'y': currentPeriod * slope};
+    const dt = startOfInterval(DateTime.fromISO(date), interval);
+    const currentPeriod = dt.diff(startDate, interval).as(interval);
+    return { 'x': dt.toISODate(), 'y': currentPeriod * slope};
   };
 }
 
