@@ -1,10 +1,26 @@
 import moment from 'moment';
+import { DateTime } from 'luxon';
 import { assert, noGroupsLabel } from './util.js';
 
 /**
  * NOTE: The variable 'interval' in bucketing methods must be a valid time delineation
  * in moment.js as described here: https://momentjs.com/docs/#/get-set/get/
  */
+
+/**
+ * Computes the start of date interval equivalent to Moment.js in the default locale.
+ *
+ * @param {DateTime} dateTime - a Luxon date time object
+ * @param {String} interval -
+ */
+function startOfInterval(dateTime, interval) {
+  if (interval === 'week' || interval === 'weeks') {
+    // return the preceding Sunday
+    return dateTime.minus({ days: dateTime.weekday % 7 });
+  } else {
+    return dateTime.startOf(interval);
+  }
+}
 
 /**
  * Given a start and end date, this will create buckets of the given time interval
@@ -22,19 +38,19 @@ import { assert, noGroupsLabel } from './util.js';
  *  the value.
  */
 export function dateBuckets(jsonData, fieldName, start, end, interval) {
-  let startDt = moment(start);
-  let endDt = moment(end);
+  let startDt = DateTime.fromISO(start);
+  let endDt = DateTime.fromISO(end);
 
-  assert(startDt.isValid(), 'Start date is invalid');
-  assert(endDt.isValid(), 'End date is invalid');
+  assert(startDt.isValid, 'Start date is invalid');
+  assert(endDt.isValid, 'End date is invalid');
 
   // Groups the data by interval start and summarizes the counts.
   let countsByInterval = jsonData.reduce((counts, item) => {
-    let dt = moment(item[fieldName]);
+    let dt = DateTime.fromISO(item[fieldName]);
 
-    if (dt.isSameOrAfter(startDt) && dt.isSameOrBefore(endDt)) {
-      let intervalStart = moment(dt.startOf(interval));
-      let key = intervalStart.format("YYYY-MM-DD");
+    if (dt >= startDt && dt <= endDt) {
+      let intervalStart = startOfInterval(dt, interval);
+      let key = intervalStart.toISODate();
       let total = counts[key] || 0;
       counts[key] = total + 1;
     }
