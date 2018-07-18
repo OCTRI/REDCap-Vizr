@@ -2,8 +2,8 @@ import uuid from 'uuid/v4';
 import assert from 'assert';
 import moment from 'moment';
 
-const userDateFormat = 'MM/DD/YYYY';
-const isoDateFormat = 'YYYY-MM-DD';
+export const userDateFormat = 'MM/DD/YYYY';
+export const isoDateFormat = 'YYYY-MM-DD';
 
 // Global for assertions
 export { assert };

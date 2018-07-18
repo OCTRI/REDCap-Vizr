@@ -188,10 +188,9 @@ import {
   targetsObjectWithGroups,
   isoToUserDate,
   userToIsoDate,
+  userDateFormat,
   fieldLabel
 } from '@/util';
-
-const userDateFormat = 'MM/DD/YYYY';
 
 export const selector = {
   titleField: 'input[name=chart_title]',
