@@ -61,6 +61,8 @@
 </template>
 
 <script>
+import { DateTime } from 'luxon';
+
 import { groupedByInterval, summarizeGroups, trendPoints } from '@/bucket';
 import { makeStackedChart } from '@/chart-config';
 
@@ -69,7 +71,7 @@ import ChartSummary from '@/components/ChartSummary';
 
 const ALL_EVENTS = 'ALL_EVENTS';
 
-const defaultChartEnd = new Date();
+const defaultChartEnd = DateTime.local().toISODate();
 const messages = {
   actions : {
     confirmDelete: 'Permanently delete chart',

@@ -1,9 +1,8 @@
 import uuid from 'uuid/v4';
 import assert from 'assert';
-import moment from 'moment';
+import { DateTime } from 'luxon';
 
-const userDateFormat = 'MM/DD/YYYY';
-const isoDateFormat = 'YYYY-MM-DD';
+export const userDateFormat = 'MM/dd/yyyy';
 
 // Global for assertions
 export { assert };
@@ -79,8 +78,8 @@ export function copyContents(el) {
  *   not a valid ISO date
  */
 export function isoToUserDate(dateString) {
-  const converted = moment(dateString, isoDateFormat, true);
-  return converted.isValid() ? converted.format(userDateFormat) : '';
+  const converted = DateTime.fromISO(dateString)
+  return converted.isValid ? converted.toFormat(userDateFormat) : '';
 }
 
 /**
@@ -92,8 +91,8 @@ export function isoToUserDate(dateString) {
  *   was not a valid US date
  */
 export function userToIsoDate(dateString) {
-  const converted = moment(dateString, userDateFormat, true);
-  return converted.isValid() ? converted.format(isoDateFormat) : '';
+  const converted = DateTime.fromFormat(dateString, userDateFormat);
+  return converted.isValid ? converted.toISODate() : '';
 }
 
 /**

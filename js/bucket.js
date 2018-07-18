@@ -1,10 +1,42 @@
-import moment from 'moment';
+import { DateTime, Duration } from 'luxon';
 import { assert, noGroupsLabel } from './util.js';
 
 /**
  * NOTE: The variable 'interval' in bucketing methods must be a valid time delineation
  * in moment.js as described here: https://momentjs.com/docs/#/get-set/get/
  */
+
+/**
+ * Computes the start of a date interval equivalent to Moment.js in the default locale.
+ *
+ * @param {DateTime} dateTime - a Luxon `DateTime` object
+ * @param {String} interval - the time interval
+ * @return {DateTime} a Luxon `DateTime` representing the start of the interval
+ */
+function startOfInterval(dateTime, interval) {
+  if (interval === 'week' || interval === 'weeks') {
+    // return the preceding Sunday
+    return dateTime.minus({ days: dateTime.weekday % 7 });
+  } else {
+    return dateTime.startOf(interval);
+  }
+}
+
+/**
+ * Computes the end of a date interval equivalent to Moment.js in the default locale.
+ *
+ * @param {DateTime} dateTime - a Luxon `DateTime` object
+ * @param {String} interval - the time interval
+ * @return {DateTime} a Luxon `DateTime` representing the end of the interval
+ */
+function endOfInterval(dateTime, interval) {
+  if (interval === 'week' || interval === 'weeks') {
+    // return the next Saturday
+    return dateTime.plus({ days: 6 - (dateTime.weekday % 7) });
+  } else {
+    return dateTime.endOf(interval);
+  }
+}
 
 /**
  * Given a start and end date, this will create buckets of the given time interval
@@ -22,19 +54,19 @@ import { assert, noGroupsLabel } from './util.js';
  *  the value.
  */
 export function dateBuckets(jsonData, fieldName, start, end, interval) {
-  let startDt = moment(start);
-  let endDt = moment(end);
+  let startDt = DateTime.fromISO(start);
+  let endDt = DateTime.fromISO(end);
 
-  assert(startDt.isValid(), 'Start date is invalid');
-  assert(endDt.isValid(), 'End date is invalid');
+  assert(startDt.isValid, 'Start date is invalid');
+  assert(endDt.isValid, 'End date is invalid');
 
   // Groups the data by interval start and summarizes the counts.
   let countsByInterval = jsonData.reduce((counts, item) => {
-    let dt = moment(item[fieldName]);
+    let dt = DateTime.fromISO(item[fieldName]);
 
-    if (dt.isSameOrAfter(startDt) && dt.isSameOrBefore(endDt)) {
-      let intervalStart = moment(dt.startOf(interval));
-      let key = intervalStart.format("YYYY-MM-DD");
+    if (dt >= startDt && dt <= endDt) {
+      let intervalStart = startOfInterval(dt, interval);
+      let key = intervalStart.toISODate();
       let total = counts[key] || 0;
       counts[key] = total + 1;
     }
@@ -65,14 +97,15 @@ export function dateBuckets(jsonData, fieldName, start, end, interval) {
  */
 function startDates(start, end, interval) {
   // Get the start of the first interval and the end of the last
-  const startDate = moment(start).startOf(interval);
-  const endDate = moment(end).endOf(interval);
-  let currentStart = moment(startDate);
+  const startDate = startOfInterval(DateTime.fromISO(start), interval);
+  const endDate = endOfInterval(DateTime.fromISO(end), interval);
+  const duration = Duration.fromObject({ [interval]: 1 });
+  let currentStart = startDate;
   let results = [];
 
-  while (currentStart.isBefore(endDate)) {
-    results.push(currentStart.format("YYYY-MM-DD"));
-    currentStart.add(1, interval);
+  while (currentStart < endDate) {
+    results.push(currentStart.toISODate());
+    currentStart = currentStart.plus(duration);
   }
   return results;
 }
@@ -101,16 +134,16 @@ export function trendPoints(start, end, interval, target) {
  * @return {Function(String) -> {x: String, y: Integer}}
  */
 function trendFn(start, end, interval, overallTarget) {
-  const startDate = moment(start).startOf(interval);
-  const endDate = moment(end).endOf(interval);
-  const totalIntervals = endDate.diff(startDate, interval);
+  const startDate = startOfInterval(DateTime.fromISO(start), interval);
+  const endDate = endOfInterval(DateTime.fromISO(end), interval);
+  const totalIntervals = Math.floor(endDate.diff(startDate, interval).as(interval));
   const slope = overallTarget / totalIntervals;
 
   // @return {x: String, y: Integer} target point
   return function(date) {
-    const dt = moment(date).startOf(interval);
-    const currentPeriod = dt.diff(startDate, interval);
-    return { 'x': dt.format("YYYY-MM-DD"), 'y': currentPeriod * slope};
+    const dt = startOfInterval(DateTime.fromISO(date), interval);
+    const currentPeriod = dt.diff(startDate, interval).as(interval);
+    return { 'x': dt.toISODate(), 'y': currentPeriod * slope};
   };
 }
 
