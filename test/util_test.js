@@ -34,7 +34,7 @@ describe('newChartDefinition', () => {
   });
 });
 
-describe('isToUserDate', () => {
+describe('isoToUserDate', () => {
   it('converts a datestring to userDateFormat', () => {
     expect(isoToUserDate('2018-01-23')).toEqual('01/23/2018');
   });

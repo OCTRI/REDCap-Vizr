@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import moment from 'moment';
 import { groupedByInterval, summarizeGroups, trendPoints } from '@/bucket';
 import { makeStackedChart } from '@/chart-config';
 
@@ -69,7 +70,6 @@ import ChartSummary from '@/components/ChartSummary';
 
 const ALL_EVENTS = 'ALL_EVENTS';
 
-const defaultChartEnd = new Date();
 const messages = {
   actions : {
     confirmDelete: 'Permanently delete chart',
@@ -261,7 +261,7 @@ export default {
 
     chartEnd() {
       const { chartDef } = this;
-      return chartDef.chartEnd ? chartDef.chartEnd : defaultChartEnd;
+      return chartDef.chartEnd ? chartDef.chartEnd : moment().format('YYYY-MM-DD');
     },
 
     dateInterval() {
