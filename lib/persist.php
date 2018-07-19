@@ -10,6 +10,9 @@
 require_once dirname(realpath(__FILE__)) . '/../../../redcap_connect.php';
 require_once dirname(realpath(__FILE__)) . '/permissions.php';
 
+// Allows project settings to be saved when users don't have explicit module permission.
+$module->disableUserBasedSettingPermissions();
+
 /**
  * Validates that input is shaped like a chart definition.
  *
@@ -86,8 +89,12 @@ $data = json_decode(file_get_contents('php://input'));
 if (inputIsValid($data)) {
   try {
     sanitizeChartConfig($data->charts);
-    $module->setProjectSetting('chart-definitions', $data->charts);
-    $response->item_count = 1;
+    if ($module->canEditVizrCharts()) {
+      $module->setProjectSetting('chart-definitions', $data->charts);
+      $response->item_count = 1;
+    } else {
+      $response->errors = array("You do not have permission to modify chart definitions.");
+    }
   } catch (Exception $e) {
     error_log("Vizr caught an exception persisting configuration for PID $project_id: " . $e->getMessage());
     $response->errors = array("The settings could not be saved due to an error.");
