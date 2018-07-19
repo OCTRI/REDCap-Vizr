@@ -7,19 +7,12 @@ use ExternalModules\ExternalModules;
 class Vizr extends AbstractExternalModule {
 
   /**
-   * Override to check for Vizr module rights in addition to design and
-   * super user rights checked by the parent. If a user has access to the
-   * Vizr module in User Rights they will be able to view charts. If the
-   * user has super user or design rights they will also be able to create
-   * and edit charts.
+   * Override to allow anyone with project access to be able to view Vizr charts. The
+   * user will need `Project Design and Setup` rights in order to create, edit, and
+   * delete charts.
    */
   public function redcap_module_link_check_display($project_id, $link) {
-    $rights = \REDCap::getUserRights(USERID);
-    if ($this->hasVizrUserRights($rights)) {
-      return $link;
-    } else {
-      return parent::redcap_module_link_check_display($project_id, $link);
-    }
+    return $link;
   }
 
   /**
@@ -31,7 +24,6 @@ class Vizr extends AbstractExternalModule {
     return !empty($rights) && is_array($user_module_config)
         && in_array($this->PREFIX, $user_module_config);
   }
-
 
   /**
    * Checks to see if a user has design rights for the current project.

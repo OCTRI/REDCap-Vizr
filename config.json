@@ -41,13 +41,6 @@
   "permissions": [
     "select_data"
   ],
-  "project-settings": [
-    {
-      "key": "vizr-descriptive",
-      "name": "To configure a chart, click the Vizr link under <strong>External Modules</strong> on the left navigation bar. On that page there's a link titled \"Vizr charts are configured\" which contains documentation for building charts.",
-      "type": "descriptive"
-    }
-  ],
   "links": {
     "project": [
       {
