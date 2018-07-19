@@ -13,7 +13,7 @@ See [INSTALL.md](INSTALL.md).
 
 # Vizr Permissions
 
-By default, all users of a project with Vizr enabled may view charts.
+All users of a project with Vizr enabled may view charts.
 
 For users that also need to create, edit, and delete charts you must give them **Project Design and Setup** rights. To do so follow these steps:
 
