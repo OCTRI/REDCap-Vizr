@@ -10,3 +10,15 @@ in a time series fashion to provide additional insights about their project.
 # Vizr Installation and Upgrades
 
 See [INSTALL.md](INSTALL.md).
+
+# Vizr Permissions
+
+All users of a project with Vizr enabled may view charts.
+
+For users that also need to create, edit, and delete charts you must give them **Project Design and Setup** rights. To do so follow these steps:
+
+* Navigate, on a project with Vizr, to **User Rights**
+* Select a user
+* Click **Edit user privileges**
+* Under **Highest level privileges** check **Project Design and Setup*
+* Save
