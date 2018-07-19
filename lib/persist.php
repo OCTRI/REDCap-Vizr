@@ -91,10 +91,10 @@ if (inputIsValid($data)) {
     sanitizeChartConfig($data->charts);
     if ($module->canEditVizrCharts()) {
       $module->setProjectSetting('chart-definitions', $data->charts);
+      $response->item_count = 1;
     } else {
       $response->errors = array("You do not have permission to modify chart definitions.");
     }
-    $response->item_count = 1;
   } catch (Exception $e) {
     error_log("Vizr caught an exception persisting configuration for PID $project_id: " . $e->getMessage());
     $response->errors = array("The settings could not be saved due to an error.");
