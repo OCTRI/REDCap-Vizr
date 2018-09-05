@@ -13,6 +13,20 @@
 .vizr-form-panel .panel-heading strong {
 	color:#fff;
 }
+
+.vizr-form-panel .card-header {
+	background-color:rgb(51, 122, 183);
+}
+
+.vizr-form-panel.card {
+	border-color:rgb(51, 122, 183);
+}
+
+.vizr-form-panel .remove-form {
+  color:#ffff99;
+  font-size: 100%;
+}
+
 .vizr-form-panel legend {
 	font-size:120%;
 	font-weight:bold;
@@ -38,6 +52,7 @@
 }
 .vizr-chart-summary caption {
 	padding-bottom:0px !important;
+  caption-side: top;
 }
 .vizr-chart-summary .btn-sm {
 	font-size:14px;

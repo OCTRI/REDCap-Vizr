@@ -4,12 +4,8 @@
       <table ref="totalsTable" class="table table-striped table-bordered">
         <caption>
           {{ messages.totalsCaption }}
-          <button class="copy-link pull-right btn btn-link btn-sm" @click="copyTable($refs.totalsTable)">
-            <span
-              class="glyphicon glyphicon-copy"
-              aria-hidden="true"
-              :title="messages.copyTable">
-            </span>
+          <button class="copy-link pull-right float-right btn btn-link btn-sm" @click="copyTable($refs.totalsTable)">
+            <i class="far fa-copy" :title="messages.copyTable"></i>
           </button>
         </caption>
         <thead>
@@ -33,11 +29,7 @@
       <caption>
         {{ messages.groupedCaption }}
         <button class="copy-link pull-right btn btn-link btn-sm" @click="copyTable($refs.groupedTable)">
-          <span
-            class="glyphicon glyphicon-copy"
-            aria-hidden="true"
-            :title="messages.copyTable">
-          </span>
+          <i class="far fa-copy" :title="messages.copyTable"></i>
         </button>
       </caption>
       <thead>

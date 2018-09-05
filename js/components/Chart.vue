@@ -13,7 +13,7 @@
     </div>
 
     <a href="#" data-description="reload" role="button" @click.prevent="reloadChart">{{ messages.actions.reload }}
-      <span class="glyphicon glyphicon-refresh" aria-hidden="true" :title="messages.actions.reload"></span>
+      <i class="fas fa-sync-alt" :title="messages.actions.reload"></i>
     </a>
 
     <div class="vizr-chart-form row">
@@ -25,8 +25,8 @@
         @save-chart="saveChart"/>
     </div>
 
-    <div class="vizr-event-select pull-right">
-      <select class="form-control" name="filter-event" v-if="hasMultipleEvents" v-model="selectedEvent" @change="chartFilterChanged" required>
+    <div class="vizr-event-select pull-right float-right">
+      <select class="form-control form-control-sm" name="filter-event" v-if="hasMultipleEvents" v-model="selectedEvent" @change="chartFilterChanged" required>
         <option :value="allEventsSentinel">All Events</option>
         <option v-for="filterEvent in filterEvents" :key="filterEvent" :value="filterEvent">{{ filterEvent }}</option>
       </select>
@@ -43,7 +43,7 @@
 
         <div class="vizr-chart col-md-8">
           <a href="#"
-             class="vizr-chart-legend-toggle pull-right"
+             class="vizr-chart-legend-toggle pull-right float-right"
              data-description="toggle-legend"
              @click.prevent="toggleLegend"
           >{{ messages.actions.toggleLegend }}</a>

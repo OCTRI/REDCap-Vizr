@@ -1,11 +1,13 @@
 <template>
   <div :id="id" aria-expanded="true" @input="validateChanges" @change="validateChanges">
-    <div class="vizr-form-panel panel panel-primary">
-      <div class="panel-heading">
+    <div class="vizr-form-panel panel panel-primary card">
+      <div class="panel-heading card-header">
         <strong>{{ messages.heading }}</strong>
-        <span class="glyphicon glyphicon-remove pull-right" aria-hidden="true" data-toggle="collapse" :data-target="idSelector" aria-expanded="true" role="button" @click="reset"></span>
+        <a href="#" class="remove-form pull-right float-right" role="button" data-toggle="collapse" :data-target="idSelector" aria-hidden="true" aria-expanded="true" @click="reset">
+          <i class="fas fa-times"></i>
+        </a>        
       </div>
-      <div class="panel-body">
+      <div class="panel-body card-body">
         <div class="form-group" :class="{ 'has-error': errors.titleError }">
           <label for="chart_title" class="control-label">{{ messages.titleLabel }}</label>
           <input type="text" class="form-control" name="chart_title" required="required" data-field="title" v-model.trim="model.title">
@@ -21,8 +23,8 @@
             <label for="start_date" class="control-label">{{ messages.startDateLabel }}</label>
             <div class="input-group">
               <input ref="startDateInput" type="text" class="form-control vizr-date" name="start_date" data-field="start" data-v-model="startDate" data-validate="validateDate,validateTargetDate" v-model="startDate" @input="dateFieldChanged">
-              <span class="input-group-addon" @click="showDatePicker($refs.startDateInput)">
-                <span class="glyphicon glyphicon-calendar"></span>
+              <span class="input-group-addon input-group-append" @click="showDatePicker($refs.startDateInput)">
+                <span class='input-group-text'><i class="far fa-calendar-alt"></i></span>
               </span>
             </div>
             <div class="help-block error-help">{{ errors.startError }}</div>
@@ -31,8 +33,8 @@
             <label for="chart_end_date" class="control-label">{{ messages.endDateLabel }}</label>
             <div class="input-group">
               <input ref="endDateInput" type="text" class="form-control vizr-date" name="chart_end_date" data-field="chartEnd" data-v-model="endDate" data-validate="validateDate" v-model="endDate" @input="dateFieldChanged">
-              <span class="input-group-addon" @click="showDatePicker($refs.endDateInput)">
-                <span class="glyphicon glyphicon-calendar"></span>
+              <span class="input-group-addon input-group-append" @click="showDatePicker($refs.endDateInput)">
+                <span class='input-group-text'><i class="far fa-calendar-alt"></i></span>
               </span>
             </div>
             <div class="help-block error-help">{{ errors.chartEndError }}</div>
@@ -131,8 +133,8 @@
             <label class="control-label" for="target_date">{{ messages.targetEndDateLabel }}</label>
             <div class="input-group">
               <input ref="targetEndDateInput" type="text" class="form-control vizr-date" name="target_date" data-field="end" data-v-model="targetEndDate" data-validate="validateDate,validateTargetDate" v-model="targetEndDate" @input="dateFieldChanged">
-              <span class="input-group-addon" @click="showDatePicker($refs.targetEndDateInput)">
-                <span class="glyphicon glyphicon-calendar"></span>
+              <span class="input-group-addon input-group-append" @click="showDatePicker($refs.targetEndDateInput)">
+                <span class='input-group-text'><i class="far fa-calendar-alt"></i></span>
               </span>
             </div>
             <div class="help-block error-help">{{ errors.endError }}</div>
