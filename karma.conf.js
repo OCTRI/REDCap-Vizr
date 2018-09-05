@@ -2,7 +2,14 @@
 // Generated on Mon Mar 27 2017 14:40:22 GMT-0700 (PDT)
 /* eslint-env node */
 
-var webpackConfig = require('./webpack.config.js');
+const webpackConfig = require('./webpack.config.js');
+
+// Work around for a TypeError where Webpack passes an array including the bundle and the
+// source map to Karma:
+// https://github.com/webpack-contrib/karma-webpack/issues/322#issuecomment-417862717
+webpackConfig.output = {
+  filename: '[name]'
+};
 
 module.exports = function(config) {
   config.set({
