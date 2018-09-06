@@ -1,5 +1,5 @@
 <template>
-  <figure class="pull-right vizr-example">
+  <figure class="pull-right float-right vizr-example">
     <img :src="imgSrc" :alt="messages.imgTitle" class="img-thumbnail" :title="messages.imgTitle">
     <figcaption>
       <strong>{{ messages.captionIntro }}</strong> {{ messages.captionTitle }}
