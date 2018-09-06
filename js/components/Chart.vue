@@ -2,11 +2,24 @@
   <div :id="chartId" class="vizr-chart-container">
     <div class="vizr-chart-header">
       <h3 data-description="title">{{ chartDef.title }}
+      </h3>
+      <p v-if="hasDescription" data-description="description"><em>{{ chartDef.description }}</em></p>
+      <p class='chart-controls'>
+        <a href="#" data-description="reload" role="button" @click.prevent="reloadChart">{{ messages.actions.reload }}
+          <i class="far fa-sync-alt" :title="messages.actions.reload"></i>
+        </a>
         <a :href="formIdSelector" role="button" data-toggle="collapse" data-description="edit" v-if="canEdit">{{ messages.actions.edit }}
           <i class="far fa-edit"></i>
         </a>
-      </h3>
-      <p v-if="hasDescription" data-description="description"><em>{{ chartDef.description }}</em></p>
+        <a href="#"
+          class="delete"
+          data-description="delete"
+          v-if="canEdit"
+          @click.prevent="deleteChart"
+        >{{ messages.actions.delete }}
+          <i class="far fa-trash-alt"></i>
+        </a>
+      </p>
       <div v-if="hasWarnings" class="alert alert-warning">
         <button type="button" class="close" aria-label="Close" @click="resetWarnings">
           <span aria-hidden="true">&times;</span>
@@ -16,11 +29,6 @@
         </ul>
       </div>
     </div>
-
-    <a href="#" data-description="reload" role="button" @click.prevent="reloadChart">{{ messages.actions.reload }}
-      <i class="far fa-sync-alt" :title="messages.actions.reload"></i>
-    </a>
-
     <div class="vizr-chart-form row">
       <ChartForm
         class="col-md-12 collapse"
@@ -55,14 +63,6 @@
           <canvas ref="canvas" :id="id"></canvas>
         </div>
       </div>
-      <a href="#"
-         class="pull-right float-right delete"
-         data-description="delete"
-         v-if="canEdit"
-         @click.prevent="deleteChart"
-      >{{ messages.actions.delete }}
-        <i class="far fa-trash-alt"></i>
-      </a>
     </div>
   </div>
 </template>
@@ -81,8 +81,8 @@ const messages = {
   actions : {
     confirmDelete: 'Permanently delete chart',
     delete: 'Delete',
-    edit: ' Edit Chart',
-    reload: 'Reload Chart ',
+    edit: 'Edit',
+    reload: 'Reload',
     toggleLegend: 'Hide/Show Legend'
   },
   warnings: {
