@@ -2,18 +2,23 @@
   <div :id="chartId" class="vizr-chart-container">
     <div class="vizr-chart-header">
       <h3 data-description="title">{{ chartDef.title }}
-        <a :href="formIdSelector" role="button" data-toggle="collapse" data-description="edit" v-if="canEdit">{{ messages.actions.edit }}</a>
+        <a :href="formIdSelector" role="button" data-toggle="collapse" data-description="edit" v-if="canEdit">{{ messages.actions.edit }}
+          <i class="far fa-edit"></i>
+        </a>
       </h3>
       <p v-if="hasDescription" data-description="description"><em>{{ chartDef.description }}</em></p>
-      <div class="error">
-        <ul v-if="hasWarnings">
+      <div v-if="hasWarnings" class="alert alert-warning">
+        <button type="button" class="close" aria-label="Close" @click="resetWarnings">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <ul>
           <li v-for="warning in warnings" :key="warning.key">{{ warning.message }}</li>
         </ul>
       </div>
     </div>
 
     <a href="#" data-description="reload" role="button" @click.prevent="reloadChart">{{ messages.actions.reload }}
-      <i class="fas fa-sync-alt" :title="messages.actions.reload"></i>
+      <i class="far fa-sync-alt" :title="messages.actions.reload"></i>
     </a>
 
     <div class="vizr-chart-form row">
@@ -51,11 +56,13 @@
         </div>
       </div>
       <a href="#"
-         class="pull-right float-right"
+         class="pull-right float-right delete"
          data-description="delete"
          v-if="canEdit"
          @click.prevent="deleteChart"
-      >{{ messages.actions.delete }}</a>
+      >{{ messages.actions.delete }}
+        <i class="far fa-trash-alt"></i>
+      </a>
     </div>
   </div>
 </template>
@@ -216,6 +223,13 @@ export default {
      */
     chartFilterChanged() {
       this._makeChart();
+    },
+
+    /**
+     * Reset the warnings.
+     */
+    resetWarnings() {
+      this.warnings = [];
     }
   },
 

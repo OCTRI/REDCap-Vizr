@@ -44,11 +44,14 @@
 	padding-bottom: 15px;
 }
 .vizr-chart-container a {
-	color:#c30;
+	color: rgb(0, 123, 255);
 	font-size:11px;
 	font-weight:600;
 	margin-left:8px;
 	text-transform:capitalize;
+}
+.vizr-chart-container a.delete {
+	color: #c30;
 }
 .vizr-chart-summary table {
 	table-layout:fixed;
@@ -131,6 +134,17 @@
 
 .error {
 	color: #a94442;
+}
+.alert-warning {
+	/* override redcap's override */
+	border-color: #ffeeba !important;	
+}
+.alert-info {
+	/* override redcap's override */
+	border-color: #bee5eb !important;
+}
+.alert ul {
+	margin-bottom: 0px;
 }
 
 .vizr-version {
