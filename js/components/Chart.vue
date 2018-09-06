@@ -6,7 +6,7 @@
       <p v-if="hasDescription" data-description="description"><em>{{ chartDef.description }}</em></p>
       <p class='chart-controls'>
         <a href="#" data-description="reload" role="button" @click.prevent="reloadChart">{{ messages.actions.reload }}
-          <i class="far fa-sync-alt" :title="messages.actions.reload"></i>
+          <i class="fas fa-sync-alt" :title="messages.actions.reload"></i>
         </a>
         <a :href="formIdSelector" role="button" data-toggle="collapse" data-description="edit" v-if="canEdit">{{ messages.actions.edit }}
           <i class="far fa-edit"></i>
@@ -38,23 +38,20 @@
         @save-chart="saveChart"/>
     </div>
 
-    <div class="vizr-event-select pull-right float-right">
-      <select class="form-control form-control-sm" name="filter-event" v-if="hasMultipleEvents" v-model="selectedEvent" @change="chartFilterChanged" required>
-        <option :value="allEventsSentinel">All Events</option>
-        <option v-for="filterEvent in filterEvents" :key="filterEvent" :value="filterEvent">{{ filterEvent }}</option>
-      </select>
+    <div class="row">
+      <span class="vizr-event-select col-xs-3">
+        <select class="form-control form-control-sm" name="filter-event" v-if="hasMultipleEvents" v-model="selectedEvent" @change="chartFilterChanged" required>
+          <option :value="allEventsSentinel">All Events</option>
+          <option v-for="filterEvent in filterEvents" :key="filterEvent" :value="filterEvent">{{ filterEvent }}</option>
+        </select>
+      </span>
+      <span class="col-xs-9"></span>
     </div>
 
     <div class="vizr-chart-data-container">
-      <div class="row">
-        <ChartSummary
-          class="vizr-chart-summary col-lg-4 col-md-12"
-          :total-count="totalCount"
-          :total-target="totalTarget"
-          :group="chartDef.group"
-          :group-data="summary"/>
 
-        <div class="vizr-chart col-lg-8 col-md-12">
+      <div class='row'>
+        <div class="vizr-chart col-md-12">
           <a href="#"
              class="vizr-chart-legend-toggle pull-right float-right"
              data-description="toggle-legend"
@@ -63,6 +60,14 @@
           <canvas ref="canvas" :id="id"></canvas>
         </div>
       </div>
+
+      <ChartSummary
+        class="vizr-chart-summary"
+        :total-count="totalCount"
+        :total-target="totalTarget"
+        :group="chartDef.group"
+        :group-data="summary"/>
+
     </div>
   </div>
 </template>

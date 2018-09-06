@@ -2,7 +2,6 @@ import 'babel-polyfill';
 
 import Vue from 'vue';
 
-import $ from 'jquery';
 import '../lib/vizr.css';
 import Vizr from './components/Vizr';
 import createDataService from './services/data-service';
@@ -28,11 +27,6 @@ export function run(pid, canEdit, jsonAssetUrls) {
     el: '.vizr-container',
     components: { Vizr },
     render(createElement) {
-      // In the REDCap 8.7.1 conversion to Bootstrap 4, they decreased the main display area,
-      // which causes the chart to be too small on most screens. Programmatically change this
-      // back to the original settings.
-      $('#center').addClass('col-lg-9').removeClass('col-lg-8'); 
-      $('#west').addClass('col-lg-3').removeClass('col-lg-4');
       return createElement(Vizr, {
         props: {
           pid: this.pid,

@@ -24,7 +24,8 @@
 
 .vizr-form-panel .remove-form {
   color:#ffff99;
-  font-size: 100%;
+  font-size: 140%;
+  text-decoration: none;
 }
 
 .vizr-form-panel legend {
@@ -41,6 +42,7 @@
 	font-weight:normal;
 }
 .vizr-chart-container {
+	max-width: 960px;
 	padding-bottom: 15px;
 }
 .vizr-chart-container a {
@@ -53,6 +55,13 @@
 .vizr-chart-container a.delete {
 	color: #c30;
 }
+.vizr-event-select {
+	padding-left: 15px;
+}
+.vizr-event-select select {
+	width: auto;
+}
+
 .vizr-chart-summary table {
 	table-layout:fixed;
 	width:100%;

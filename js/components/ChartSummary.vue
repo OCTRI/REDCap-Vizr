@@ -1,12 +1,13 @@
 <template>
-  <div>
-    <div>
+  <div class="row">
+    <div class="col-md-6">
       <table ref="totalsTable" class="table table-striped table-bordered">
         <caption>
           {{ messages.totalsCaption }}
-          <button class="copy-link pull-right float-right btn btn-link btn-sm" @click="copyTable($refs.totalsTable)">
+          <a href="#" class="pull-right float-right" data-description="reload" role="button" @click.prevent="copyTable($refs.totalsTable)">
+            {{ messages.copyTable }}
             <i class="far fa-copy" :title="messages.copyTable"></i>
-          </button>
+          </a>
         </caption>
         <thead>
           <tr>
@@ -25,13 +26,14 @@
       </table>
     </div>
 
-    <div>    
+    <div class="col-md-6">    
       <table ref="groupedTable" class="table table-striped table-bordered" v-if="group">
         <caption>
           {{ messages.groupedCaption }}
-          <button class="copy-link pull-right float-right btn btn-link btn-sm" @click="copyTable($refs.groupedTable)">
+          <a href="#" class="pull-right float-right" data-description="reload" role="button" @click.prevent="copyTable($refs.groupedTable)">
+            {{ messages.copyTable }}
             <i class="far fa-copy" :title="messages.copyTable"></i>
-          </button>
+          </a>
         </caption>
         <thead>
           <tr>
@@ -60,7 +62,7 @@
 import { copyContents, notAnsweredLabel, title } from '@/util';
 
 const messages = {
-  copyTable: 'Copy table to clipboard',
+  copyTable: 'Copy',
   groupedCaption: 'Grouped Results',
   percent: 'Percent',
   percentOfTotal: 'Percent of Total',

@@ -4,7 +4,7 @@
       <div class="panel-heading card-header">
         <strong>{{ messages.heading }}</strong>
         <a href="#" class="remove-form pull-right float-right" role="button" data-toggle="collapse" :data-target="idSelector" aria-hidden="true" aria-expanded="true" @click="reset">
-          <i class="fas fa-times"></i>
+          &times;
         </a>        
       </div>
       <div class="panel-body card-body">
