@@ -25,32 +25,34 @@
       </table>
     </div>
 
-    <table ref="groupedTable" class="table table-striped table-bordered" v-if="group">
-      <caption>
-        {{ messages.groupedCaption }}
-        <button class="copy-link pull-right btn btn-link btn-sm" @click="copyTable($refs.groupedTable)">
-          <i class="far fa-copy" :title="messages.copyTable"></i>
-        </button>
-      </caption>
-      <thead>
-        <tr>
-          <th>{{ groupTitle }}</th>
-          <th>{{ messages.resultsCount }}</th>
-          <th>{{ messages.target }}</th>
-          <th>{{ messages.percent }}</th>
-          <th>{{ messages.percentOfTotal }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="group in groupStats" :key="group.label">
-          <td>{{ group.label }}</td>
-          <td>{{ group.count }}</td>
-          <td>{{ group.target }}</td>
-          <td>{{ group.percentOfTarget }}</td>
-          <td>{{ group.percentOfTotal }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div>    
+      <table ref="groupedTable" class="table table-striped table-bordered" v-if="group">
+        <caption>
+          {{ messages.groupedCaption }}
+          <button class="copy-link pull-right float-right btn btn-link btn-sm" @click="copyTable($refs.groupedTable)">
+            <i class="far fa-copy" :title="messages.copyTable"></i>
+          </button>
+        </caption>
+        <thead>
+          <tr>
+            <th>{{ groupTitle }}</th>
+            <th>{{ messages.resultsCount }}</th>
+            <th>{{ messages.target }}</th>
+            <th>{{ messages.percent }}</th>
+            <th>{{ messages.percentOfTotal }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="group in groupStats" :key="group.label">
+            <td>{{ group.label }}</td>
+            <td>{{ group.count }}</td>
+            <td>{{ group.target }}</td>
+            <td>{{ group.percentOfTarget }}</td>
+            <td>{{ group.percentOfTotal }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 

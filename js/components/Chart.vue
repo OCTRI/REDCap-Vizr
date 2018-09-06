@@ -35,13 +35,13 @@
     <div class="vizr-chart-data-container">
       <div class="row">
         <ChartSummary
-          class="vizr-chart-summary col-md-4"
+          class="vizr-chart-summary col-lg-4 col-md-12"
           :total-count="totalCount"
           :total-target="totalTarget"
           :group="chartDef.group"
           :group-data="summary"/>
 
-        <div class="vizr-chart col-md-8">
+        <div class="vizr-chart col-lg-8 col-md-12">
           <a href="#"
              class="vizr-chart-legend-toggle pull-right float-right"
              data-description="toggle-legend"
@@ -51,7 +51,7 @@
         </div>
       </div>
       <a href="#"
-         class="pull-right"
+         class="pull-right float-right"
          data-description="delete"
          v-if="canEdit"
          @click.prevent="deleteChart"
