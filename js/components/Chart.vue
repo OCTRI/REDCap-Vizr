@@ -20,7 +20,7 @@
           <i class="far fa-trash-alt"></i>
         </a>
       </p>
-      <div v-if="hasWarnings" class="alert alert-warning">
+      <div v-if="hasWarnings" class="alert alert-warning warning">
         <button type="button" class="close" aria-label="Close" @click="resetWarnings">
           <span aria-hidden="true">&times;</span>
         </button>

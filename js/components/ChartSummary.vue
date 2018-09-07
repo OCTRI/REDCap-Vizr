@@ -4,7 +4,7 @@
       <table ref="totalsTable" class="table table-striped table-bordered">
         <caption>
           {{ messages.totalsCaption }}
-          <a href="#" class="pull-right float-right" data-description="reload" role="button" @click.prevent="copyTable($refs.totalsTable)">
+          <a href="#" class="copy-link pull-right float-right" data-description="reload" role="button" @click.prevent="copyTable($refs.totalsTable)">
             {{ messages.copyTable }}
             <i class="far fa-copy" :title="messages.copyTable"></i>
           </a>
@@ -30,7 +30,7 @@
       <table ref="groupedTable" class="table table-striped table-bordered" v-if="group">
         <caption>
           {{ messages.groupedCaption }}
-          <a href="#" class="pull-right float-right" data-description="reload" role="button" @click.prevent="copyTable($refs.groupedTable)">
+          <a href="#" class="copy-link pull-right float-right" data-description="reload" role="button" @click.prevent="copyTable($refs.groupedTable)">
             {{ messages.copyTable }}
             <i class="far fa-copy" :title="messages.copyTable"></i>
           </a>
