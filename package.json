@@ -8,6 +8,7 @@
     "clean": "rm -rf dist junit bundle-stats.json",
     "prebuild": "npm install",
     "build": "webpack --optimize-minimize",
+    "build-dev": "webpack",
     "test": "karma start karma.conf.js --single-run",
     "test-jenkins": "karma start karma.conf.js --single-run --reporters junit --browsers Chrome_Headless",
     "test-single-run": "karma start karma.conf.js --single-run",
