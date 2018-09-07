@@ -4,7 +4,7 @@
       <h3 data-description="title">{{ chartDef.title }}
       </h3>
       <p v-if="hasDescription" data-description="description"><em>{{ chartDef.description }}</em></p>
-      <p class='chart-controls'>
+      <p class="chart-controls">
         <a href="#" data-description="reload" role="button" @click.prevent="reloadChart">{{ messages.actions.reload }}
           <i class="fas fa-sync-alt" :title="messages.actions.reload"></i>
         </a>
@@ -50,7 +50,7 @@
 
     <div class="vizr-chart-data-container">
 
-      <div class='row'>
+      <div class="row">
         <div class="vizr-chart col-md-12">
           <a href="#"
              class="vizr-chart-legend-toggle pull-right float-right"

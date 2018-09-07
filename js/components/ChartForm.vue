@@ -24,7 +24,7 @@
             <div class="input-group">
               <input ref="startDateInput" type="text" class="form-control form-control-sm vizr-date" name="start_date" data-field="start" data-v-model="startDate" data-validate="validateDate,validateTargetDate" v-model="startDate" @input="dateFieldChanged">
               <span class="input-group-addon input-group-append" @click="showDatePicker($refs.startDateInput)">
-                <span class='input-group-text'><i class="far fa-calendar-alt"></i></span>
+                <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
               </span>
             </div>
             <div class="help-block error-help">{{ errors.startError }}</div>
@@ -34,7 +34,7 @@
             <div class="input-group">
               <input ref="endDateInput" type="text" class="form-control form-control-sm vizr-date" name="chart_end_date" data-field="chartEnd" data-v-model="endDate" data-validate="validateDate" v-model="endDate" @input="dateFieldChanged">
               <span class="input-group-addon input-group-append" @click="showDatePicker($refs.endDateInput)">
-                <span class='input-group-text'><i class="far fa-calendar-alt"></i></span>
+                <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
               </span>
             </div>
             <div class="help-block error-help">{{ errors.chartEndError }}</div>
@@ -134,7 +134,7 @@
             <div class="input-group">
               <input ref="targetEndDateInput" type="text" class="form-control form-control-sm vizr-date" name="target_date" data-field="end" data-v-model="targetEndDate" data-validate="validateDate,validateTargetDate" v-model="targetEndDate" @input="dateFieldChanged">
               <span class="input-group-addon input-group-append" @click="showDatePicker($refs.targetEndDateInput)">
-                <span class='input-group-text'><i class="far fa-calendar-alt"></i></span>
+                <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
               </span>
             </div>
             <div class="help-block error-help">{{ errors.endError }}</div>
