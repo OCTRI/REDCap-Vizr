@@ -2,20 +2,33 @@
   <div :id="chartId" class="vizr-chart-container">
     <div class="vizr-chart-header">
       <h3 data-description="title">{{ chartDef.title }}
-        <a :href="formIdSelector" role="button" data-toggle="collapse" data-description="edit" v-if="canEdit">{{ messages.actions.edit }}</a>
       </h3>
       <p v-if="hasDescription" data-description="description"><em>{{ chartDef.description }}</em></p>
-      <div class="error">
-        <ul v-if="hasWarnings">
+      <p class="chart-controls">
+        <a href="#" data-description="reload" role="button" @click.prevent="reloadChart">{{ messages.actions.reload }}
+          <i class="fas fa-sync-alt" :title="messages.actions.reload"></i>
+        </a>
+        <a :href="formIdSelector" role="button" data-toggle="collapse" data-description="edit" v-if="canEdit">{{ messages.actions.edit }}
+          <i class="far fa-edit"></i>
+        </a>
+        <a href="#"
+          class="delete"
+          data-description="delete"
+          v-if="canEdit"
+          @click.prevent="deleteChart"
+        >{{ messages.actions.delete }}
+          <i class="far fa-trash-alt"></i>
+        </a>
+      </p>
+      <div v-if="hasWarnings" class="alert alert-warning warning">
+        <button type="button" class="close" aria-label="Close" @click="resetWarnings">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <ul>
           <li v-for="warning in warnings" :key="warning.key">{{ warning.message }}</li>
         </ul>
       </div>
     </div>
-
-    <a href="#" data-description="reload" role="button" @click.prevent="reloadChart">{{ messages.actions.reload }}
-      <span class="glyphicon glyphicon-refresh" aria-hidden="true" :title="messages.actions.reload"></span>
-    </a>
-
     <div class="vizr-chart-form row">
       <ChartForm
         class="col-md-12 collapse"
@@ -25,37 +38,36 @@
         @save-chart="saveChart"/>
     </div>
 
-    <div class="vizr-event-select pull-right">
-      <select class="form-control" name="filter-event" v-if="hasMultipleEvents" v-model="selectedEvent" @change="chartFilterChanged" required>
-        <option :value="allEventsSentinel">All Events</option>
-        <option v-for="filterEvent in filterEvents" :key="filterEvent" :value="filterEvent">{{ filterEvent }}</option>
-      </select>
+    <div class="row">
+      <span class="vizr-event-select col-xs-3">
+        <select class="form-control form-control-sm" name="filter-event" v-if="hasMultipleEvents" v-model="selectedEvent" @change="chartFilterChanged" required>
+          <option :value="allEventsSentinel">All Events</option>
+          <option v-for="filterEvent in filterEvents" :key="filterEvent" :value="filterEvent">{{ filterEvent }}</option>
+        </select>
+      </span>
+      <span class="col-xs-9"></span>
     </div>
 
     <div class="vizr-chart-data-container">
-      <div class="row">
-        <ChartSummary
-          class="vizr-chart-summary col-md-4"
-          :total-count="totalCount"
-          :total-target="totalTarget"
-          :group="chartDef.group"
-          :group-data="summary"/>
 
-        <div class="vizr-chart col-md-8">
+      <div class="row">
+        <div class="vizr-chart col-md-12">
           <a href="#"
-             class="vizr-chart-legend-toggle pull-right"
+             class="vizr-chart-legend-toggle pull-right float-right"
              data-description="toggle-legend"
              @click.prevent="toggleLegend"
           >{{ messages.actions.toggleLegend }}</a>
           <canvas ref="canvas" :id="id"></canvas>
         </div>
       </div>
-      <a href="#"
-         class="pull-right"
-         data-description="delete"
-         v-if="canEdit"
-         @click.prevent="deleteChart"
-      >{{ messages.actions.delete }}</a>
+
+      <ChartSummary
+        class="vizr-chart-summary"
+        :total-count="totalCount"
+        :total-target="totalTarget"
+        :group="chartDef.group"
+        :group-data="summary"/>
+
     </div>
   </div>
 </template>
@@ -74,8 +86,8 @@ const messages = {
   actions : {
     confirmDelete: 'Permanently delete chart',
     delete: 'Delete',
-    edit: ' Edit Chart',
-    reload: 'Reload Chart ',
+    edit: 'Edit',
+    reload: 'Reload',
     toggleLegend: 'Hide/Show Legend'
   },
   warnings: {
@@ -216,6 +228,13 @@ export default {
      */
     chartFilterChanged() {
       this._makeChart();
+    },
+
+    /**
+     * Reset the warnings.
+     */
+    resetWarnings() {
+      this.warnings = [];
     }
   },
 

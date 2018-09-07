@@ -79,7 +79,7 @@ describe('ChartSummary.vue', () => {
     });
 
     it('has a copy link for each table', () => {
-      const buttons = wrapper.findAll('button.copy-link');
+      const buttons = wrapper.findAll('.copy-link');
       expect(buttons.length).toEqual(2);
     });
 
@@ -87,7 +87,7 @@ describe('ChartSummary.vue', () => {
       spyOn(wrapper.vm, 'copyTable');
 
       const table = wrapper.findAll('table').at(1);
-      const button = table.find('button');
+      const button = table.find('a');
       button.trigger('click');
 
       expect(wrapper.vm.copyTable).toHaveBeenCalledWith(wrapper.vm.$refs.groupedTable);

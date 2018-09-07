@@ -26,7 +26,7 @@
 
       <div class="spacious" v-if="canEdit">
         <button type="button"
-                class="btn btn-lg btn-warning"
+                class="btn btn-warning"
                 data-toggle="collapse"
                 data-target=".add-chart-form"
                 aria-expanded="false"

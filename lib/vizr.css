@@ -13,6 +13,21 @@
 .vizr-form-panel .panel-heading strong {
 	color:#fff;
 }
+
+.vizr-form-panel .card-header {
+	background-color:rgb(51, 122, 183);
+}
+
+.vizr-form-panel.card {
+	border-color:rgb(51, 122, 183);
+}
+
+.vizr-form-panel .remove-form {
+  color:#ffff99;
+  font-size: 140%;
+  text-decoration: none;
+}
+
 .vizr-form-panel legend {
 	font-size:120%;
 	font-weight:bold;
@@ -27,17 +42,33 @@
 	font-weight:normal;
 }
 .vizr-chart-container {
+	max-width: 960px;
 	padding-bottom: 15px;
 }
 .vizr-chart-container a {
-	color:#c30;
+	color: rgb(0, 123, 255);
 	font-size:11px;
 	font-weight:600;
 	margin-left:8px;
 	text-transform:capitalize;
 }
+.vizr-chart-container a.delete {
+	color: #c30;
+}
+.vizr-event-select {
+	padding-left: 15px;
+}
+.vizr-event-select select {
+	width: auto;
+}
+
+.vizr-chart-summary table {
+	table-layout:fixed;
+	width:100%;
+}
 .vizr-chart-summary caption {
 	padding-bottom:0px !important;
+  	caption-side: top;
 }
 .vizr-chart-summary .btn-sm {
 	font-size:14px;
@@ -112,6 +143,17 @@
 
 .error {
 	color: #a94442;
+}
+.alert-warning {
+	/* override redcap's override */
+	border-color: #ffeeba !important;	
+}
+.alert-info {
+	/* override redcap's override */
+	border-color: #bee5eb !important;
+}
+.alert ul {
+	margin-bottom: 0px;
 }
 
 .vizr-version {

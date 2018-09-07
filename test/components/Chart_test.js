@@ -49,7 +49,7 @@ describe('Chart.vue', () => {
       });
 
       it('shows no errors', () => {
-        expect(wrapper.find('.error').isEmpty()).toBe(true);
+        expect(wrapper.contains('.warning')).toBe(false);
       });
 
       it('does not show live event filter', () => {
@@ -112,7 +112,7 @@ describe('Chart.vue', () => {
       });
 
       it('displays the warnings', () => {
-        const errorElement = wrapper.find('.error');
+        const errorElement = wrapper.find('.warning');
         expect(errorElement.isEmpty()).toBe(false);
         expect(errorElement.text()).toMatch(response.warnings[0].message);
       });
@@ -149,7 +149,7 @@ describe('Chart.vue', () => {
       });
 
       it('shows no errors', () => {
-        expect(wrapper.find('.error').isEmpty()).toBe(true);
+        expect(wrapper.contains('.warning')).toBe(false);
       });
 
       it('does not show live event filter', () => {
@@ -212,7 +212,7 @@ describe('Chart.vue', () => {
       });
 
       it('displays the warnings', () => {
-        const errorElement = wrapper.find('.error');
+        const errorElement = wrapper.find('.warning');
         expect(errorElement.isEmpty()).toBe(false);
         expect(errorElement.text()).toMatch(response.warnings[0].message);
       });
