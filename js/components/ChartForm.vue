@@ -141,10 +141,8 @@
           </div>
         </fieldset>
 
-        <div class="form-group has-error save-warning" v-if="hasErrors">
-          <div class="help-block error-help">
-            {{ messages.validation.cannotSave }}
-          </div>
+        <div class="alert alert-danger" role="alert" v-if="hasErrors">
+          {{ messages.validation.cannotSave }}
         </div>
 
         <button
