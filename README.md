@@ -1,11 +1,24 @@
 # Vizr Plugin
 
+***_NOTE_: This plugin has been superseded by the Vizr External Module.***
+
+The Vizr External Module supports more recent releases of REDCap (> 8.7.0) and has additional
+features not found in the plugin.
+
+To download the External Module, search for Vizr in the REDCap Repo or see the GitHub releases:
+
+* REDCap Repo: https://redcap.vanderbilt.edu/consortium/modules/
+* GitHub Releases: https://github.com/OCTRI/REDCap-Vizr/releases
+
+## About Vizr
+
 Vizr was created by the Oregon Clinical & Translational Research Institute's (OCTRI)
 Clinical Research Informatics (CRI) Application team at Oregon Health & Science University
 (OHSU) with the aim to visualize data contained within a REDCap project.
 
 This plugin provides a way for project designers to create charts summarizing their data
 in a time series fashion to provide additional insights about their project.
+
 
 # Vizr Installation
 
