@@ -4,12 +4,12 @@ import ChartSummary from '@/components/ChartSummary';
 import { notAnsweredLabel } from '@/util';
 
 const totalCount = 60;
-const totalTarget= 90;
+const totalTarget = 90;
 
 const groupData = {
-  Bend: { count: 10 , target: 20 },
-  Eugene: { count: 20 , target: 30 },
-  Portland: { count: 30 , target: 40 }
+  Bend: { count: 10, target: 20 },
+  Eugene: { count: 20, target: 30 },
+  Portland: { count: 30, target: 40 }
 };
 
 const expected = {
@@ -55,17 +55,32 @@ describe('ChartSummary.vue', () => {
 
     it('displays the total results', () => {
       const totals = tables.at(0);
-      expect(totals.findAll('td').at(0).text()).toEqual(totalCount.toString());
+      expect(
+        totals
+          .findAll('td')
+          .at(0)
+          .text()
+      ).toEqual(totalCount.toString());
     });
 
     it('displays the total target', () => {
       const totals = tables.at(0);
-      expect(totals.findAll('td').at(1).text()).toEqual(totalTarget.toString());
+      expect(
+        totals
+          .findAll('td')
+          .at(1)
+          .text()
+      ).toEqual(totalTarget.toString());
     });
 
     it('displays the total percent of the target reached', () => {
       const totals = tables.at(0);
-      expect(totals.findAll('td').at(2).text()).toEqual('66.67%');
+      expect(
+        totals
+          .findAll('td')
+          .at(2)
+          .text()
+      ).toEqual('66.67%');
     });
 
     it('displays a second table with a summary row for each group', () => {
@@ -75,7 +90,12 @@ describe('ChartSummary.vue', () => {
 
     it('has a header for the grouping field', () => {
       const groups = tables.at(1);
-      expect(groups.findAll('th').at(0).text()).toEqual('Study Clinic');
+      expect(
+        groups
+          .findAll('th')
+          .at(0)
+          .text()
+      ).toEqual('Study Clinic');
     });
 
     it('has a copy link for each table', () => {
@@ -138,9 +158,9 @@ describe('ChartSummary.vue', () => {
 
     it('should display empty target data if values were not provided', () => {
       const noTargetData = {
-        Bend: {count: 10 , target: null },
-        Eugene: {count: 20 , target: null },
-        Portland: {count: 30 , target: null }
+        Bend: { count: 10, target: null },
+        Eugene: { count: 20, target: null },
+        Portland: { count: 30, target: null }
       };
 
       const rows = wrapper.vm.statistics(noTargetData);
@@ -169,10 +189,10 @@ describe('ChartSummary.vue', () => {
 
     it('should provide a Not Answered row if group field was optional', () => {
       const optionalGroupData = {
-        '': {count: 60, target: 0},
-        Bend: {count: 10 , target: 20 },
-        Eugene: {count: 20 , target: 30 },
-        Portland: {count: 30 , target: 40 }
+        '': { count: 60, target: 0 },
+        Bend: { count: 10, target: 20 },
+        Eugene: { count: 20, target: 30 },
+        Portland: { count: 30, target: 40 }
       };
 
       const rows = wrapper.vm.statistics(optionalGroupData);
@@ -208,11 +228,11 @@ describe('ChartSummary.vue', () => {
 
     it('should round calculated targets to 2 decimals', () => {
       const calculatedTargetData = {
-        Bend: {count: 10, target: 100 / 3}
+        Bend: { count: 10, target: 100 / 3 }
       };
 
-      const [ row ] = wrapper.vm.statistics(calculatedTargetData);
+      const [row] = wrapper.vm.statistics(calculatedTargetData);
       expect(row.target).toEqual('33.33');
     });
-  })
+  });
 });

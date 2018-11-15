@@ -10,7 +10,8 @@ export const ENDPOINTS = {
 };
 
 const warnings = {
-  blankDateFields: ((count) => `Ignored ${count} ${count > 1 ? 'records' : 'record'} with blank date field.`),
+  blankDateFields: count =>
+    `Ignored ${count} ${count > 1 ? 'records' : 'record'} with blank date field.`,
   multipleEvents: 'The filter returned multiple events per record.',
   noData: 'The filter returned 0 records.',
   repeatingInstruments: 'Charts may not work as expected with repeating instruments.'
@@ -50,7 +51,7 @@ export default function createDataService(assetUrls) {
   assert(assetUrls, 'Asset URL object is required');
   Object.keys(ENDPOINTS).forEach(key => {
     const endpoint = ENDPOINTS[key];
-    assert(assetUrls[endpoint], `A URL for ${endpoint} is required`)
+    assert(assetUrls[endpoint], `A URL for ${endpoint} is required`);
   });
 
   return {
@@ -153,7 +154,9 @@ export default function createDataService(assetUrls) {
       if (item_count === 1 && noErrors) {
         return data;
       } else {
-        const error = new Error(`Expected to change 1 record, but ${item_count} records changed.`);
+        const error = new Error(
+          `Expected to change 1 record, but ${item_count} records changed.`
+        );
         error.redcapErrors = errors || [];
         throw error;
       }
@@ -168,7 +171,7 @@ export default function createDataService(assetUrls) {
      * @see getChartConfig
      */
     getProjectConfig() {
-      return Promise.all([ this.getMetadata(), this.getChartConfig() ]);
+      return Promise.all([this.getMetadata(), this.getChartConfig()]);
     },
 
     /**
@@ -179,8 +182,7 @@ export default function createDataService(assetUrls) {
      *   recordIdField, dataDictionary, and events.
      */
     getMetadata() {
-      return axios(this.metadataUrl)
-        .then(this._extractData);
+      return axios(this.metadataUrl).then(this._extractData);
     },
 
     /**
@@ -216,7 +218,8 @@ export default function createDataService(assetUrls) {
      *   - warnings: An array of warning message objects (@see makeWarning)
      */
     getChartData(dateField, requestBody) {
-      return axios.post(this.dataUrl, qs.stringify(requestBody))
+      return axios
+        .post(this.dataUrl, qs.stringify(requestBody))
         .then(this._extractData)
         .then(responseData => this._validateChartData(dateField, responseData))
         .then(validatedData => this._filterBlankDates(dateField, validatedData));
@@ -232,7 +235,8 @@ export default function createDataService(assetUrls) {
      *   the error's `redcapErrors` property.
      */
     saveChartConfig(charts) {
-      return axios.post(this.persistenceUrl, { charts })
+      return axios
+        .post(this.persistenceUrl, { charts })
         .then(this._extractData)
         .then(this._checkSaveResponse);
     }

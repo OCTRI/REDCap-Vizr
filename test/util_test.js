@@ -12,9 +12,9 @@ import exampleDictionary from './example-data-dictionary';
 
 describe('title', () => {
   it('should convert an underscore string to title case', () => {
-    expect(title('study_clinic')).toBe("Study Clinic");
-    expect(title('studyClinic')).toBe("StudyClinic");
-    expect(title('study clinic')).toBe("Study Clinic");
+    expect(title('study_clinic')).toBe('Study Clinic');
+    expect(title('studyClinic')).toBe('StudyClinic');
+    expect(title('study clinic')).toBe('Study Clinic');
   });
 });
 
@@ -71,6 +71,10 @@ describe('defaultTargetsObject', () => {
 describe('targetsObjectWithGroups', () => {
   it('adds a target for each string in the input array', () => {
     const groups = ['Bend', 'Portland', 'Eugene'];
-    expect(targetsObjectWithGroups(groups)).toEqual({ Bend: null, Portland: null, Eugene: null });
+    expect(targetsObjectWithGroups(groups)).toEqual({
+      Bend: null,
+      Portland: null,
+      Eugene: null
+    });
   });
 });

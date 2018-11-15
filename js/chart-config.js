@@ -33,21 +33,20 @@ function color(i) {
  * @return {Object} configuration.
  */
 export function labelOpts(labelCount) {
-
   const settings = [
     { from: 0, to: 10, use: { boxWidth: 40, fontSize: 12, padding: 10 } },
     { from: 11, to: 20, use: { boxWidth: 15, fontSize: 10, padding: 10 } },
     { defaultValue: true, use: { boxWidth: 10, fontSize: 10, padding: 5 } }
-  ]
+  ];
 
-   return settings.find(r => {
-     return r.defaultValue || (labelCount >= r.from && labelCount <= r.to);
-   }).use;
+  return settings.find(r => {
+    return r.defaultValue || (labelCount >= r.from && labelCount <= r.to);
+  }).use;
 }
 
 function newChart(canvas, chartdata, chartDef) {
   let { title, hide_legend } = chartDef;
-  let lblOpts = chartdata.datasets ? labelOpts(chartdata.datasets.length) : {}
+  let lblOpts = chartdata.datasets ? labelOpts(chartdata.datasets.length) : {};
 
   let chart = new Chart(canvas, {
     type: 'bar',
@@ -61,7 +60,7 @@ function newChart(canvas, chartdata, chartDef) {
       tooltips: {
         callbacks: {
           // http://www.chartjs.org/docs/latest/configuration/tooltip.html#tooltip-callbacks
-          label: function (tooltipItem, data) {
+          label: function(tooltipItem, data) {
             const group = data.datasets[tooltipItem.datasetIndex].label;
             const value = tooltipItem.yLabel;
             const n = Number.isInteger(value) ? value : value.toFixed(2);
@@ -78,16 +77,20 @@ function newChart(canvas, chartdata, chartDef) {
         }
       },
       scales: {
-        xAxes: [{
-          stacked: true
-        }],
-        yAxes: [{
-          stacked: true
-        }]
+        xAxes: [
+          {
+            stacked: true
+          }
+        ],
+        yAxes: [
+          {
+            stacked: true
+          }
+        ]
       },
       title: {
-          display: true,
-          text: title
+        display: true,
+        text: title
       }
     }
   });
@@ -114,7 +117,9 @@ export function makeStackedChart(canvas, groupedData, chartDef, trendPoints) {
   groups.forEach((g, i) => {
     let data = groupedData[g];
     let x = Object.keys(data);
-    let y = x.map(k => { return data[k]; });
+    let y = x.map(k => {
+      return data[k];
+    });
     let c = color(i);
 
     if (labels === null) {
@@ -132,18 +137,20 @@ export function makeStackedChart(canvas, groupedData, chartDef, trendPoints) {
   if (trendPoints && trendPoints.length > 0) {
     datasets.push({
       type: 'line',
-      label: "Target",
-      backgroundColor: "rgba(200, 200, 200, 0.75)",
+      label: 'Target',
+      backgroundColor: 'rgba(200, 200, 200, 0.75)',
       fill: false,
       pointRadius: 0,
       pointHitRadius: 15,
-      data: trendPoints.map(pt => { return pt.y; })
+      data: trendPoints.map(pt => {
+        return pt.y;
+      })
     });
   }
 
   const chartdata = {
     labels: labels,
-    datasets : datasets
+    datasets: datasets
   };
 
   return newChart(canvas, chartdata, chartDef);
@@ -158,15 +165,16 @@ export function makeStackedChart(canvas, groupedData, chartDef, trendPoints) {
  *   chart title.
  */
 export function makeChart(canvas, data, chartDef) {
-
   let x = Object.keys(data);
-  let y = x.map(k => { return data[k]; });
+  let y = x.map(k => {
+    return data[k];
+  });
   let c = color(0);
 
   // TODO: make this data configurable
   var chartdata = {
     labels: x,
-    datasets : [
+    datasets: [
       {
         label: chartDef.title,
         backgroundColor: c,

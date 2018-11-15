@@ -16,7 +16,7 @@ describe('Chart.vue', () => {
       const response = JSON.parse(exampleResponses.data.nonlongitudinal.responseText);
       let wrapper;
 
-      beforeEach((done) => {
+      beforeEach(done => {
         wrapper = shallowMount(Chart, {
           propsData: {
             canEdit: true,
@@ -45,7 +45,9 @@ describe('Chart.vue', () => {
         const titleSelector = '[data-description=title]';
         const descriptionSelector = '[data-description=description]';
         expect(wrapper.find(titleSelector).text()).toMatch(exampleChart.title);
-        expect(wrapper.find(descriptionSelector).text()).toMatch(exampleChart.description);
+        expect(wrapper.find(descriptionSelector).text()).toMatch(
+          exampleChart.description
+        );
       });
 
       it('shows no errors', () => {
@@ -89,10 +91,10 @@ describe('Chart.vue', () => {
 
     describe('when the response contains warnings', () => {
       const response = JSON.parse(exampleResponses.data.noData.responseText);
-      response.warnings = [{ key: 'noData', message: 'The filter returned 0 records.' }]
+      response.warnings = [{ key: 'noData', message: 'The filter returned 0 records.' }];
       let wrapper;
 
-      beforeEach((done) => {
+      beforeEach(done => {
         wrapper = shallowMount(Chart, {
           propsData: {
             canEdit: true,
@@ -124,7 +126,7 @@ describe('Chart.vue', () => {
       const response = JSON.parse(exampleResponses.data.longitudinal.responseText);
       let wrapper;
 
-      beforeEach((done) => {
+      beforeEach(done => {
         wrapper = shallowMount(Chart, {
           propsData: {
             canEdit: true,
@@ -145,7 +147,9 @@ describe('Chart.vue', () => {
 
       it('shows a title', () => {
         const titleSelector = '[data-description=title]';
-        expect(wrapper.find(titleSelector).text()).toMatch(exampleLongitudinalChart.title);
+        expect(wrapper.find(titleSelector).text()).toMatch(
+          exampleLongitudinalChart.title
+        );
       });
 
       it('shows no errors', () => {
@@ -188,11 +192,18 @@ describe('Chart.vue', () => {
     });
 
     describe('when the response contains warnings', () => {
-      const response = JSON.parse(exampleResponses.data.longitudinalRepeating.responseText);
-      response.warnings = [{ key: 'repeatingInstruments', message: 'Charts may not work as expected with repeating instruments.' }];
+      const response = JSON.parse(
+        exampleResponses.data.longitudinalRepeating.responseText
+      );
+      response.warnings = [
+        {
+          key: 'repeatingInstruments',
+          message: 'Charts may not work as expected with repeating instruments.'
+        }
+      ];
       let wrapper;
 
-      beforeEach((done) => {
+      beforeEach(done => {
         wrapper = shallowMount(Chart, {
           propsData: {
             canEdit: true,
@@ -219,10 +230,12 @@ describe('Chart.vue', () => {
     });
 
     describe('when data for multiple events is received', () => {
-      const response = JSON.parse(exampleResponses.data.longitudinalMultipleEvents.responseText);
+      const response = JSON.parse(
+        exampleResponses.data.longitudinalMultipleEvents.responseText
+      );
       let wrapper;
 
-      beforeEach((done) => {
+      beforeEach(done => {
         wrapper = shallowMount(Chart, {
           propsData: {
             canEdit: true,
@@ -260,7 +273,10 @@ describe('Chart.vue', () => {
         expect(wrapper.vm.summary).not.toEqual(allEventSummary);
 
         // Select all events again - data should revert
-        wrapper.findAll('option').at(0).setSelected();
+        wrapper
+          .findAll('option')
+          .at(0)
+          .setSelected();
         expect(wrapper.vm.filteredData).toEqual(allEventData);
         expect(wrapper.vm.grouped).toEqual(allEventGrouped);
         expect(wrapper.vm.summary).toEqual(allEventSummary);
@@ -272,7 +288,7 @@ describe('Chart.vue', () => {
     const response = JSON.parse(exampleResponses.data.longitudinal.responseText);
     let wrapper, dataService;
 
-    beforeEach((done) => {
+    beforeEach(done => {
       dataService = {
         getChartData() {
           return Promise.resolve(response);
@@ -293,7 +309,7 @@ describe('Chart.vue', () => {
       wrapper.vm.dataPromise.then(() => done());
     });
 
-    it('refreshes chart data', (done) => {
+    it('refreshes chart data', done => {
       spyOn(dataService, 'getChartData').and.callThrough();
       wrapper.find('[data-description=reload]').trigger('click');
       wrapper.vm.dataPromise.then(() => {
@@ -307,7 +323,7 @@ describe('Chart.vue', () => {
     const response = JSON.parse(exampleResponses.data.longitudinal.responseText);
     let wrapper, dataService;
 
-    beforeEach((done) => {
+    beforeEach(done => {
       dataService = {
         getChartData() {
           return Promise.resolve(response);
@@ -328,7 +344,7 @@ describe('Chart.vue', () => {
       wrapper.vm.dataPromise.then(() => done());
     });
 
-    it('refreshes chart data when chartDef is replaced', (done) => {
+    it('refreshes chart data when chartDef is replaced', done => {
       const newChart = exampleLongitudinalChartDef('different');
 
       spyOn(dataService, 'getChartData').and.callThrough();
@@ -346,7 +362,7 @@ describe('Chart.vue', () => {
     let deleteSelector = '[data-description=delete]';
     let wrapper;
 
-    beforeEach((done) => {
+    beforeEach(done => {
       wrapper = shallowMount(Chart, {
         propsData: {
           canEdit: true,
@@ -382,7 +398,7 @@ describe('Chart.vue', () => {
       spyOn(window, 'confirm').and.returnValue(true);
       wrapper.find(deleteSelector).trigger('click');
       expect(wrapper.emitted('delete-chart')).toBeTruthy();
-      expect(wrapper.emitted('delete-chart')[0]).toEqual([ exampleLongitudinalChart ]);
+      expect(wrapper.emitted('delete-chart')[0]).toEqual([exampleLongitudinalChart]);
     });
   });
 
@@ -391,7 +407,7 @@ describe('Chart.vue', () => {
     const legendToggleSelector = '[data-description=toggle-legend]';
     let wrapper, chartDef;
 
-    beforeEach((done) => {
+    beforeEach(done => {
       chartDef = exampleLongitudinalChartDef();
       wrapper = shallowMount(Chart, {
         propsData: {
@@ -410,7 +426,7 @@ describe('Chart.vue', () => {
 
       wrapper.vm.dataPromise.then(() => {
         spyOn(wrapper.vm.chart, 'update').and.returnValue(undefined);
-        done()
+        done();
       });
     });
 
@@ -437,7 +453,7 @@ describe('Chart.vue', () => {
     it('emits an event with the chart definition when user can edit', () => {
       wrapper.find(legendToggleSelector).trigger('click');
       expect(wrapper.emitted('toggle-legend')).toBeTruthy();
-      expect(wrapper.emitted('toggle-legend')[0]).toEqual([ chartDef ]);
+      expect(wrapper.emitted('toggle-legend')[0]).toEqual([chartDef]);
     });
   });
 });

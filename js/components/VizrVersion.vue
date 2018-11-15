@@ -1,7 +1,5 @@
 <template>
-  <div class="vizr-version">
-    REDCap Vizr {{ versionString }}
-  </div>
+  <div class="vizr-version">REDCap Vizr {{ versionString }}</div>
 </template>
 
 <script>
@@ -15,5 +13,5 @@ export default {
       versionString: VERSION_STRING
     };
   }
-}
+};
 </script>
