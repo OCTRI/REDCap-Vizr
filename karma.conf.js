@@ -1,6 +1,5 @@
 // Karma configuration
 // Generated on Mon Mar 27 2017 14:40:22 GMT-0700 (PDT)
-/* eslint-env node */
 
 const webpackConfig = require('./webpack.config.js');
 
