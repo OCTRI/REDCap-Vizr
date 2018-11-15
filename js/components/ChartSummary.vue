@@ -3,8 +3,15 @@
     <div class="col-md-6">
       <table ref="totalsTable" class="table table-striped table-bordered">
         <caption>
-          {{ messages.totalsCaption }}
-          <a href="#" class="copy-link pull-right float-right" role="button" @click.prevent="copyTable($refs.totalsTable)">
+          {{
+            messages.totalsCaption
+          }}
+          <a
+            href="#"
+            class="copy-link pull-right float-right"
+            role="button"
+            @click.prevent="copyTable($refs.totalsTable);"
+          >
             {{ messages.copyTable }}
             <i class="far fa-copy" :title="messages.copyTable"></i>
           </a>
@@ -26,11 +33,18 @@
       </table>
     </div>
 
-    <div class="col-md-6">    
+    <div class="col-md-6">
       <table ref="groupedTable" class="table table-striped table-bordered" v-if="group">
         <caption>
-          {{ messages.groupedCaption }}
-          <a href="#" class="copy-link pull-right float-right" role="button" @click.prevent="copyTable($refs.groupedTable)">
+          {{
+            messages.groupedCaption
+          }}
+          <a
+            href="#"
+            class="copy-link pull-right float-right"
+            role="button"
+            @click.prevent="copyTable($refs.groupedTable);"
+          >
             {{ messages.copyTable }}
             <i class="far fa-copy" :title="messages.copyTable"></i>
           </a>
@@ -68,7 +82,7 @@ const messages = {
   percentOfTotal: 'Percent of Total',
   resultsCount: 'Results Count',
   target: 'Target',
-  totalsCaption: 'Total Number of Results',
+  totalsCaption: 'Total Number of Results'
 };
 
 /**
@@ -99,7 +113,7 @@ export default {
      */
     pct(num, total) {
       if (isNaN(parseFloat(num)) || isNaN(parseFloat(total)) || total === 0) {
-        return "";
+        return '';
       }
 
       const value = (num / total) * 100;
@@ -114,7 +128,7 @@ export default {
      */
     targetString(target) {
       if (!target) {
-        return "";
+        return '';
       }
 
       return Number.isInteger(target) ? target.toString() : target.toFixed(2);
@@ -143,7 +157,7 @@ export default {
         const { count, target } = data;
         // Group target must exist and be non-zero to display
         const targetDisplay = this.targetString(target); // optional form field
-        const countStr = (count !== undefined && count !== null) ? count.toString() : "";
+        const countStr = count !== undefined && count !== null ? count.toString() : '';
 
         return {
           label: groupLabel,
@@ -180,5 +194,5 @@ export default {
       return groupData ? this.statistics(groupData) : [];
     }
   }
-}
+};
 </script>

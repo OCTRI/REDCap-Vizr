@@ -3,8 +3,8 @@
     <div id="vizr-container" v-if="!loading">
       <h1>{{ messages.heading }}</h1>
 
-      <ExampleChart v-show="noCharts"/>
-      <Instructions :can-edit="canEdit" :has-charts="hasCharts"/>
+      <ExampleChart v-show="noCharts" />
+      <Instructions :can-edit="canEdit" :has-charts="hasCharts" />
 
       <div class="error" v-if="hasError">
         {{ errorMessage }}
@@ -14,24 +14,27 @@
       </div>
 
       <div class="vizr-charts">
-        <Chart v-for="chart in charts"
-               :key="chart.id"
-               :can-edit="canEdit"
-               :metadata="metadata"
-               :chart-def="chart"
-               @delete-chart="deleteChart"
-               @toggle-legend="saveChart"
-               @save-chart="saveChart"/>
+        <Chart
+          v-for="chart in charts"
+          :key="chart.id"
+          :can-edit="canEdit"
+          :metadata="metadata"
+          :chart-def="chart"
+          @delete-chart="deleteChart"
+          @toggle-legend="saveChart"
+          @save-chart="saveChart"
+        />
       </div>
 
       <div class="spacious" v-if="canEdit">
-        <button type="button"
-                class="btn btn-warning"
-                data-toggle="collapse"
-                data-target=".add-chart-form"
-                aria-expanded="false"
-                aria-controls="add-chart-form"
-                :disabled="hasConfigError"
+        <button
+          type="button"
+          class="btn btn-warning"
+          data-toggle="collapse"
+          data-target=".add-chart-form"
+          aria-expanded="false"
+          aria-controls="add-chart-form"
+          :disabled="hasConfigError"
         >
           {{ messages.actions.create }}
         </button>
@@ -42,9 +45,10 @@
         :metadata="metadata"
         :chart-def="newChart"
         v-if="canEdit"
-        @save-chart="saveChart"/>
+        @save-chart="saveChart"
+      />
 
-      <VizrVersion/>
+      <VizrVersion />
     </div>
   </transition>
 </template>
@@ -59,8 +63,8 @@ import ChartForm from './ChartForm';
 import { newChartDefinition } from '@/util';
 
 const messages = {
-  actions : {
-    create: 'Build a Chart',
+  actions: {
+    create: 'Build a Chart'
   },
   heading: 'Vizr Charts',
   warnings: {
@@ -113,7 +117,8 @@ export default {
      */
     fetchConfig() {
       const { dataService } = this;
-      return dataService.getProjectConfig()
+      return dataService
+        .getProjectConfig()
         .then(this.captureConfig)
         .catch(this.handleConfigError)
         .finally(() => {
@@ -128,7 +133,7 @@ export default {
      * @see data-service.js
      */
     captureConfig(responseArray) {
-      const [ metadata, chartConfig ] = responseArray;
+      const [metadata, chartConfig] = responseArray;
       this.metadata = metadata;
       this.config = chartConfig;
     },
@@ -140,7 +145,7 @@ export default {
     handleConfigError(reason) {
       this.config = { error: reason };
       this.errorMessage = messages.warnings.configError;
-      this.errorDetails = [ reason.message ];
+      this.errorDetails = [reason.message];
     },
 
     /**
@@ -164,7 +169,7 @@ export default {
     handleSaveError(reason) {
       const { message, redcapErrors } = reason;
       this.errorMessage = messages.warnings.saveError;
-      this.errorDetails = [ message, ...redcapErrors ];
+      this.errorDetails = [message, ...redcapErrors];
     },
 
     /**
@@ -198,7 +203,8 @@ export default {
      */
     saveChartConfig(newCharts) {
       const { dataService } = this;
-      dataService.saveChartConfig(newCharts)
+      dataService
+        .saveChartConfig(newCharts)
         .then(() => this.replaceCharts(newCharts))
         .catch(this.handleSaveError);
     },
@@ -263,5 +269,5 @@ export default {
       return `form-${newChart.id}`;
     }
   }
-}
+};
 </script>

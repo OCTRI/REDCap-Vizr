@@ -1,5 +1,9 @@
 import { exampleMetadata, exampleLongitudinalMetadata } from './example-metadata';
-import { exampleChartDef, exampleNoGroupChartDef, exampleLongitudinalChartDef } from './example-chart-def';
+import {
+  exampleChartDef,
+  exampleNoGroupChartDef,
+  exampleLongitudinalChartDef
+} from './example-chart-def';
 
 export const exampleResponses = {
   metadata: {
@@ -45,22 +49,26 @@ export const exampleResponses = {
     nonlongitudinal: {
       status: 200,
       contentType: 'application/json',
-      responseText: '{"filterEvents": null, "data": [{"record_id":0, "screen_date": "2016-11-01", "study_clinic": "Portland"}]}'
+      responseText:
+        '{"filterEvents": null, "data": [{"record_id":0, "screen_date": "2016-11-01", "study_clinic": "Portland"}]}'
     },
     longitudinal: {
       status: 200,
       contentType: 'application/json',
-      responseText: '{"filterEvents": ["visit_1"], "data": [{"record_id":0, "screen_date": "2016-11-01", "study_clinic": "Portland", "redcap_event_name": "visit_1"}]}'
+      responseText:
+        '{"filterEvents": ["visit_1"], "data": [{"record_id":0, "screen_date": "2016-11-01", "study_clinic": "Portland", "redcap_event_name": "visit_1"}]}'
     },
     longitudinalBlankDates: {
       status: 200,
       contentType: 'application/json',
-      responseText: '{"filterEvents": ["visit_1"], "data": [{"record_id":0, "screen_date": "2016-11-01", "study_clinic": "Portland", "redcap_event_name": "visit_1"}, {"record_id":1, "screen_date": "", "study_clinic": "Portland", "redcap_event_name": "visit_1"}]}'
+      responseText:
+        '{"filterEvents": ["visit_1"], "data": [{"record_id":0, "screen_date": "2016-11-01", "study_clinic": "Portland", "redcap_event_name": "visit_1"}, {"record_id":1, "screen_date": "", "study_clinic": "Portland", "redcap_event_name": "visit_1"}]}'
     },
     longitudinalMultipleEvents: {
       status: 200,
       contentType: 'application/json',
-      responseText: '{"filterEvents": ["visit_1", "visit_2"], "data": [{"record_id":0, "screen_date": "2016-11-01", "study_clinic": "Portland", "redcap_event_name": "visit_1"}, {"record_id":0, "screen_date": "2016-11-01", "study_clinic": "Portland", "redcap_event_name": "visit_2"}]}'
+      responseText:
+        '{"filterEvents": ["visit_1", "visit_2"], "data": [{"record_id":0, "screen_date": "2016-11-01", "study_clinic": "Portland", "redcap_event_name": "visit_1"}, {"record_id":0, "screen_date": "2016-11-01", "study_clinic": "Portland", "redcap_event_name": "visit_2"}]}'
     },
     noData: {
       status: 200,
@@ -70,12 +78,14 @@ export const exampleResponses = {
     nonlongitudinalRepeating: {
       status: 200,
       contentType: 'application/json',
-      responseText: '{"filterEvents": null, "data": [{"record_id":0, "screen_date": "2016-11-01", "study_clinic": "Portland", "redcap_repeat_instrument": "Enrollment and Status", "redcap_repeat_instance": 1}]}'
+      responseText:
+        '{"filterEvents": null, "data": [{"record_id":0, "screen_date": "2016-11-01", "study_clinic": "Portland", "redcap_repeat_instrument": "Enrollment and Status", "redcap_repeat_instance": 1}]}'
     },
     longitudinalRepeating: {
       status: 200,
       contentType: 'application/json',
-      responseText: '{"filterEvents": ["visit_1"], "data": [{"record_id":0, "screen_date": "2016-11-01", "study_clinic": "Portland", "redcap_event_name": "visit_1", "redcap_repeat_instrument": "Enrollment and Status", "redcap_repeat_instance": 1}]}'
+      responseText:
+        '{"filterEvents": ["visit_1"], "data": [{"record_id":0, "screen_date": "2016-11-01", "study_clinic": "Portland", "redcap_event_name": "visit_1", "redcap_repeat_instrument": "Enrollment and Status", "redcap_repeat_instance": 1}]}'
     }
   },
   persistence: {

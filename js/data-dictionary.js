@@ -1,4 +1,3 @@
-
 /**
  * Finds a field definition by name.
  *
@@ -24,8 +23,11 @@ export function isDateField(field) {
   const datePrefix = 'date_';
   const datetimePrefix = 'datetime_';
   const fieldValidation = field[validationProperty];
-  return Boolean(fieldValidation && (fieldValidation.startsWith(datePrefix) ||
-    fieldValidation.startsWith(datetimePrefix)));
+  return Boolean(
+    fieldValidation &&
+      (fieldValidation.startsWith(datePrefix) ||
+        fieldValidation.startsWith(datetimePrefix))
+  );
 }
 
 /**
@@ -104,7 +106,8 @@ export function getCategoricalFields(dataDictionary = [], forms = null) {
  * @return {Object[]} an array of label/value pairs
  */
 function parseChoices(str = '') {
-  return str.split('|')
+  return str
+    .split('|')
     .map(str => str.trim().split(', '))
     .map(pair => ({ label: pair[1], value: pair[0] }));
 }

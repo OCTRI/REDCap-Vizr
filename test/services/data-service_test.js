@@ -16,8 +16,9 @@ describe('data service', () => {
   it('createDataService requires every endpoint to have a URL', () => {
     const missingUrls = Object.assign({}, mockUrls);
     missingUrls[ENDPOINTS.PERSISTENCE] = null;
-    expect(() => createDataService(missingUrls))
-      .toThrowError(/A URL for lib\/persist.php is required/);
+    expect(() => createDataService(missingUrls)).toThrowError(
+      /A URL for lib\/persist.php is required/
+    );
   });
 
   describe('requests', () => {
@@ -36,11 +37,12 @@ describe('data service', () => {
       const expectedUrl = mockUrls[ENDPOINTS.METADATA];
 
       beforeEach(() => {
-        jasmine.Ajax.stubRequest(expectedUrl)
-          .andReturn(exampleResponses.metadata.longitudinal);
+        jasmine.Ajax.stubRequest(expectedUrl).andReturn(
+          exampleResponses.metadata.longitudinal
+        );
       });
 
-      it('resolves with the metadata object', (done) => {
+      it('resolves with the metadata object', done => {
         service.getMetadata().then(metadata => {
           const request = jasmine.Ajax.requests.mostRecent();
           expect(request.url).toEqual(expectedUrl);
@@ -59,11 +61,12 @@ describe('data service', () => {
       const expectedUrl = mockUrls[ENDPOINTS.CONFIG];
 
       beforeEach(() => {
-        jasmine.Ajax.stubRequest(expectedUrl)
-          .andReturn(exampleResponses.config.longitudinal);
+        jasmine.Ajax.stubRequest(expectedUrl).andReturn(
+          exampleResponses.config.longitudinal
+        );
       });
 
-      it('resolves with the chart config', (done) => {
+      it('resolves with the chart config', done => {
         service.getChartConfig().then(chartConfig => {
           const request = jasmine.Ajax.requests.mostRecent();
           expect(request.url).toEqual(expectedUrl);
@@ -83,15 +86,17 @@ describe('data service', () => {
       const configUrl = mockUrls[ENDPOINTS.CONFIG];
 
       beforeEach(() => {
-        jasmine.Ajax.stubRequest(metadataUrl)
-          .andReturn(exampleResponses.metadata.longitudinal);
-        jasmine.Ajax.stubRequest(configUrl)
-          .andReturn(exampleResponses.config.longitudinal);
+        jasmine.Ajax.stubRequest(metadataUrl).andReturn(
+          exampleResponses.metadata.longitudinal
+        );
+        jasmine.Ajax.stubRequest(configUrl).andReturn(
+          exampleResponses.config.longitudinal
+        );
       });
 
-      it('gets both metadata and chart config', (done) => {
+      it('gets both metadata and chart config', done => {
         service.getProjectConfig().then(projectConfig => {
-          const [ metadata, chartConfig ] = projectConfig;
+          const [metadata, chartConfig] = projectConfig;
 
           // first entry in the response is metadata
           expect(metadata).toBeDefined();
@@ -112,11 +117,12 @@ describe('data service', () => {
 
       describe('expected data', () => {
         beforeEach(() => {
-          jasmine.Ajax.stubRequest(expectedUrl)
-            .andReturn(exampleResponses.data.longitudinal);
+          jasmine.Ajax.stubRequest(expectedUrl).andReturn(
+            exampleResponses.data.longitudinal
+          );
         });
 
-        it('constructs the expected request', (done) => {
+        it('constructs the expected request', done => {
           service.getChartData('screen_date', { a: 'b' }).then(chartData => {
             const request = jasmine.Ajax.requests.mostRecent();
             expect(request.url).toEqual(expectedUrl);
@@ -129,7 +135,7 @@ describe('data service', () => {
           });
         });
 
-        it('extracts data from the response', (done) => {
+        it('extracts data from the response', done => {
           service.getChartData('screen_date', { a: 'b' }).then(chartData => {
             // it extracts data from the response
             expect(chartData.filterEvents).toBeDefined();
@@ -139,7 +145,7 @@ describe('data service', () => {
           });
         });
 
-        it('has no warnings', (done) => {
+        it('has no warnings', done => {
           service.getChartData('screen_date', { a: 'b' }).then(chartData => {
             expect(chartData.warnings).toBeDefined();
             expect(chartData.warnings.length).toEqual(0);
@@ -151,11 +157,10 @@ describe('data service', () => {
 
       describe('empty data', () => {
         beforeEach(() => {
-          jasmine.Ajax.stubRequest(expectedUrl)
-            .andReturn(exampleResponses.data.noData);
+          jasmine.Ajax.stubRequest(expectedUrl).andReturn(exampleResponses.data.noData);
         });
 
-        it('warns about the empty response', (done) => {
+        it('warns about the empty response', done => {
           service.getChartData('screen_date', { a: 'b' }).then(chartData => {
             expect(chartData.warnings).toBeDefined();
             expect(chartData.warnings.length).toEqual(1);
@@ -168,11 +173,12 @@ describe('data service', () => {
 
       describe('longitudinal data for multiple events', () => {
         beforeEach(() => {
-          jasmine.Ajax.stubRequest(expectedUrl)
-            .andReturn(exampleResponses.data.longitudinalMultipleEvents);
+          jasmine.Ajax.stubRequest(expectedUrl).andReturn(
+            exampleResponses.data.longitudinalMultipleEvents
+          );
         });
 
-        it('warns about multiple events', (done) => {
+        it('warns about multiple events', done => {
           service.getChartData('screen_date', { a: 'b' }).then(chartData => {
             expect(chartData.warnings).toBeDefined();
             expect(chartData.warnings.length).toEqual(1);
@@ -185,11 +191,12 @@ describe('data service', () => {
 
       describe('repeating instrument data', () => {
         beforeEach(() => {
-          jasmine.Ajax.stubRequest(expectedUrl)
-            .andReturn(exampleResponses.data.longitudinalRepeating);
+          jasmine.Ajax.stubRequest(expectedUrl).andReturn(
+            exampleResponses.data.longitudinalRepeating
+          );
         });
 
-        it('warns about repeating instruments', (done) => {
+        it('warns about repeating instruments', done => {
           service.getChartData('screen_date', { a: 'b' }).then(chartData => {
             expect(chartData.warnings).toBeDefined();
             expect(chartData.warnings.length).toEqual(1);
@@ -202,11 +209,12 @@ describe('data service', () => {
 
       describe('blank date fields', () => {
         beforeEach(() => {
-          jasmine.Ajax.stubRequest(expectedUrl)
-            .andReturn(exampleResponses.data.longitudinalBlankDates);
+          jasmine.Ajax.stubRequest(expectedUrl).andReturn(
+            exampleResponses.data.longitudinalBlankDates
+          );
         });
 
-        it('filters out records with blank dates', (done) => {
+        it('filters out records with blank dates', done => {
           service.getChartData('screen_date', { a: 'b' }).then(chartData => {
             expect(chartData.data.length).toEqual(1);
             expect(chartData.data[0].screen_date).toBeTruthy();
@@ -215,11 +223,13 @@ describe('data service', () => {
           });
         });
 
-        it('warns about records with missing dates', (done) => {
+        it('warns about records with missing dates', done => {
           service.getChartData('screen_date', { a: 'b' }).then(chartData => {
             expect(chartData.warnings).toBeDefined();
             expect(chartData.warnings.length).toEqual(1);
-            expect(chartData.warnings[0].message).toMatch('Ignored 1 record with blank date field');
+            expect(chartData.warnings[0].message).toMatch(
+              'Ignored 1 record with blank date field'
+            );
 
             done();
           });
@@ -229,15 +239,16 @@ describe('data service', () => {
 
     describe('saveChartConfig', () => {
       const expectedUrl = mockUrls[ENDPOINTS.PERSISTENCE];
-      const chartConfig = [ exampleChartDef() ];
+      const chartConfig = [exampleChartDef()];
 
       describe('successful request', () => {
         beforeEach(() => {
-          jasmine.Ajax.stubRequest(expectedUrl)
-            .andReturn(exampleResponses.persistence.successful);
-        })
+          jasmine.Ajax.stubRequest(expectedUrl).andReturn(
+            exampleResponses.persistence.successful
+          );
+        });
 
-        it('constructs the expected request', (done) => {
+        it('constructs the expected request', done => {
           service.saveChartConfig(chartConfig).then(saveResponse => {
             const request = jasmine.Ajax.requests.mostRecent();
             expect(request.method).toEqual('POST');
@@ -254,13 +265,16 @@ describe('data service', () => {
       });
 
       describe('error responses', () => {
-        it('throws an error if an unexpected number of records change', (done) => {
-          jasmine.Ajax.stubRequest(expectedUrl)
-            .andReturn(exampleResponses.persistence.unexpected);
+        it('throws an error if an unexpected number of records change', done => {
+          jasmine.Ajax.stubRequest(expectedUrl).andReturn(
+            exampleResponses.persistence.unexpected
+          );
 
           service.saveChartConfig(chartConfig).catch(reason => {
             // it throws an error with the expected reason
-            expect(reason.message).toEqual('Expected to change 1 record, but 2 records changed.');
+            expect(reason.message).toEqual(
+              'Expected to change 1 record, but 2 records changed.'
+            );
 
             // it includes the REDCap errors in the error object
             expect(reason.redcapErrors).toBeDefined();
@@ -272,18 +286,23 @@ describe('data service', () => {
           });
         });
 
-        it('throws an error if the REDCap response has errors', (done) => {
-          const failureBody = JSON.parse(exampleResponses.persistence.failure.responseText);
-          jasmine.Ajax.stubRequest(expectedUrl)
-            .andReturn(exampleResponses.persistence.failure);
+        it('throws an error if the REDCap response has errors', done => {
+          const failureBody = JSON.parse(
+            exampleResponses.persistence.failure.responseText
+          );
+          jasmine.Ajax.stubRequest(expectedUrl).andReturn(
+            exampleResponses.persistence.failure
+          );
 
           service.saveChartConfig(chartConfig).catch(reason => {
             // it throws an error with the expected reason
-            expect(reason.message).toEqual('Expected to change 1 record, but 0 records changed.');
+            expect(reason.message).toEqual(
+              'Expected to change 1 record, but 0 records changed.'
+            );
 
             // it includes the REDCap errors in the error object
             expect(reason.redcapErrors).toBeDefined();
-            expect(reason.redcapErrors).toEqual(failureBody.errors)
+            expect(reason.redcapErrors).toEqual(failureBody.errors);
 
             done();
           });

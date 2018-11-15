@@ -1,23 +1,32 @@
 <template>
   <div :id="chartId" class="vizr-chart-container">
     <div class="vizr-chart-header">
-      <h3 data-description="title">{{ chartDef.title }}
-      </h3>
-      <p v-if="hasDescription" data-description="description"><em>{{ chartDef.description }}</em></p>
+      <h3 data-description="title">{{ chartDef.title }}</h3>
+      <p v-if="hasDescription" data-description="description">
+        <em>{{ chartDef.description }}</em>
+      </p>
       <p class="chart-controls">
-        <a href="#" data-description="reload" role="button" @click.prevent="reloadChart">{{ messages.actions.reload }}
+        <a href="#" data-description="reload" role="button" @click.prevent="reloadChart">
+          {{ messages.actions.reload }}
           <i class="fas fa-sync-alt" :title="messages.actions.reload"></i>
         </a>
-        <a :href="formIdSelector" role="button" data-toggle="collapse" data-description="edit" v-if="canEdit">{{ messages.actions.edit }}
-          <i class="far fa-edit"></i>
+        <a
+          :href="formIdSelector"
+          role="button"
+          data-toggle="collapse"
+          data-description="edit"
+          v-if="canEdit"
+        >
+          {{ messages.actions.edit }} <i class="far fa-edit"></i>
         </a>
-        <a href="#"
+        <a
+          href="#"
           class="delete"
           data-description="delete"
           v-if="canEdit"
           @click.prevent="deleteChart"
-        >{{ messages.actions.delete }}
-          <i class="far fa-trash-alt"></i>
+        >
+          {{ messages.actions.delete }} <i class="far fa-trash-alt"></i>
         </a>
       </p>
       <div v-if="hasWarnings" class="alert alert-warning warning">
@@ -35,28 +44,44 @@
         :metadata="metadata"
         :chart-def="chartDef"
         v-if="canEdit"
-        @save-chart="saveChart"/>
+        @save-chart="saveChart"
+      />
     </div>
 
     <div class="row">
       <span class="vizr-event-select col-xs-3">
-        <select class="form-control form-control-sm" name="filter-event" v-if="hasMultipleEvents" v-model="selectedEvent" @change="chartFilterChanged" required>
+        <select
+          class="form-control form-control-sm"
+          name="filter-event"
+          v-if="hasMultipleEvents"
+          v-model="selectedEvent"
+          @change="chartFilterChanged"
+          required
+        >
           <option :value="allEventsSentinel">All Events</option>
-          <option v-for="filterEvent in filterEvents" :key="filterEvent" :value="filterEvent">{{ filterEvent }}</option>
+          <option
+            v-for="filterEvent in filterEvents"
+            :key="filterEvent"
+            :value="filterEvent"
+          >
+            {{ filterEvent }}
+          </option>
         </select>
       </span>
       <span class="col-xs-9"></span>
     </div>
 
     <div class="vizr-chart-data-container">
-
       <div class="row">
         <div class="vizr-chart col-md-12">
-          <a href="#"
-             class="vizr-chart-legend-toggle pull-right float-right"
-             data-description="toggle-legend"
-             @click.prevent="toggleLegend"
-          >{{ messages.actions.toggleLegend }}</a>
+          <a
+            href="#"
+            class="vizr-chart-legend-toggle pull-right float-right"
+            data-description="toggle-legend"
+            @click.prevent="toggleLegend"
+          >
+            {{ messages.actions.toggleLegend }}
+          </a>
           <canvas ref="canvas" :id="id"></canvas>
         </div>
       </div>
@@ -66,8 +91,8 @@
         :total-count="totalCount"
         :total-target="totalTarget"
         :group="chartDef.group"
-        :group-data="summary"/>
-
+        :group-data="summary"
+      />
     </div>
   </div>
 </template>
@@ -83,7 +108,7 @@ import ChartSummary from '@/components/ChartSummary';
 const ALL_EVENTS = 'ALL_EVENTS';
 
 const messages = {
-  actions : {
+  actions: {
     confirmDelete: 'Permanently delete chart',
     delete: 'Delete',
     edit: 'Edit',
@@ -135,7 +160,8 @@ export default {
     fetchData() {
       const { dataService, chartDef } = this;
       const requestOptions = this._makeRequestOptions();
-      return dataService.getChartData(chartDef.field, requestOptions)
+      return dataService
+        .getChartData(chartDef.field, requestOptions)
         .then(this._captureData)
         .then(this._makeChart)
         .catch(this._showFetchError);
@@ -172,7 +198,7 @@ export default {
     _showFetchError() {
       const { responseError } = this;
       this._clearChart();
-      this.warnings = [ responseError ];
+      this.warnings = [responseError];
     },
 
     _makeRequestOptions() {
@@ -291,13 +317,23 @@ export default {
     filteredData() {
       const { allEventsSentinel, selectedEvent, chartData } = this;
       const eventFilter = record => record.redcap_event_name === selectedEvent;
-      return selectedEvent === allEventsSentinel ? chartData : chartData.filter(eventFilter);
+      return selectedEvent === allEventsSentinel
+        ? chartData
+        : chartData.filter(eventFilter);
     },
 
     grouped() {
       const { loaded, filteredData, chartDef, chartEnd, dateInterval } = this;
-      return loaded ? groupedByInterval(filteredData, chartDef.field, chartDef.start, chartEnd,
-        dateInterval, chartDef.group) : {};
+      return loaded
+        ? groupedByInterval(
+            filteredData,
+            chartDef.field,
+            chartDef.start,
+            chartEnd,
+            dateInterval,
+            chartDef.group
+          )
+        : {};
     },
 
     summary() {
@@ -307,12 +343,16 @@ export default {
 
     totalCount() {
       const { summary } = this;
-      return summary ? Object.keys(summary).reduce((total, k) => total + summary[k].count, 0) : 0;
+      return summary
+        ? Object.keys(summary).reduce((total, k) => total + summary[k].count, 0)
+        : 0;
     },
 
     totalTarget() {
       const { summary } = this;
-      return summary ? Object.keys(summary).reduce((total, k) => total + summary[k].target, 0) : 0;
+      return summary
+        ? Object.keys(summary).reduce((total, k) => total + summary[k].target, 0)
+        : 0;
     },
 
     trendPoints() {

@@ -9,13 +9,13 @@ export const isoDateFormat = 'YYYY-MM-DD';
 export { assert };
 
 // The string to indicate a chart with no groups
-export const noGroupsLabel = "No Groups";
+export const noGroupsLabel = 'No Groups';
 // The string to indicate the grouped field was optional and unanswered.
-export const notAnsweredLabel = "Not Answered";
+export const notAnsweredLabel = 'Not Answered';
 
 // Ex. title("study_clinic") => "Study Clinic"
 export function title(str) {
-  return str.replace("_", " ").replace(/\b\w/g, l => l.toUpperCase());
+  return str.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
 }
 
 /**
@@ -48,27 +48,28 @@ export function newChartDefinition() {
  * http://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
  */
 export function copyContents(el) {
-  var body = document.body, range, sel;
+  var body = document.body,
+    range,
+    sel;
   if (document.createRange && window.getSelection) {
     range = document.createRange();
     sel = window.getSelection();
     sel.removeAllRanges();
     try {
-        range.selectNodeContents(el);
-        sel.addRange(range);
+      range.selectNodeContents(el);
+      sel.addRange(range);
     } catch (e) {
-        range.selectNode(el);
-        sel.addRange(range);
+      range.selectNode(el);
+      sel.addRange(range);
     }
   } else if (body.createTextRange) {
     range = body.createTextRange();
     range.moveToElementText(el);
     range.select();
   }
-  document.execCommand("copy");
+  document.execCommand('copy');
   window.getSelection().removeAllRanges();
 }
-
 
 /**
  * Converts from ISO date format to format displayed to users.

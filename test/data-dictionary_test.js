@@ -22,18 +22,22 @@ describe('findField', () => {
 describe('isDateField', () => {
   it('returns true for fields with date validation', () => {
     const validationProperty = 'text_validation_type_or_show_slider_number';
-    expect(isDateField({[validationProperty]: ""})).toBe(false);
-    expect(isDateField({[validationProperty]: "date_mdy"})).toBe(true);
-    expect(isDateField({[validationProperty]: "date_mdy"})).toBe(true);
-    expect(isDateField({[validationProperty]: "date_something"})).toBe(true);
-    expect(isDateField({[validationProperty]: "datetime_dmy"})).toBe(true);
+    expect(isDateField({ [validationProperty]: '' })).toBe(false);
+    expect(isDateField({ [validationProperty]: 'date_mdy' })).toBe(true);
+    expect(isDateField({ [validationProperty]: 'date_mdy' })).toBe(true);
+    expect(isDateField({ [validationProperty]: 'date_something' })).toBe(true);
+    expect(isDateField({ [validationProperty]: 'datetime_dmy' })).toBe(true);
   });
 });
 
 describe('getDateFields', () => {
   it('returns fields with date validation', () => {
-    const dateFields = [exampleDictionary[2], exampleDictionary[4], 
-      exampleDictionary[8], exampleDictionary[9]];
+    const dateFields = [
+      exampleDictionary[2],
+      exampleDictionary[4],
+      exampleDictionary[8],
+      exampleDictionary[9]
+    ];
     expect(getDateFields(exampleDictionary)).toEqual(dateFields);
   });
 });
@@ -41,20 +45,32 @@ describe('getDateFields', () => {
 describe('getDateFieldsInForm', () => {
   it('returns date fields for the form given', () => {
     const dateFields = [exampleDictionary[8]];
-    expect(getDateFields(exampleDictionary, ["survey"])).toEqual(dateFields);
+    expect(getDateFields(exampleDictionary, ['survey'])).toEqual(dateFields);
   });
 });
 
 describe('isCategoricalField', () => {
   it('returns true for the expected types', () => {
-    const testFields = ['radio', 'dropdown', 'truefalse', 'yesno']
-      .map(type => ({field_type: type}));
+    const testFields = ['radio', 'dropdown', 'truefalse', 'yesno'].map(type => ({
+      field_type: type
+    }));
 
     testFields.forEach(field => {
       expect(isCategoricalField(field)).toBe(true);
     });
 
-    const expectedMapResult = [false, true, false, true, false, true, true, true, false, false ];
+    const expectedMapResult = [
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      true,
+      true,
+      false,
+      false
+    ];
     expect(exampleDictionary.map(isCategoricalField)).toEqual(expectedMapResult);
   });
 });
@@ -71,7 +87,7 @@ describe('getCategoricalFieldsInForm', () => {
   it('returns only fields with expected types in the forms given', () => {
     const edd = exampleDictionary;
     const categoricals = [edd[6], edd[7]];
-    expect(getCategoricalFields(edd, ["survey"])).toEqual(categoricals);
+    expect(getCategoricalFields(edd, ['survey'])).toEqual(categoricals);
   });
 });
 
@@ -94,7 +110,7 @@ describe('getChoices', () => {
       { label: 'Choice One', value: '1' },
       { label: 'Choice Two', value: '2' },
       { label: 'Choice Three', value: '3' },
-      { label: 'Etc.', value: '4'}
+      { label: 'Etc.', value: '4' }
     ];
 
     // radio or select type
@@ -104,13 +120,16 @@ describe('getChoices', () => {
 
   it('handles yesno fields', () => {
     const enrolledField = exampleDictionary.find(f => f.field_name === 'enrolled');
-    const yesnoResult = [{label: 'Yes', value: '1'}, {label: 'No', value: '0'}];
+    const yesnoResult = [{ label: 'Yes', value: '1' }, { label: 'No', value: '0' }];
     expect(getChoices(enrolledField)).toEqual(yesnoResult);
   });
 
   it('handles truefalse fields', () => {
     const truefalseField = exampleDictionary.find(f => f.field_name === 'tf');
-    const truefalseResult = [{label: 'True', value: '1'}, {label: 'False', value: '0'}];
+    const truefalseResult = [
+      { label: 'True', value: '1' },
+      { label: 'False', value: '0' }
+    ];
     expect(getChoices(truefalseField)).toEqual(truefalseResult);
   });
 });

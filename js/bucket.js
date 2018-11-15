@@ -34,7 +34,7 @@ export function dateBuckets(jsonData, fieldName, start, end, interval) {
 
     if (dt.isSameOrAfter(startDt) && dt.isSameOrBefore(endDt)) {
       let intervalStart = moment(dt.startOf(interval));
-      let key = intervalStart.format("YYYY-MM-DD");
+      let key = intervalStart.format('YYYY-MM-DD');
       let total = counts[key] || 0;
       counts[key] = total + 1;
     }
@@ -44,13 +44,16 @@ export function dateBuckets(jsonData, fieldName, start, end, interval) {
 
   // For each interval, get the count of items that occur before the end of the interval. There should be
   // a record for every interval between start and end.
-  let results = startDates(start, end, interval).reduce(({ prevKey, counts }, key) => {
-    let previousTotal = counts[prevKey] || 0;
-    let intervalCount = countsByInterval[key] || 0;
-    counts[key] = previousTotal + intervalCount; // Counts are cumulative.
+  let results = startDates(start, end, interval).reduce(
+    ({ prevKey, counts }, key) => {
+      let previousTotal = counts[prevKey] || 0;
+      let intervalCount = countsByInterval[key] || 0;
+      counts[key] = previousTotal + intervalCount; // Counts are cumulative.
 
-    return { prevKey: key, counts: counts};
-  }, { prevKey: null, counts: {}});
+      return { prevKey: key, counts: counts };
+    },
+    { prevKey: null, counts: {} }
+  );
 
   return results.counts;
 }
@@ -71,7 +74,7 @@ function startDates(start, end, interval) {
   let results = [];
 
   while (currentStart.isBefore(endDate)) {
-    results.push(currentStart.format("YYYY-MM-DD"));
+    results.push(currentStart.format('YYYY-MM-DD'));
     currentStart.add(1, interval);
   }
   return results;
@@ -88,7 +91,9 @@ function startDates(start, end, interval) {
  */
 export function trendPoints(start, end, interval, target) {
   const trend = trendFn(start, end, interval, target);
-  return startDates(start, end, interval).map(dt => { return trend(dt);});
+  return startDates(start, end, interval).map(dt => {
+    return trend(dt);
+  });
 }
 
 /**
@@ -110,7 +115,7 @@ function trendFn(start, end, interval, overallTarget) {
   return function(date) {
     const dt = moment(date).startOf(interval);
     const currentPeriod = dt.diff(startDate, interval);
-    return { 'x': dt.format("YYYY-MM-DD"), 'y': currentPeriod * slope};
+    return { x: dt.format('YYYY-MM-DD'), y: currentPeriod * slope };
   };
 }
 
@@ -156,7 +161,9 @@ function groupBy(list, key) {
  * @return {Object} obj with key for each group.
  */
 export function groupedByInterval(jsonData, fieldName, start, end, interval, groupField) {
-  const grouped = groupField ? groupBy(jsonData, groupField) : { [noGroupsLabel] : jsonData};
+  const grouped = groupField
+    ? groupBy(jsonData, groupField)
+    : { [noGroupsLabel]: jsonData };
 
   // If start is not provided, set it to the earliest date.
   if (!start && jsonData.length > 0) {
@@ -199,16 +206,16 @@ export function summarizeGroups(data, targets) {
   let groups = Object.keys(data);
 
   let summaries = groups.reduce((groupCounts, g) => {
-    groupCounts[g] = { 'count': totalCount(data[g]), 'target': targets[g] || 0};
+    groupCounts[g] = { count: totalCount(data[g]), target: targets[g] || 0 };
     return groupCounts;
   }, {});
 
   // Add targets without data
   targetNames.forEach(function(name) {
     if (!summaries.hasOwnProperty(name)) {
-      summaries[name] = { 'count' : 0, 'target': targets[name]};
+      summaries[name] = { count: 0, target: targets[name] };
     }
-  })
+  });
 
   return summaries;
 }

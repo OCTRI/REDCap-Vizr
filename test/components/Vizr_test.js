@@ -11,10 +11,7 @@ import Chart from '@/components/Chart';
 import VizrVersion from '@/components/VizrVersion';
 
 const exampleChartConfig = {
-  charts: [
-    exampleChartDef(uuid()),
-    exampleChartDef(uuid())
-  ]
+  charts: [exampleChartDef(uuid()), exampleChartDef(uuid())]
 };
 
 function createProvideObject() {
@@ -22,7 +19,7 @@ function createProvideObject() {
     assetUrls: {},
     dataService: {
       getProjectConfig() {
-        return Promise.resolve([ exampleMetadata, exampleChartConfig ]);
+        return Promise.resolve([exampleMetadata, exampleChartConfig]);
       },
       saveChartConfig() {
         return Promise.resolve({ item_count: 1 });
@@ -34,7 +31,7 @@ function createProvideObject() {
 describe('Vizr.vue', () => {
   let mockProvide, wrapper;
 
-  beforeEach((done) => {
+  beforeEach(done => {
     mockProvide = createProvideObject();
     spyOn(mockProvide.dataService, 'getProjectConfig').and.callThrough();
     spyOn(mockProvide.dataService, 'saveChartConfig').and.callThrough();
@@ -88,7 +85,7 @@ describe('Vizr.vue', () => {
   });
 
   describe('when fetching config fails', () => {
-    it('shows an error message', (done) => {
+    it('shows an error message', done => {
       const provideObject = createProvideObject();
       provideObject.dataService.getProjectConfig = () => {
         return Promise.reject(new Error('Timeout'));
@@ -115,7 +112,7 @@ describe('Vizr.vue', () => {
     });
 
     describe('when the chart is new', () => {
-      it('persists the new configuration', (done) => {
+      it('persists the new configuration', done => {
         const newChart = exampleChartDef(uuid());
         const expectedCharts = [...exampleChartConfig.charts, newChart];
 
@@ -124,7 +121,9 @@ describe('Vizr.vue', () => {
         // schedule on the task queue to allow promises to resolve
         setTimeout(() => {
           // new chart is added to the array
-          expect(mockProvide.dataService.saveChartConfig).toHaveBeenCalledWith(expectedCharts);
+          expect(mockProvide.dataService.saveChartConfig).toHaveBeenCalledWith(
+            expectedCharts
+          );
           expect(wrapper.vm.charts).toEqual(expectedCharts);
           done();
         });
@@ -132,7 +131,7 @@ describe('Vizr.vue', () => {
     });
 
     describe('when the chart is updated', () => {
-      it('persists the new configuration', (done) => {
+      it('persists the new configuration', done => {
         // second chart config will be replaced
         const updatedChart = Object.assign({}, exampleChartConfig[1]);
         updatedChart.title = 'Different Title';
@@ -143,7 +142,9 @@ describe('Vizr.vue', () => {
         // schedule on the task queue to allow promises to resolve
         setTimeout(() => {
           // updated chart is replaced
-          expect(mockProvide.dataService.saveChartConfig).toHaveBeenCalledWith(expectedCharts);
+          expect(mockProvide.dataService.saveChartConfig).toHaveBeenCalledWith(
+            expectedCharts
+          );
           expect(wrapper.vm.charts).toEqual(expectedCharts);
           done();
         });
@@ -153,7 +154,7 @@ describe('Vizr.vue', () => {
     describe('when saving fails', () => {
       let errorWrapper;
 
-      beforeEach((done) => {
+      beforeEach(done => {
         const provideObject = createProvideObject();
         provideObject.dataService.saveChartConfig = () => {
           const error = new Error('Expected to change 1 record, but 0 records changed.');
@@ -171,7 +172,7 @@ describe('Vizr.vue', () => {
         errorWrapper.vm.configPromise.then(() => done());
       });
 
-      it('displays errors', (done) => {
+      it('displays errors', done => {
         const chartDef = exampleChartConfig.charts[0];
         errorWrapper.vm.saveChart(chartDef);
 
@@ -189,7 +190,7 @@ describe('Vizr.vue', () => {
   });
 
   describe('deleting a chart', () => {
-    it('persists the new configuration', (done) => {
+    it('persists the new configuration', done => {
       mockProvide.dataService.saveChartConfig.calls.reset();
 
       const toDelete = exampleChartConfig.charts[1];
@@ -200,7 +201,9 @@ describe('Vizr.vue', () => {
       // schedule on the task queue to allow promises to resolve
       setTimeout(() => {
         // chart is removed
-        expect(mockProvide.dataService.saveChartConfig).toHaveBeenCalledWith(expectedCharts);
+        expect(mockProvide.dataService.saveChartConfig).toHaveBeenCalledWith(
+          expectedCharts
+        );
         expect(wrapper.vm.charts).toEqual(expectedCharts);
         done();
       });
@@ -218,7 +221,7 @@ describe('Vizr.vue', () => {
         expect(output).not.toEqual(oldCharts);
         expect(oldCharts).toEqual([]);
 
-        expect(output).toEqual([ newChart ]);
+        expect(output).toEqual([newChart]);
       });
 
       it('adds correctly when the array contains charts', () => {
@@ -251,11 +254,7 @@ describe('Vizr.vue', () => {
       });
 
       it('replaces correctly when the chart is in the middle of the array', () => {
-        const oldCharts = [
-          { id: 'start' },
-          { id: 'test', status: 'old' },
-          { id: 'end' }
-        ];
+        const oldCharts = [{ id: 'start' }, { id: 'test', status: 'old' }, { id: 'end' }];
         const newChart = { id: 'test', status: 'new' };
         const output = wrapper.vm._makeNewChartsArray(oldCharts, newChart);
 
@@ -267,10 +266,7 @@ describe('Vizr.vue', () => {
       });
 
       it('replaces correctly when the chart is at the end of the array', () => {
-        const oldCharts = [
-          { id: 'start' },
-          { id: 'test', status: 'old' }
-        ];
+        const oldCharts = [{ id: 'start' }, { id: 'test', status: 'old' }];
         const newChart = { id: 'test', status: 'new' };
         const output = wrapper.vm._makeNewChartsArray(oldCharts, newChart);
 
@@ -297,11 +293,7 @@ describe('Vizr.vue', () => {
       });
 
       it('deletes correctly when the chart is in the middle of the array', () => {
-        const oldCharts = [
-          { id: 'before' },
-          { id: 'test' },
-          { id: 'after' }
-        ];
+        const oldCharts = [{ id: 'before' }, { id: 'test' }, { id: 'after' }];
         const toDelete = oldCharts[1];
         const output = wrapper.vm._makeNewChartsArray(oldCharts, toDelete, true);
 
@@ -314,10 +306,7 @@ describe('Vizr.vue', () => {
       });
 
       it('deletes correctly when the chart is at the end of the array', () => {
-        const oldCharts = [
-          { id: 'before' },
-          { id: 'test' }
-        ];
+        const oldCharts = [{ id: 'before' }, { id: 'test' }];
         const toDelete = oldCharts[1];
         const output = wrapper.vm._makeNewChartsArray(oldCharts, toDelete, true);
 
