@@ -1,4 +1,3 @@
-/* eslint-env node */
 module.exports = {
   root: true,
   parserOptions: {
@@ -25,5 +24,28 @@ module.exports = {
     'eqeqeq': ['error', 'always'],
     'no-console': ['error', { allow: ['warn', 'error'] }],
     'no-unused-vars': ['error', { vars: 'all', args: 'none' }]
-  }
+  },
+  overrides: [
+    // node files
+    {
+      files: [
+        'karma.conf.js',
+        'webpack.config.js'
+      ],
+      env: {
+        browser: false,
+        node: true
+      }
+    },
+
+    // jasmine tests
+    {
+      files: [
+        'test/**/*.js'
+      ],
+      env: {
+        jasmine: true
+      }
+    }
+  ]
 };
