@@ -5,14 +5,15 @@
   "main": "./dist/bundle.js",
   "scripts": {
     "analyze": "webpack --optimize-minimize; webpack --profile --json > bundle-stats.json; webpack-bundle-analyzer bundle-stats.json dist",
-    "clean": "rm -rf dist junit bundle-stats.json",
-    "prebuild": "npm install",
-    "build": "webpack --optimize-minimize",
     "build-dev": "webpack",
-    "test": "karma start karma.conf.js --single-run",
+    "build": "webpack --optimize-minimize",
+    "clean": "rm -rf dist junit bundle-stats.json",
+    "lint:js": "eslint ./*.js js/**/*.{js,vue} test/**/*.js",
+    "prebuild": "npm install",
+    "start": "WATCHING=1 webpack --progress --colors --watch",
     "test-jenkins": "karma start karma.conf.js --single-run --reporters junit --browsers Chrome_Headless",
     "test-single-run": "karma start karma.conf.js --single-run",
-    "start": "WATCHING=1 webpack --progress --colors --watch"
+    "test": "karma start karma.conf.js --single-run"
   },
   "author": "BMIP - OCTRI",
   "license": "MIT",
