@@ -16,8 +16,9 @@
         data-target="#collapseMore"
         aria-expanded="false"
         aria-controls="collapseMore"
-        >{{ messages.moreInfo.title }}</a
       >
+        {{ messages.moreInfo.title }}
+      </a>
       <div id="collapseMore" class="collapse">
         <li class="more-li">
           {{ messages.moreInfo.timeConfigTitle }}

@@ -71,9 +71,9 @@
             <div class="help-block error-help">{{ errors.startError }}</div>
           </div>
           <div class="form-group" :class="{ 'has-error': errors.chartEndError }">
-            <label for="chart_end_date" class="control-label">{{
-              messages.endDateLabel
-            }}</label>
+            <label for="chart_end_date" class="control-label">
+              {{ messages.endDateLabel }}
+            </label>
             <div class="input-group">
               <input
                 ref="endDateInput"
@@ -101,9 +101,9 @@
             :class="{ 'has-error': errors.dateFieldEventError }"
             v-if="hasEvents"
           >
-            <label for="date_field_event" class="control-label">{{
-              messages.dateFieldEventLabel
-            }}</label>
+            <label for="date_field_event" class="control-label">
+              {{ messages.dateFieldEventLabel }}
+            </label>
             <select
               ref="dateFieldEventSelect"
               v-model="model.dateFieldEvent"
@@ -113,7 +113,7 @@
               data-field="dateFieldEvent"
               @change="dateFieldEventChanged"
             >
-              <option value=""> {{ messages.selectEvent }} </option>
+              <option value="">{{ messages.selectEvent }}</option>
               <option
                 v-for="choice in eventChoices"
                 :key="choice.value"
@@ -126,9 +126,9 @@
           </div>
 
           <div class="form-group" :class="{ 'has-error': errors.fieldError }">
-            <label for="record_date" class="control-label">{{
-              messages.dateFieldLabel
-            }}</label>
+            <label for="record_date" class="control-label">
+              {{ messages.dateFieldLabel }}
+            </label>
             <select
               v-model="model.field"
               class="form-control form-control-sm"
@@ -137,7 +137,7 @@
               data-validate="validateDateEvent"
               data-field="field"
             >
-              <option value=""> {{ messages.selectDateField }} </option>
+              <option value="">{{ messages.selectDateField }}</option>
               <option
                 v-for="choice in dateFieldChoices"
                 :key="choice.value"
@@ -149,9 +149,9 @@
             <div class="help-block error-help">{{ errors.fieldError }}</div>
           </div>
           <div class="form-group" :class="{ 'has-error': errors.dateIntervalError }">
-            <label for="date_interval" class="control-label">{{
-              messages.dateIntervalLabel
-            }}</label>
+            <label for="date_interval" class="control-label">
+              {{ messages.dateIntervalLabel }}
+            </label>
             <select
               v-model="model.dateInterval"
               class="form-control form-control-sm"
@@ -159,7 +159,7 @@
               required="required"
               data-field="dateInterval"
             >
-              <option value=""> {{ messages.selectInterval }} </option>
+              <option value="">{{ messages.selectInterval }}</option>
               <option
                 v-for="choice in dateIntervals"
                 :key="choice.value"
@@ -173,15 +173,15 @@
         </fieldset>
         <fieldset>
           <legend>
-            <span class="label label-default">{{
-              messages.dataConfigurationHeading
-            }}</span>
+            <span class="label label-default">
+              {{ messages.dataConfigurationHeading }}
+            </span>
           </legend>
           <div class="form-group">
-            <label for="filter" class="control-label"
-              >{{ messages.filterLogicLabel }}
-              <span class="sub-label">{{ messages.filterLogicSubLabel }}</span></label
-            >
+            <label for="filter" class="control-label">
+              {{ messages.filterLogicLabel }}
+              <span class="sub-label">{{ messages.filterLogicSubLabel }}</span>
+            </label>
             <textarea
               class="form-control form-control-sm"
               rows="3"
@@ -193,9 +193,9 @@
           </div>
 
           <div class="form-group" v-if="hasEvents">
-            <label for="group_field_event" class="control-label">{{
-              messages.groupingFieldEventLabel
-            }}</label>
+            <label for="group_field_event" class="control-label">
+              {{ messages.groupingFieldEventLabel }}
+            </label>
             <select
               class="form-control form-control-sm"
               name="group_field_event"
@@ -204,7 +204,7 @@
               v-model="model.groupFieldEvent"
               @change="groupFieldEventChanged"
             >
-              <option value=""> {{ messages.selectEvent }} </option>
+              <option value="">{{ messages.selectEvent }}</option>
               <option
                 v-for="choice in eventChoices"
                 :key="choice.value"
@@ -216,9 +216,9 @@
           </div>
 
           <div class="form-group" :class="{ 'has-error': errors.groupError }">
-            <label class="control-label" for="group_field">{{
-              messages.groupingFieldLabel
-            }}</label>
+            <label class="control-label" for="group_field">
+              {{ messages.groupingFieldLabel }}
+            </label>
             <select
               v-model="model.group"
               class="form-control form-control-sm"
@@ -227,7 +227,7 @@
               data-field="group"
               @change="groupFieldChanged"
             >
-              <option value=""> {{ messages.noGrouping }} </option>
+              <option value="">{{ messages.noGrouping }}</option>
               <option
                 v-for="choice in groupFieldChoices"
                 :key="choice.value"
@@ -244,9 +244,9 @@
             <span class="label label-default">{{ messages.targetLabel }}</span>
           </legend>
           <div class="form-group targets" v-if="noGroup">
-            <label class="control-label" for="target_count">{{
-              messages.targetCountLabel
-            }}</label>
+            <label class="control-label" for="target_count">
+              {{ messages.targetCountLabel }}
+            </label>
             <input
               type="text"
               class="form-control form-control-sm"
@@ -263,8 +263,9 @@
               role="button"
               :href="groupTargetsIdSelector"
               aria-expanded="true"
-              >{{ messages.actions.hideShow }}</a
             >
+              {{ messages.actions.hideShow }}
+            </a>
             <div class="collapse in" :id="groupTargetsId">
               <div class="well group-targets">
                 <div
@@ -272,9 +273,9 @@
                   v-for="target in groupTargets"
                   :key="target.name"
                 >
-                  <label class="control-label" :for="target.name">{{
-                    target.label
-                  }}</label>
+                  <label class="control-label" :for="target.name">
+                    {{ target.label }}
+                  </label>
                   <input
                     type="text"
                     class="form-control form-control-sm col-sm-10"
@@ -283,16 +284,16 @@
                     v-model.number="model.targets[target.label]"
                   />
                 </div>
-                <span class="target-total"
-                  ><em>{{ messages.targetTotal }} {{ targetTotal }}</em></span
-                >
+                <span class="target-total">
+                  <em>{{ messages.targetTotal }} {{ targetTotal }}</em>
+                </span>
               </div>
             </div>
           </div>
           <div class="form-group" :class="{ 'has-error': errors.endError }">
-            <label class="control-label" for="target_date">{{
-              messages.targetEndDateLabel
-            }}</label>
+            <label class="control-label" for="target_date">
+              {{ messages.targetEndDateLabel }}
+            </label>
             <div class="input-group">
               <input
                 ref="targetEndDateInput"

@@ -3,7 +3,9 @@
     <div class="col-md-6">
       <table ref="totalsTable" class="table table-striped table-bordered">
         <caption>
-          {{ messages.totalsCaption }}
+          {{
+            messages.totalsCaption
+          }}
           <a
             href="#"
             class="copy-link pull-right float-right"
@@ -34,7 +36,9 @@
     <div class="col-md-6">
       <table ref="groupedTable" class="table table-striped table-bordered" v-if="group">
         <caption>
-          {{ messages.groupedCaption }}
+          {{
+            messages.groupedCaption
+          }}
           <a
             href="#"
             class="copy-link pull-right float-right"

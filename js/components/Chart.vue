@@ -16,7 +16,7 @@
           data-toggle="collapse"
           data-description="edit"
           v-if="canEdit"
-          >
+        >
           {{ messages.actions.edit }} <i class="far fa-edit"></i>
         </a>
         <a
@@ -25,7 +25,7 @@
           data-description="delete"
           v-if="canEdit"
           @click.prevent="deleteChart"
-          >
+        >
           {{ messages.actions.delete }} <i class="far fa-trash-alt"></i>
         </a>
       </p>
@@ -63,7 +63,7 @@
             v-for="filterEvent in filterEvents"
             :key="filterEvent"
             :value="filterEvent"
-            >
+          >
             {{ filterEvent }}
           </option>
         </select>
@@ -79,7 +79,7 @@
             class="vizr-chart-legend-toggle pull-right float-right"
             data-description="toggle-legend"
             @click.prevent="toggleLegend"
-            >
+          >
             {{ messages.actions.toggleLegend }}
           </a>
           <canvas ref="canvas" :id="id"></canvas>
