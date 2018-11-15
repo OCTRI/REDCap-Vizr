@@ -1,6 +1,6 @@
 # Vizr Plugin
 
-*** _NOTE_: This plugin has been superseded by the Vizr External Module. ***
+***_NOTE_: This plugin has been superseded by the Vizr External Module.***
 
 The Vizr External Module supports more recent releases of REDCap (> 8.7.0) and has additional
 features not found in the plugin.
