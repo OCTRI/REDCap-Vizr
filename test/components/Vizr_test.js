@@ -10,16 +10,18 @@ import ExampleChart from '@/components/ExampleChart';
 import Chart from '@/components/Chart';
 import VizrVersion from '@/components/VizrVersion';
 
-const exampleChartConfig = {
-  charts: [exampleChartDef(uuid()), exampleChartDef(uuid())]
-};
+function createChartConfig() {
+  return {
+    charts: [exampleChartDef(uuid()), exampleChartDef(uuid())]
+  };
+}
 
-function createProvideObject() {
+function createProvideObject(chartConfig) {
   return {
     assetUrls: {},
     dataService: {
       getProjectConfig() {
-        return Promise.resolve([exampleMetadata, exampleChartConfig]);
+        return Promise.resolve([exampleMetadata, chartConfig]);
       },
       saveChartConfig() {
         return Promise.resolve({ item_count: 1 });
@@ -29,10 +31,11 @@ function createProvideObject() {
 }
 
 describe('Vizr.vue', () => {
-  let mockProvide, wrapper;
+  let mockProvide, exampleChartConfig, wrapper;
 
   beforeEach(done => {
-    mockProvide = createProvideObject();
+    exampleChartConfig = createChartConfig();
+    mockProvide = createProvideObject(exampleChartConfig);
     spyOn(mockProvide.dataService, 'getProjectConfig').and.callThrough();
     spyOn(mockProvide.dataService, 'saveChartConfig').and.callThrough();
 
@@ -133,7 +136,7 @@ describe('Vizr.vue', () => {
     describe('when the chart is updated', () => {
       it('persists the new configuration', done => {
         // second chart config will be replaced
-        const updatedChart = Object.assign({}, exampleChartConfig[1]);
+        const updatedChart = Object.assign({}, exampleChartConfig.charts[1]);
         updatedChart.title = 'Different Title';
         const expectedCharts = [exampleChartConfig.charts[0], updatedChart];
 
@@ -155,7 +158,7 @@ describe('Vizr.vue', () => {
       let errorWrapper;
 
       beforeEach(done => {
-        const provideObject = createProvideObject();
+        const provideObject = createProvideObject(exampleChartConfig);
         provideObject.dataService.saveChartConfig = () => {
           const error = new Error('Expected to change 1 record, but 0 records changed.');
           error.redcapErrors = ['Some error'];
