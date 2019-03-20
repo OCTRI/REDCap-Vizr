@@ -17,9 +17,6 @@
 
 header('Content-Type: application/json');
 
-// Call the REDCap Connect file in the main "redcap" directory; enforces permissions.
-require_once dirname(realpath(__FILE__)) . '/../../../redcap_connect.php';
-
 $metadata_object = new stdClass();
 $record_id_field = REDCap::getRecordIdField();
 $data_dictionary = json_decode(REDCap::getDataDictionary('json'));
@@ -46,9 +43,9 @@ $metadata_object->recordIdField = $record_id_field;
 $metadata_object->dataDictionary = $data_dictionary;
 $metadata_object->events = $event_map;
 if (REDCap::versionCompare ( REDCAP_VERSION , '8.7.1', '<')) {
-	$metadata_object->bootstrapVersion = 3;	
+	$metadata_object->bootstrapVersion = 3;
 } else {
-	$metadata_object->bootstrapVersion = 4;	
+	$metadata_object->bootstrapVersion = 4;
 }
 
 print json_encode($metadata_object);
