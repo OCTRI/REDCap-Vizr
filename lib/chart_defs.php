@@ -6,9 +6,6 @@
  */
 header('Content-Type: application/json');
 
-// Call the REDCap Connect file in the main "redcap" directory; enforces permissions.
-require_once dirname(realpath(__FILE__)) . '/../../../redcap_connect.php';
-
 $defs_object = new stdClass();
 
 // NOTE: pid must be appended to the query url for this to be treated as a project-level request

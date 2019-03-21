@@ -6,8 +6,6 @@
  * rights for the current project.
  */
 
-// Call the REDCap Connect file in the main "redcap" directory
-require_once dirname(realpath(__FILE__)) . '/../../../redcap_connect.php';
 require_once dirname(realpath(__FILE__)) . '/permissions.php';
 
 // Allows project settings to be saved when users don't have explicit module permission.
