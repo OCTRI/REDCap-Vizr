@@ -1,5 +1,6 @@
 import uuid from 'uuid/v4';
 import { shallowMount } from '@vue/test-utils';
+import Vue from 'vue';
 
 import { exampleMetadata } from '../example-metadata';
 import { exampleChartDef } from '../example-chart-def';
@@ -66,10 +67,11 @@ describe('Vizr.vue', () => {
     expect(wrapper.findAll(Chart).length).toEqual(exampleChartConfig.charts.length);
   });
 
-  it('shows the example chart if no charts are defined yet', () => {
+  it('shows the example chart if no charts are defined yet', async () => {
     expect(wrapper.find(ExampleChart).isVisible()).toBe(false);
 
     wrapper.setData({ config: { charts: [] } });
+    await Vue.nextTick();
     expect(wrapper.find(ExampleChart).isVisible()).toBe(true);
   });
 
@@ -81,8 +83,9 @@ describe('Vizr.vue', () => {
   });
 
   describe('when user cannot edit', () => {
-    it('the button to create a chart is not shown', () => {
+    it('the button to create a chart is not shown', async () => {
       wrapper.setProps({ canEdit: false });
+      await Vue.nextTick();
       expect(wrapper.find('button').exists()).toBe(false);
     });
   });
