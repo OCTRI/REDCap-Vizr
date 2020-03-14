@@ -22,9 +22,9 @@
     "url": "https://octriinternal.ohsu.edu/stash/scm/reddev/vizr.git"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.0",
-    "@babel/plugin-transform-runtime": "^7.4.0",
-    "@babel/preset-env": "^7.4.0",
+    "@babel/core": "^7.8.7",
+    "@babel/plugin-transform-runtime": "^7.8.3",
+    "@babel/preset-env": "^7.8.7",
     "@vue/test-utils": "^1.0.0-beta.25",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.6",
@@ -57,8 +57,8 @@
     "webpack-cli": "^3.3.11"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.0.0",
-    "@babel/runtime": "^7.1.5",
+    "@babel/polyfill": "^7.8.7",
+    "@babel/runtime": "^7.8.7",
     "axios": "^0.19.0",
     "lodash": "^4.17.15",
     "qs": "^6.5.2",
