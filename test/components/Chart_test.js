@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import { shallowMount } from '@vue/test-utils';
 
 import Chart from '@/components/Chart';
@@ -381,10 +382,11 @@ describe('Chart.vue', () => {
       wrapper.vm.dataPromise.then(() => done());
     });
 
-    it('is not shown if the user cannot edit', () => {
+    it('is not shown if the user cannot edit', async () => {
       expect(wrapper.find(deleteSelector).exists()).toBe(true);
 
       wrapper.setProps({ canEdit: false });
+      await Vue.nextTick();
       expect(wrapper.find(deleteSelector).exists()).toBe(false);
     });
 
