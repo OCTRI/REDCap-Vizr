@@ -11,6 +11,7 @@
     "lint:js": "eslint --ext .js --ext .vue ./*.js js test",
     "prebuild": "npm install",
     "start": "WATCHING=1 webpack --mode=development --progress --colors --watch",
+    "test-ci": "karma start karma.conf.js --single-run --browsers Chrome_Headless",
     "test-jenkins": "karma start karma.conf.js --single-run --reporters junit --browsers Chrome_Headless",
     "test-single-run": "karma start karma.conf.js --single-run",
     "test": "karma start karma.conf.js --single-run"
