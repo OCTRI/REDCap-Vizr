@@ -63,7 +63,7 @@
               />
               <span
                 class="input-group-addon input-group-append"
-                @click="showDatePicker($refs.startDateInput);"
+                @click="showDatePicker($refs.startDateInput)"
               >
                 <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
               </span>
@@ -88,7 +88,7 @@
               />
               <span
                 class="input-group-addon input-group-append"
-                @click="showDatePicker($refs.endDateInput);"
+                @click="showDatePicker($refs.endDateInput)"
               >
                 <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
               </span>
@@ -308,7 +308,7 @@
               />
               <span
                 class="input-group-addon input-group-append"
-                @click="showDatePicker($refs.targetEndDateInput);"
+                @click="showDatePicker($refs.targetEndDateInput)"
               >
                 <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
               </span>
@@ -567,9 +567,7 @@ export default {
           }
         };
 
-        $($el)
-          .find('input.vizr-date')
-          .datepicker(pickerConfig);
+        $($el).find('input.vizr-date').datepicker(pickerConfig);
       }
     },
 
@@ -579,9 +577,7 @@ export default {
     destroyDatePickers() {
       const { $el, hasDatePickers } = this;
       if (hasDatePickers) {
-        $($el)
-          .find('input.vizr-date')
-          .datepicker('destroy');
+        $($el).find('input.vizr-date').datepicker('destroy');
       }
     },
 
@@ -658,7 +654,7 @@ export default {
     /**
      * Validates the form on input and change events. Closely-spaced events are coalesced.
      */
-    validateChanges: debounce(function(evt) {
+    validateChanges: debounce(function (evt) {
       const { target } = evt;
       this.validateInput(target);
     }, 300),

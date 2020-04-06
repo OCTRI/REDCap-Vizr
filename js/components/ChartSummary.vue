@@ -10,7 +10,7 @@
             href="#"
             class="copy-link pull-right float-right"
             role="button"
-            @click.prevent="copyTable($refs.totalsTable);"
+            @click.prevent="copyTable($refs.totalsTable)"
           >
             {{ messages.copyTable }}
             <i class="far fa-copy" :title="messages.copyTable"></i>
@@ -43,7 +43,7 @@
             href="#"
             class="copy-link pull-right float-right"
             role="button"
-            @click.prevent="copyTable($refs.groupedTable);"
+            @click.prevent="copyTable($refs.groupedTable)"
           >
             {{ messages.copyTable }}
             <i class="far fa-copy" :title="messages.copyTable"></i>

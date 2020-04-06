@@ -43,12 +43,9 @@ describe('ChartForm.vue', () => {
     it('creates the expected date field options', () => {
       const dateFieldOptions = wrapper.findAll(`${selector.dateFieldSelect} > option`);
       expect(dateFieldOptions.length).toEqual(5); // 4 options plus prompt
-      expect(
-        dateFieldOptions
-          .at(1)
-          .text()
-          .trim()
-      ).toEqual('enroll_date (Enrollment date)'); // sorted by label
+      expect(dateFieldOptions.at(1).text().trim()).toEqual(
+        'enroll_date (Enrollment date)'
+      ); // sorted by label
     });
 
     it('creates the expected date interval options', () => {
@@ -56,30 +53,10 @@ describe('ChartForm.vue', () => {
         `${selector.dateIntervalSelect} > option`
       );
       expect(dateIntervalOptions.length).toEqual(5); // 4 options plus prompt
-      expect(
-        dateIntervalOptions
-          .at(1)
-          .text()
-          .trim()
-      ).toEqual('Days');
-      expect(
-        dateIntervalOptions
-          .at(2)
-          .text()
-          .trim()
-      ).toEqual('Weeks');
-      expect(
-        dateIntervalOptions
-          .at(3)
-          .text()
-          .trim()
-      ).toEqual('Months');
-      expect(
-        dateIntervalOptions
-          .at(4)
-          .text()
-          .trim()
-      ).toEqual('Years');
+      expect(dateIntervalOptions.at(1).text().trim()).toEqual('Days');
+      expect(dateIntervalOptions.at(2).text().trim()).toEqual('Weeks');
+      expect(dateIntervalOptions.at(3).text().trim()).toEqual('Months');
+      expect(dateIntervalOptions.at(4).text().trim()).toEqual('Years');
     });
 
     it('creates the expected grouping field options', () => {
@@ -87,12 +64,7 @@ describe('ChartForm.vue', () => {
         `${selector.groupingFieldSelect} > option`
       );
       expect(groupFieldOptions.length).toEqual(6); // 5 options plus prompt
-      expect(
-        groupFieldOptions
-          .at(1)
-          .text()
-          .trim()
-      ).toEqual('dropdown (Dropdown field)'); // sorted by label
+      expect(groupFieldOptions.at(1).text().trim()).toEqual('dropdown (Dropdown field)'); // sorted by label
     });
 
     it('initializes form inputs from the chart definition', done => {
@@ -221,10 +193,7 @@ describe('ChartForm.vue', () => {
       });
 
       // change the group
-      form
-        .findAll(`${selector.groupingFieldSelect} > option`)
-        .at(0)
-        .setSelected();
+      form.findAll(`${selector.groupingFieldSelect} > option`).at(0).setSelected();
 
       expect(form.vm.model.group).toEqual('');
       expect(form.vm.model.targets).toEqual(defaultTargetsObject());
@@ -239,10 +208,7 @@ describe('ChartForm.vue', () => {
       });
 
       // change the group and target
-      form
-        .findAll(`${selector.groupingFieldSelect} > option`)
-        .at(0)
-        .setSelected();
+      form.findAll(`${selector.groupingFieldSelect} > option`).at(0).setSelected();
       await Vue.nextTick();
       form.find('input[name=target_count]').setValue('60');
       await Vue.nextTick();
@@ -431,12 +397,7 @@ describe('ChartForm.vue', () => {
     it('creates the expected date field options for the selected event', () => {
       const dateFieldOptions = wrapper.findAll(`${selector.dateFieldSelect} > option`);
       expect(dateFieldOptions.length).toEqual(2); // 1 options plus prompt
-      expect(
-        dateFieldOptions
-          .at(1)
-          .text()
-          .trim()
-      ).toEqual('survey_date (Survey date)'); // sorted by label
+      expect(dateFieldOptions.at(1).text().trim()).toEqual('survey_date (Survey date)'); // sorted by label
     });
 
     it('changes date field options when event is changed and removes selection', done => {
@@ -449,12 +410,9 @@ describe('ChartForm.vue', () => {
         expect(wrapper.vm.model.field).toEqual('');
         const dateFieldOptions = wrapper.findAll(`${selector.dateFieldSelect} > option`);
         expect(dateFieldOptions.length).toEqual(4); // 3 options plus prompt
-        expect(
-          dateFieldOptions
-            .at(1)
-            .text()
-            .trim()
-        ).toEqual('enroll_date (Enrollment date)'); // sorted by label
+        expect(dateFieldOptions.at(1).text().trim()).toEqual(
+          'enroll_date (Enrollment date)'
+        ); // sorted by label
         done();
       });
     });
@@ -464,12 +422,7 @@ describe('ChartForm.vue', () => {
         `${selector.groupingFieldSelect} > option`
       );
       expect(groupFieldOptions.length).toEqual(4); // 3 options plus prompt
-      expect(
-        groupFieldOptions
-          .at(2)
-          .text()
-          .trim()
-      ).toEqual('screened (Screened)'); // sorted by label
+      expect(groupFieldOptions.at(2).text().trim()).toEqual('screened (Screened)'); // sorted by label
     });
 
     it('changes grouping options when event is changed and removes selection', done => {
@@ -484,12 +437,9 @@ describe('ChartForm.vue', () => {
           `${selector.groupingFieldSelect} > option`
         );
         expect(groupFieldOptions.length).toEqual(3); // 2 options plus prompt
-        expect(
-          groupFieldOptions
-            .at(1)
-            .text()
-            .trim()
-        ).toEqual('dropdown (Dropdown field)'); // sorted by label
+        expect(groupFieldOptions.at(1).text().trim()).toEqual(
+          'dropdown (Dropdown field)'
+        ); // sorted by label
         done();
       });
     });
@@ -516,10 +466,7 @@ describe('ChartForm.vue', () => {
 
       it('disables saving when date field event is missing', async () => {
         // unselect the event
-        form
-          .findAll(`${selector.dateFieldEventSelect} > option`)
-          .at(0)
-          .setSelected();
+        form.findAll(`${selector.dateFieldEventSelect} > option`).at(0).setSelected();
         await Vue.nextTick();
 
         expect(form.findAll(selector.validationError).length).toEqual(1); // date event is invalid
@@ -529,14 +476,8 @@ describe('ChartForm.vue', () => {
 
       it('validates date field event selected if date field selected', async () => {
         // Unselect date field event - select date field
-        form
-          .findAll(`${selector.dateFieldEventSelect} > option`)
-          .at(0)
-          .setSelected();
-        form
-          .findAll(`${selector.dateFieldSelect} > option`)
-          .at(1)
-          .setSelected();
+        form.findAll(`${selector.dateFieldEventSelect} > option`).at(0).setSelected();
+        form.findAll(`${selector.dateFieldSelect} > option`).at(1).setSelected();
         await Vue.nextTick();
 
         expect(form.findAll(selector.validationError).length).toEqual(2); // date event and date field are invalid
@@ -548,14 +489,8 @@ describe('ChartForm.vue', () => {
 
       it('validates group event selected if group selected', async () => {
         // Unselect group event - select group field
-        form
-          .findAll(`${selector.groupFieldEventSelect} > option`)
-          .at(0)
-          .setSelected();
-        form
-          .findAll(`${selector.groupingFieldSelect} > option`)
-          .at(1)
-          .setSelected();
+        form.findAll(`${selector.groupFieldEventSelect} > option`).at(0).setSelected();
+        form.findAll(`${selector.groupingFieldSelect} > option`).at(1).setSelected();
         await Vue.nextTick();
 
         expect(form.findAll(selector.validationError).length).toEqual(1);

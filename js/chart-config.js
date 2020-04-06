@@ -60,7 +60,7 @@ function newChart(canvas, chartdata, chartDef) {
       tooltips: {
         callbacks: {
           // http://www.chartjs.org/docs/latest/configuration/tooltip.html#tooltip-callbacks
-          label: function(tooltipItem, data) {
+          label: function (tooltipItem, data) {
             const group = data.datasets[tooltipItem.datasetIndex].label;
             const value = tooltipItem.yLabel;
             const n = Number.isInteger(value) ? value : value.toFixed(2);

@@ -112,7 +112,7 @@ function trendFn(start, end, interval, overallTarget) {
   const slope = overallTarget / totalIntervals;
 
   // @return {x: String, y: Integer} target point
-  return function(date) {
+  return function (date) {
     const dt = moment(date).startOf(interval);
     const currentPeriod = dt.diff(startDate, interval);
     return { x: dt.format('YYYY-MM-DD'), y: currentPeriod * slope };
@@ -168,7 +168,7 @@ export function groupedByInterval(jsonData, fieldName, start, end, interval, gro
   // If start is not provided, set it to the earliest date.
   if (!start && jsonData.length > 0) {
     // in-place sort
-    jsonData.sort(function(a, b) {
+    jsonData.sort(function (a, b) {
       var dateStrA = a[fieldName];
       var dateStrB = b[fieldName];
       if (dateStrA < dateStrB) {
@@ -211,7 +211,7 @@ export function summarizeGroups(data, targets) {
   }, {});
 
   // Add targets without data
-  targetNames.forEach(function(name) {
+  targetNames.forEach(function (name) {
     if (!summaries.hasOwnProperty(name)) {
       summaries[name] = { count: 0, target: targets[name] };
     }
