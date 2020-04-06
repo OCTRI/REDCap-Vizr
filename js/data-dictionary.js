@@ -127,9 +127,15 @@ export function getChoices(field) {
       case 'dropdown':
         return parseChoices(field.select_choices_or_calculations);
       case 'truefalse':
-        return [{ label: 'True', value: '1' }, { label: 'False', value: '0' }];
+        return [
+          { label: 'True', value: '1' },
+          { label: 'False', value: '0' }
+        ];
       case 'yesno':
-        return [{ label: 'Yes', value: '1' }, { label: 'No', value: '0' }];
+        return [
+          { label: 'Yes', value: '1' },
+          { label: 'No', value: '0' }
+        ];
       default:
         // should never get here
         throw new Error(`Unhandled categorical field type "${field.field_type}"`);

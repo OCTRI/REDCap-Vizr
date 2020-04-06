@@ -274,10 +274,7 @@ describe('Chart.vue', () => {
         expect(wrapper.vm.summary).not.toEqual(allEventSummary);
 
         // Select all events again - data should revert
-        wrapper
-          .findAll('option')
-          .at(0)
-          .setSelected();
+        wrapper.findAll('option').at(0).setSelected();
         expect(wrapper.vm.filteredData).toEqual(allEventData);
         expect(wrapper.vm.grouped).toEqual(allEventGrouped);
         expect(wrapper.vm.summary).toEqual(allEventSummary);

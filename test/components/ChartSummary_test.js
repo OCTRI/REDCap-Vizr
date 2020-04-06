@@ -55,32 +55,17 @@ describe('ChartSummary.vue', () => {
 
     it('displays the total results', () => {
       const totals = tables.at(0);
-      expect(
-        totals
-          .findAll('td')
-          .at(0)
-          .text()
-      ).toEqual(totalCount.toString());
+      expect(totals.findAll('td').at(0).text()).toEqual(totalCount.toString());
     });
 
     it('displays the total target', () => {
       const totals = tables.at(0);
-      expect(
-        totals
-          .findAll('td')
-          .at(1)
-          .text()
-      ).toEqual(totalTarget.toString());
+      expect(totals.findAll('td').at(1).text()).toEqual(totalTarget.toString());
     });
 
     it('displays the total percent of the target reached', () => {
       const totals = tables.at(0);
-      expect(
-        totals
-          .findAll('td')
-          .at(2)
-          .text()
-      ).toEqual('66.67%');
+      expect(totals.findAll('td').at(2).text()).toEqual('66.67%');
     });
 
     it('displays a second table with a summary row for each group', () => {
@@ -90,12 +75,7 @@ describe('ChartSummary.vue', () => {
 
     it('has a header for the grouping field', () => {
       const groups = tables.at(1);
-      expect(
-        groups
-          .findAll('th')
-          .at(0)
-          .text()
-      ).toEqual('Study Clinic');
+      expect(groups.findAll('th').at(0).text()).toEqual('Study Clinic');
     });
 
     it('has a copy link for each table', () => {

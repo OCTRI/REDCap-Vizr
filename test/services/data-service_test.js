@@ -24,12 +24,12 @@ describe('data service', () => {
   describe('requests', () => {
     let service;
 
-    beforeEach(function() {
+    beforeEach(function () {
       service = createDataService(mockUrls);
       jasmine.Ajax.install();
     });
 
-    afterEach(function() {
+    afterEach(function () {
       jasmine.Ajax.uninstall();
     });
 

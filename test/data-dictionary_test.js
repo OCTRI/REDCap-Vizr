@@ -120,7 +120,10 @@ describe('getChoices', () => {
 
   it('handles yesno fields', () => {
     const enrolledField = exampleDictionary.find(f => f.field_name === 'enrolled');
-    const yesnoResult = [{ label: 'Yes', value: '1' }, { label: 'No', value: '0' }];
+    const yesnoResult = [
+      { label: 'Yes', value: '1' },
+      { label: 'No', value: '0' }
+    ];
     expect(getChoices(enrolledField)).toEqual(yesnoResult);
   });
 
