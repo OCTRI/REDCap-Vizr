@@ -212,7 +212,7 @@ export function summarizeGroups(data, targets) {
 
   // Add targets without data
   targetNames.forEach(function (name) {
-    if (!summaries.hasOwnProperty(name)) {
+    if (!Object.prototype.hasOwnProperty.call(summaries, name)) {
       summaries[name] = { count: 0, target: targets[name] };
     }
   });
