@@ -259,7 +259,7 @@ describe('Chart.vue', () => {
         expect(wrapper.find('.vizr-event-select').isEmpty()).toBe(false);
       });
 
-      it('filters the data when event is selected', () => {
+      it('filters the data when event is selected', async () => {
         const allEventData = wrapper.vm.chartData;
         const allEventGrouped = wrapper.vm.grouped;
         const allEventSummary = wrapper.vm.summary;
@@ -268,13 +268,17 @@ describe('Chart.vue', () => {
         expect(wrapper.vm.filteredData).toEqual(allEventData);
 
         // Select an event - data should change
-        wrapper.find('option[value=visit_1]').setSelected();
+        const visit1Option = wrapper.find('option[value=visit_1]');
+        wrapper.find('select').setValue(visit1Option.element.value);
+        await wrapper.vm.$nextTick();
         expect(wrapper.vm.filteredData).not.toEqual(allEventData);
         expect(wrapper.vm.grouped).not.toEqual(allEventGrouped);
         expect(wrapper.vm.summary).not.toEqual(allEventSummary);
 
         // Select all events again - data should revert
-        wrapper.findAll('option').at(0).setSelected();
+        const allEventsOption = wrapper.findAll('option').at(0);
+        wrapper.find('select').setValue(allEventsOption.element.value);
+        await wrapper.vm.$nextTick();
         expect(wrapper.vm.filteredData).toEqual(allEventData);
         expect(wrapper.vm.grouped).toEqual(allEventGrouped);
         expect(wrapper.vm.summary).toEqual(allEventSummary);
