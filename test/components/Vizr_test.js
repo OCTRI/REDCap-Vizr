@@ -59,20 +59,20 @@ describe('Vizr.vue', () => {
     const heading = wrapper.find('h1');
     expect(heading.text()).toBe('Vizr Charts');
 
-    expect(wrapper.find(Instructions).exists()).toBe(true);
-    expect(wrapper.find(ExampleChart).exists()).toBe(true);
-    expect(wrapper.find(VizrVersion).exists()).toBe(true);
+    expect(wrapper.findComponent(Instructions).exists()).toBe(true);
+    expect(wrapper.findComponent(ExampleChart).exists()).toBe(true);
+    expect(wrapper.findComponent(VizrVersion).exists()).toBe(true);
 
     // renders a chart component for each chart
-    expect(wrapper.findAll(Chart).length).toEqual(exampleChartConfig.charts.length);
+    expect(wrapper.findAllComponents(Chart).length).toEqual(exampleChartConfig.charts.length);
   });
 
   it('shows the example chart if no charts are defined yet', async () => {
-    expect(wrapper.find(ExampleChart).isVisible()).toBe(false);
+    expect(wrapper.findComponent(ExampleChart).isVisible()).toBe(false);
 
     wrapper.setData({ config: { charts: [] } });
     await Vue.nextTick();
-    expect(wrapper.find(ExampleChart).isVisible()).toBe(true);
+    expect(wrapper.findComponent(ExampleChart).isVisible()).toBe(true);
   });
 
   describe('when the user can edit', () => {
