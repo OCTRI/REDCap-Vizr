@@ -68,11 +68,13 @@ describe('Vizr.vue', () => {
   });
 
   it('shows the example chart if no charts are defined yet', async () => {
-    expect(wrapper.findComponent(ExampleChart).isVisible()).toBe(false);
+    let style = wrapper.findComponent(ExampleChart).element.style;
+    expect(style.display).toEqual('none');
 
     wrapper.setData({ config: { charts: [] } });
     await Vue.nextTick();
-    expect(wrapper.findComponent(ExampleChart).isVisible()).toBe(true);
+    style = wrapper.findComponent(ExampleChart).element.style;
+    expect(style.display).not.toEqual('none');
   });
 
   describe('when the user can edit', () => {
