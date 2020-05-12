@@ -52,7 +52,7 @@ describe('Chart.vue', () => {
       });
 
       it('shows no errors', () => {
-        expect(wrapper.contains('.warning')).toBe(false);
+        expect(wrapper.find('.warning').exists()).toBeFalse();
       });
 
       it('does not show live event filter', () => {
@@ -60,11 +60,11 @@ describe('Chart.vue', () => {
       });
 
       it('shows a chart summary', () => {
-        expect(wrapper.contains(ChartSummary)).toBe(true);
+        expect(wrapper.findComponent(ChartSummary).exists()).toBeTrue();
       });
 
       it('shows a chart', () => {
-        expect(wrapper.contains('.vizr-chart canvas')).toBe(true);
+        expect(wrapper.find('.vizr-chart canvas').exists()).toBeTrue();
         expect(wrapper.findAll('[data-description=toggle-legend]').length).toEqual(1);
       });
 
@@ -154,7 +154,7 @@ describe('Chart.vue', () => {
       });
 
       it('shows no errors', () => {
-        expect(wrapper.contains('.warning')).toBe(false);
+        expect(wrapper.find('.warning').exists()).toBeFalse();
       });
 
       it('does not show live event filter', () => {
@@ -162,11 +162,11 @@ describe('Chart.vue', () => {
       });
 
       it('shows a chart summary', () => {
-        expect(wrapper.contains(ChartSummary)).toBe(true);
+        expect(wrapper.findComponent(ChartSummary).exists()).toBeTrue();
       });
 
       it('shows a chart', () => {
-        expect(wrapper.contains('.vizr-chart canvas')).toBe(true);
+        expect(wrapper.find('.vizr-chart canvas').exists()).toBeTrue();
         expect(wrapper.findAll('[data-description=toggle-legend]').length).toEqual(1);
       });
 
