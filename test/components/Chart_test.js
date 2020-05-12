@@ -56,7 +56,7 @@ describe('Chart.vue', () => {
       });
 
       it('does not show live event filter', () => {
-        expect(wrapper.find('.vizr-event-select').isEmpty()).toBe(true);
+        expect(wrapper.find('.vizr-event-select select').exists()).toBeFalse();
       });
 
       it('shows a chart summary', () => {
@@ -116,7 +116,7 @@ describe('Chart.vue', () => {
 
       it('displays the warnings', () => {
         const errorElement = wrapper.find('.warning');
-        expect(errorElement.isEmpty()).toBe(false);
+        expect(errorElement.exists()).toBeTrue();
         expect(errorElement.text()).toMatch(response.warnings[0].message);
       });
     });
@@ -158,7 +158,7 @@ describe('Chart.vue', () => {
       });
 
       it('does not show live event filter', () => {
-        expect(wrapper.find('.vizr-event-select').isEmpty()).toBe(true);
+        expect(wrapper.find('.vizr-event-select select').exists()).toBeFalse();
       });
 
       it('shows a chart summary', () => {
@@ -225,7 +225,7 @@ describe('Chart.vue', () => {
 
       it('displays the warnings', () => {
         const errorElement = wrapper.find('.warning');
-        expect(errorElement.isEmpty()).toBe(false);
+        expect(errorElement.exists()).toBeTrue();
         expect(errorElement.text()).toMatch(response.warnings[0].message);
       });
     });
@@ -256,7 +256,7 @@ describe('Chart.vue', () => {
       });
 
       it('shows live event filter', () => {
-        expect(wrapper.find('.vizr-event-select').isEmpty()).toBe(false);
+        expect(wrapper.find('.vizr-event-select select').exists()).toBeTrue();
       });
 
       it('filters the data when event is selected', async () => {
