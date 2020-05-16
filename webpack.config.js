@@ -69,14 +69,16 @@ module.exports = {
       VIZR_GIT_HASH: JSON.stringify(repoInfo.abbreviatedSha)
     }),
     new VueLoaderPlugin(),
-    new CopyWebpackPlugin([
-      '*.md',
-      'LICENSE',
-      'index.php',
-      'Vizr.php',
-      'config.json',
-      'lib/**/*.php'
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        '*.md',
+        'LICENSE',
+        'index.php',
+        'Vizr.php',
+        'config.json',
+        'lib/**/*.php'
+      ]
+    }),
     new HtmlWebpackPlugin({
       template: 'lib/main.tmpl',
       filename: 'lib/main.php',
