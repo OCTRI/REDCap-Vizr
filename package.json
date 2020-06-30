@@ -25,7 +25,7 @@
     "url": "https://octriinternal.ohsu.edu/stash/scm/reddev/vizr.git"
   },
   "devDependencies": {
-    "@babel/core": "^7.10.3",
+    "@babel/core": "^7.10.4",
     "@babel/plugin-transform-runtime": "^7.10.3",
     "@babel/preset-env": "^7.10.3",
     "@vue/test-utils": "^1.0.3",
