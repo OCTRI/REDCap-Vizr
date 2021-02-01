@@ -34,7 +34,7 @@
     "chart.js": "^2.9.4",
     "copy-webpack-plugin": "^6.4.1",
     "css-loader": "^5.0.1",
-    "eslint": "^7.18.0",
+    "eslint": "^7.19.0",
     "eslint-plugin-vue": "^7.5.0",
     "file-loader": "^6.2.0",
     "git-repo-info": "^2.1.1",
