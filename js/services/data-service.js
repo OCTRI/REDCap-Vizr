@@ -1,6 +1,7 @@
-import assert from 'assert';
 import axios from 'axios';
 import qs from 'qs';
+
+import { assert } from '../util';
 
 export const ENDPOINTS = {
   CHART_DATA: 'lib/data.php',
