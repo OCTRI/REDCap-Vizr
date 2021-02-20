@@ -1,12 +1,8 @@
 import { v4 as uuid } from 'uuid';
-import assert from 'assert';
 import moment from 'moment';
 
 export const userDateFormat = 'MM/DD/YYYY';
 export const isoDateFormat = 'YYYY-MM-DD';
-
-// Global for assertions
-export { assert };
 
 // The string to indicate a chart with no groups
 export const noGroupsLabel = 'No Groups';
@@ -16,6 +12,18 @@ export const notAnsweredLabel = 'Not Answered';
 // Ex. title("study_clinic") => "Study Clinic"
 export function title(str) {
   return str.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+/**
+ * Throws an error if the given input value if falsy.
+ *
+ * @param {any} value - the value to check for truthiness
+ * @param {string} message - error message if the value is falsy
+ */
+export function assert(value, message) {
+  if (!value) {
+    throw new Error(message);
+  }
 }
 
 /**
