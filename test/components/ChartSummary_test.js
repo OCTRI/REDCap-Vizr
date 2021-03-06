@@ -83,12 +83,12 @@ describe('ChartSummary.vue', () => {
       expect(buttons.length).toEqual(2);
     });
 
-    it('copies the table data when the link is clicked', () => {
+    it('copies the table data when the link is clicked', async () => {
       spyOn(wrapper.vm, 'copyTable');
 
       const table = wrapper.findAll('table').at(1);
       const button = table.find('a');
-      button.trigger('click');
+      await button.trigger('click');
 
       expect(wrapper.vm.copyTable).toHaveBeenCalledWith(wrapper.vm.$refs.groupedTable);
     });
