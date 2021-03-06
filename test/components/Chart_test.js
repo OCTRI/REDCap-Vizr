@@ -17,7 +17,7 @@ describe('Chart.vue', () => {
       const response = JSON.parse(exampleResponses.data.nonlongitudinal.responseText);
       let wrapper;
 
-      beforeEach(done => {
+      beforeEach(async () => {
         wrapper = shallowMount(Chart, {
           propsData: {
             canEdit: true,
@@ -33,7 +33,7 @@ describe('Chart.vue', () => {
           }
         });
 
-        wrapper.vm.dataPromise.then(() => done());
+        await wrapper.vm.dataPromise;
       });
 
       it('creates the chart container', () => {
@@ -95,7 +95,7 @@ describe('Chart.vue', () => {
       response.warnings = [{ key: 'noData', message: 'The filter returned 0 records.' }];
       let wrapper;
 
-      beforeEach(done => {
+      beforeEach(async () => {
         wrapper = shallowMount(Chart, {
           propsData: {
             canEdit: true,
@@ -111,7 +111,7 @@ describe('Chart.vue', () => {
           }
         });
 
-        wrapper.vm.dataPromise.then(() => done());
+        await wrapper.vm.dataPromise;
       });
 
       it('displays the warnings', () => {
@@ -127,7 +127,7 @@ describe('Chart.vue', () => {
       const response = JSON.parse(exampleResponses.data.longitudinal.responseText);
       let wrapper;
 
-      beforeEach(done => {
+      beforeEach(async () => {
         wrapper = shallowMount(Chart, {
           propsData: {
             canEdit: true,
@@ -143,7 +143,7 @@ describe('Chart.vue', () => {
           }
         });
 
-        wrapper.vm.dataPromise.then(() => done());
+        await wrapper.vm.dataPromise;
       });
 
       it('shows a title', () => {
@@ -204,7 +204,7 @@ describe('Chart.vue', () => {
       ];
       let wrapper;
 
-      beforeEach(done => {
+      beforeEach(async () => {
         wrapper = shallowMount(Chart, {
           propsData: {
             canEdit: true,
@@ -220,7 +220,7 @@ describe('Chart.vue', () => {
           }
         });
 
-        wrapper.vm.dataPromise.then(() => done());
+        await wrapper.vm.dataPromise;
       });
 
       it('displays the warnings', () => {
@@ -236,7 +236,7 @@ describe('Chart.vue', () => {
       );
       let wrapper;
 
-      beforeEach(done => {
+      beforeEach(async () => {
         wrapper = shallowMount(Chart, {
           propsData: {
             canEdit: true,
@@ -252,7 +252,7 @@ describe('Chart.vue', () => {
           }
         });
 
-        wrapper.vm.dataPromise.then(() => done());
+        await wrapper.vm.dataPromise;
       });
 
       it('shows live event filter', () => {
@@ -269,16 +269,14 @@ describe('Chart.vue', () => {
 
         // Select an event - data should change
         const visit1Option = wrapper.find('option[value=visit_1]');
-        wrapper.find('select').setValue(visit1Option.element.value);
-        await wrapper.vm.$nextTick();
+        await wrapper.find('select').setValue(visit1Option.element.value);
         expect(wrapper.vm.filteredData).not.toEqual(allEventData);
         expect(wrapper.vm.grouped).not.toEqual(allEventGrouped);
         expect(wrapper.vm.summary).not.toEqual(allEventSummary);
 
         // Select all events again - data should revert
         const allEventsOption = wrapper.findAll('option').at(0);
-        wrapper.find('select').setValue(allEventsOption.element.value);
-        await wrapper.vm.$nextTick();
+        await wrapper.find('select').setValue(allEventsOption.element.value);
         expect(wrapper.vm.filteredData).toEqual(allEventData);
         expect(wrapper.vm.grouped).toEqual(allEventGrouped);
         expect(wrapper.vm.summary).toEqual(allEventSummary);
@@ -290,7 +288,7 @@ describe('Chart.vue', () => {
     const response = JSON.parse(exampleResponses.data.longitudinal.responseText);
     let wrapper, dataService;
 
-    beforeEach(done => {
+    beforeEach(async () => {
       dataService = {
         getChartData() {
           return Promise.resolve(response);
@@ -308,16 +306,14 @@ describe('Chart.vue', () => {
         }
       });
 
-      wrapper.vm.dataPromise.then(() => done());
+      await wrapper.vm.dataPromise;
     });
 
-    it('refreshes chart data', done => {
+    it('refreshes chart data', async () => {
       spyOn(dataService, 'getChartData').and.callThrough();
-      wrapper.find('[data-description=reload]').trigger('click');
-      wrapper.vm.dataPromise.then(() => {
-        expect(dataService.getChartData).toHaveBeenCalled();
-        done();
-      });
+      await wrapper.find('[data-description=reload]').trigger('click');
+      await wrapper.vm.dataPromise;
+      expect(dataService.getChartData).toHaveBeenCalled();
     });
   });
 
@@ -325,7 +321,7 @@ describe('Chart.vue', () => {
     const response = JSON.parse(exampleResponses.data.longitudinal.responseText);
     let wrapper, dataService;
 
-    beforeEach(done => {
+    beforeEach(async () => {
       dataService = {
         getChartData() {
           return Promise.resolve(response);
@@ -343,19 +339,17 @@ describe('Chart.vue', () => {
         }
       });
 
-      wrapper.vm.dataPromise.then(() => done());
+      await wrapper.vm.dataPromise;
     });
 
-    it('refreshes chart data when chartDef is replaced', done => {
+    it('refreshes chart data when chartDef is replaced', async () => {
       const newChart = exampleLongitudinalChartDef('different');
 
       spyOn(dataService, 'getChartData').and.callThrough();
-      wrapper.setProps({ chartDef: newChart });
+      await wrapper.setProps({ chartDef: newChart });
 
-      wrapper.vm.dataPromise.then(() => {
-        expect(dataService.getChartData).toHaveBeenCalled();
-        done();
-      });
+      await wrapper.vm.dataPromise;
+      expect(dataService.getChartData).toHaveBeenCalled();
     });
   });
 
@@ -364,7 +358,7 @@ describe('Chart.vue', () => {
     let deleteSelector = '[data-description=delete]';
     let wrapper;
 
-    beforeEach(done => {
+    beforeEach(async () => {
       wrapper = shallowMount(Chart, {
         propsData: {
           canEdit: true,
@@ -380,26 +374,25 @@ describe('Chart.vue', () => {
         }
       });
 
-      wrapper.vm.dataPromise.then(() => done());
+      await wrapper.vm.dataPromise;;
     });
 
     it('is not shown if the user cannot edit', async () => {
       expect(wrapper.find(deleteSelector).exists()).toBe(true);
 
-      wrapper.setProps({ canEdit: false });
-      await Vue.nextTick();
+      await wrapper.setProps({ canEdit: false });
       expect(wrapper.find(deleteSelector).exists()).toBe(false);
     });
 
-    it('does not emit an event if not confirmed', () => {
+    it('does not emit an event if not confirmed', async () => {
       spyOn(window, 'confirm').and.returnValue(false);
-      wrapper.find(deleteSelector).trigger('click');
+      await wrapper.find(deleteSelector).trigger('click');
       expect(wrapper.emitted('delete-chart')).toBeFalsy();
     });
 
-    it('emits an event with the chart definition when confirmed', () => {
+    it('emits an event with the chart definition when confirmed', async () => {
       spyOn(window, 'confirm').and.returnValue(true);
-      wrapper.find(deleteSelector).trigger('click');
+      await wrapper.find(deleteSelector).trigger('click');
       expect(wrapper.emitted('delete-chart')).toBeTruthy();
       expect(wrapper.emitted('delete-chart')[0]).toEqual([exampleLongitudinalChart]);
     });
@@ -410,7 +403,7 @@ describe('Chart.vue', () => {
     const legendToggleSelector = '[data-description=toggle-legend]';
     let wrapper, chartDef;
 
-    beforeEach(done => {
+    beforeEach(async () => {
       chartDef = exampleLongitudinalChartDef();
       wrapper = shallowMount(Chart, {
         propsData: {
@@ -427,34 +420,32 @@ describe('Chart.vue', () => {
         }
       });
 
-      wrapper.vm.dataPromise.then(() => {
-        spyOn(wrapper.vm.chart, 'update').and.returnValue(undefined);
-        done();
-      });
+      await wrapper.vm.dataPromise;
+      spyOn(wrapper.vm.chart, 'update').and.returnValue(undefined);
     });
 
-    it('toggles the legend flag in the chart config', () => {
+    it('toggles the legend flag in the chart config', async () => {
       const chart = wrapper.vm.chart;
       expect(chart.config.options.legend.display).toBe(true);
 
-      wrapper.find(legendToggleSelector).trigger('click');
+      await wrapper.find(legendToggleSelector).trigger('click');
       expect(chart.config.options.legend.display).toBe(false);
     });
 
-    it('updates the chart', () => {
+    it('updates the chart', async () => {
       const chart = wrapper.vm.chart;
-      wrapper.find(legendToggleSelector).trigger('click');
+      await wrapper.find(legendToggleSelector).trigger('click');
       expect(chart.update).toHaveBeenCalled();
     });
 
-    it('does not emit an event if the user cannot edit', () => {
-      wrapper.setProps({ canEdit: false });
-      wrapper.find(legendToggleSelector).trigger('click');
+    it('does not emit an event if the user cannot edit', async () => {
+      await wrapper.setProps({ canEdit: false });
+      await wrapper.find(legendToggleSelector).trigger('click');
       expect(wrapper.emitted('toggle-legend')).toBeFalsy();
     });
 
-    it('emits an event with the chart definition when user can edit', () => {
-      wrapper.find(legendToggleSelector).trigger('click');
+    it('emits an event with the chart definition when user can edit', async () => {
+      await wrapper.find(legendToggleSelector).trigger('click');
       expect(wrapper.emitted('toggle-legend')).toBeTruthy();
       expect(wrapper.emitted('toggle-legend')[0]).toEqual([chartDef]);
     });

@@ -72,7 +72,7 @@ describe('ChartForm.vue', () => {
       expect(groupFieldOptions.at(1).text().trim()).toEqual('dropdown (Dropdown field)');
     });
 
-    it('initializes form inputs from the chart definition', done => {
+    it('initializes form inputs from the chart definition', async () => {
       // create an initialized form
       const withData = shallowMount(ChartForm, {
         propsData: {
@@ -82,45 +82,42 @@ describe('ChartForm.vue', () => {
       });
 
       // wait a tick for children to update
-      withData.vm.$nextTick(() => {
-        expect(withData.find(selector.titleField).element.value).toEqual(
-          exampleChart.title
-        );
-        expect(withData.find(selector.descriptionField).element.value).toEqual(
-          exampleChart.description
-        );
-        expect(withData.find(selector.dateFieldSelect).element.value).toEqual(
-          exampleChart.field
-        );
-        expect(withData.find('textarea[name=filter]').element.value).toEqual(
-          exampleChart.filter
-        );
-        expect(withData.find(selector.groupingFieldSelect).element.value).toEqual(
-          exampleChart.group
-        );
+      await Vue.nextTick();
+      expect(withData.find(selector.titleField).element.value).toEqual(
+        exampleChart.title
+      );
+      expect(withData.find(selector.descriptionField).element.value).toEqual(
+        exampleChart.description
+      );
+      expect(withData.find(selector.dateFieldSelect).element.value).toEqual(
+        exampleChart.field
+      );
+      expect(withData.find('textarea[name=filter]').element.value).toEqual(
+        exampleChart.filter
+      );
+      expect(withData.find(selector.groupingFieldSelect).element.value).toEqual(
+        exampleChart.group
+      );
 
-        // dates are converted to MM/DD/YYYY format for display
-        expect(withData.find(selector.startDateField).element.value).toEqual(
-          '10/04/2016'
-        );
-        expect(withData.find(selector.endDateField).element.value).toEqual('06/04/2017');
-        expect(withData.find(selector.targetDateField).element.value).toEqual(
-          '02/25/2017'
-        );
+      // dates are converted to MM/DD/YYYY format for display
+      expect(withData.find(selector.startDateField).element.value).toEqual(
+        '10/04/2016'
+      );
+      expect(withData.find(selector.endDateField).element.value).toEqual('06/04/2017');
+      expect(withData.find(selector.targetDateField).element.value).toEqual(
+        '02/25/2017'
+      );
 
-        // group targets are initialized
-        expect(withData.find('input[name=group_target__Bend]').element.value).toEqual(
-          '20'
-        );
-        expect(withData.find('input[name=group_target__Eugene]').element.value).toEqual(
-          '20'
-        );
-        expect(withData.find('input[name=group_target__Portland]').element.value).toEqual(
-          '20'
-        );
-
-        done();
-      });
+      // group targets are initialized
+      expect(withData.find('input[name=group_target__Bend]').element.value).toEqual(
+        '20'
+      );
+      expect(withData.find('input[name=group_target__Eugene]').element.value).toEqual(
+        '20'
+      );
+      expect(withData.find('input[name=group_target__Portland]').element.value).toEqual(
+        '20'
+      );
     });
 
     it('emits an event with chart config when the save button is clicked', async () => {
@@ -133,8 +130,7 @@ describe('ChartForm.vue', () => {
 
       withValidData.vm.isDirty = true;
       await Vue.nextTick();
-      withValidData.find(selector.saveButton).trigger('click');
-      await Vue.nextTick();
+      await withValidData.find(selector.saveButton).trigger('click');
 
       expect(withValidData.emitted('save-chart')).toBeDefined();
       expect(withValidData.emitted('save-chart')[0]).toEqual([exampleChart]);
@@ -157,12 +153,9 @@ describe('ChartForm.vue', () => {
       });
 
       // add HTML to title and description
-      form.find(selector.titleField).setValue('Chart Title <a href="#">Boop</a>');
-      await Vue.nextTick();
-      form.find(selector.descriptionField).setValue('<script>alert("hello");</script>');
-      await Vue.nextTick();
-      form.find(selector.saveButton).trigger('click');
-      await Vue.nextTick();
+      await form.find(selector.titleField).setValue('Chart Title <a href="#">Boop</a>');
+      await form.find(selector.descriptionField).setValue('<script>alert("hello");</script>');
+      await form.find(selector.saveButton).trigger('click');
 
       expect(form.emitted('save-chart')).toBeDefined();
 
@@ -182,14 +175,13 @@ describe('ChartForm.vue', () => {
       expect(form.find(selector.targetTotalSpan).text()).toMatch(/Total:\s+60/);
 
       // change the target
-      form.find('input[name=group_target__Bend]').setValue('30');
-      await Vue.nextTick();
+      await form.find('input[name=group_target__Bend]').setValue('30');
 
       expect(form.vm.model.targets).toEqual({ Portland: 20, Bend: 30, Eugene: 20 });
       expect(form.find(selector.targetTotalSpan).text()).toMatch(/Total:\s+70/);
     });
 
-    it('nullifies the targets when group is changed', () => {
+    it('nullifies the targets when group is changed', async () => {
       const form = shallowMount(ChartForm, {
         propsData: {
           chartDef: exampleChart,
@@ -201,7 +193,7 @@ describe('ChartForm.vue', () => {
       const firstGroupingField = form
         .findAll(`${selector.groupingFieldSelect} > option`)
         .at(0);
-      form.find(selector.groupingFieldSelect).setValue(firstGroupingField.element.value);
+      await form.find(selector.groupingFieldSelect).setValue(firstGroupingField.element.value);
 
       expect(form.vm.model.group).toEqual('');
       expect(form.vm.model.targets).toEqual(defaultTargetsObject());
@@ -219,26 +211,24 @@ describe('ChartForm.vue', () => {
       const firstGroupingField = form
         .findAll(`${selector.groupingFieldSelect} > option`)
         .at(0);
-      form.find(selector.groupingFieldSelect).setValue(firstGroupingField.element.value);
-      await Vue.nextTick();
-      form.find('input[name=target_count]').setValue('60');
-      await Vue.nextTick();
+      await form.find(selector.groupingFieldSelect).setValue(firstGroupingField.element.value);
+      await form.find('input[name=target_count]').setValue('60');
 
       expect(form.vm.model.targets).toEqual({ [noGroupsLabel]: 60 });
     });
 
-    it('converts dates to ISO format when updating the model', () => {
+    it('converts dates to ISO format when updating the model', async () => {
       // save updated dates
-      wrapper.find(selector.startDateField).setValue('03/04/2016');
-      wrapper.find(selector.targetDateField).setValue('04/05/2017');
-      wrapper.find(selector.endDateField).setValue('05/12/2017');
+      await wrapper.find(selector.startDateField).setValue('03/04/2016');
+      await wrapper.find(selector.targetDateField).setValue('04/05/2017');
+      await wrapper.find(selector.endDateField).setValue('05/12/2017');
 
       expect(wrapper.vm.model.start).toEqual('2016-03-04');
       expect(wrapper.vm.model.end).toEqual('2017-04-05');
       expect(wrapper.vm.model.chartEnd).toEqual('2017-05-12');
     });
 
-    it('resets the form on cancel', done => {
+    it('resets the form on cancel', async () => {
       const withData = shallowMount(ChartForm, {
         propsData: {
           chartDef: exampleChart,
@@ -248,26 +238,22 @@ describe('ChartForm.vue', () => {
 
       // change the title
       let titleInput = withData.find(selector.titleField);
-      titleInput.setValue('New title');
+      await titleInput.setValue('New title');
       expect(withData.vm.model.title).toEqual('New title');
 
       let descriptionInput = withData.find(selector.descriptionField);
-      descriptionInput.setValue('New description');
+      await descriptionInput.setValue('New description');
       expect(withData.vm.model.description).toEqual('New description');
       expect(withData.vm.model).not.toEqual(withData.vm.chartDef);
 
       // roll back changes
-      withData.find(selector.cancelButton).trigger('click');
+      await withData.find(selector.cancelButton).trigger('click');
       expect(withData.vm.model).toEqual(withData.vm.chartDef);
 
-      // wait for children to update
-      withData.vm.$nextTick(() => {
-        titleInput = withData.find(selector.titleField);
-        descriptionInput = withData.find(selector.descriptionField);
-        expect(titleInput.element.value).toEqual(exampleChart.title);
-        expect(descriptionInput.element.value).toEqual(exampleChart.description);
-        done();
-      });
+      titleInput = withData.find(selector.titleField);
+      descriptionInput = withData.find(selector.descriptionField);
+      expect(titleInput.element.value).toEqual(exampleChart.title);
+      expect(descriptionInput.element.value).toEqual(exampleChart.description);
     });
 
     it('resets the form when chartDef is replaced', async () => {
@@ -281,8 +267,7 @@ describe('ChartForm.vue', () => {
       expect(form.find(selector.titleField).element.value).toEqual(exampleChart.title);
 
       // replace the chart definition
-      form.setProps({ chartDef: emptyChart });
-      await Vue.nextTick();
+      await form.setProps({ chartDef: emptyChart });
 
       expect(form.find(selector.titleField).element.value).toEqual(emptyChart.title);
     });
@@ -309,18 +294,14 @@ describe('ChartForm.vue', () => {
 
       it('disables saving when required fields are missing', async () => {
         // delete the title
-        form.find(selector.titleField).setValue('');
-        await Vue.nextTick();
-
+        await form.find(selector.titleField).setValue('');
         expect(form.findAll(selector.validationError).length).toEqual(1);
         expect(form.find(selector.saveButton).attributes().disabled).toBeTruthy();
       });
 
       it('validates date formats', async () => {
         // enter an invalid date
-        form.find(selector.startDateField).setValue('02/30/2017');
-        await Vue.nextTick();
-
+        await form.find(selector.startDateField).setValue('02/30/2017');
         expect(form.findAll(selector.validationError).length).toEqual(1);
         expect(form.text()).toMatch('Dates must be MM/DD/YYYY format.');
         expect(form.find(selector.saveButton).attributes().disabled).toBeTruthy();
@@ -328,9 +309,7 @@ describe('ChartForm.vue', () => {
 
       it('validates chart end date formats', async () => {
         // enter an invalid date
-        form.find('input[name=chart_end_date]').setValue('02/30/2017');
-        await Vue.nextTick();
-
+        await form.find('input[name=chart_end_date]').setValue('02/30/2017');
         expect(form.findAll(selector.validationError).length).toEqual(1);
         expect(form.text()).toMatch('Dates must be MM/DD/YYYY format.');
         expect(form.find(selector.saveButton).attributes().disabled).toBeTruthy();
@@ -338,13 +317,11 @@ describe('ChartForm.vue', () => {
 
       it('disables saving when target date validation fails', async () => {
         // make a change to enable save button
-        form.find(selector.titleField).setValue('Test Title');
-        await Vue.nextTick();
+        await form.find(selector.titleField).setValue('Test Title');
         expect(form.find(selector.saveButton).attributes().disabled).toBeFalsy();
 
         // delete the start date, which is required when target is present
-        form.find(selector.startDateField).setValue('');
-        await Vue.nextTick();
+        await form.find(selector.startDateField).setValue('');
 
         // errors should disable save button
         expect(form.findAll(selector.validationError).length).toEqual(1);
@@ -353,15 +330,13 @@ describe('ChartForm.vue', () => {
 
       it('clears errors on cancel', async () => {
         // delete the title
-        form.find(selector.titleField).setValue('');
-        await Vue.nextTick();
+        await form.find(selector.titleField).setValue('');
 
         expect(form.findAll(selector.validationError).length).toEqual(1);
         expect(form.find(selector.saveButton).attributes().disabled).toBeTruthy();
 
         // click the cancel button
-        form.find(selector.cancelButton).trigger('click');
-        await Vue.nextTick();
+        await form.find(selector.cancelButton).trigger('click');
 
         expect(form.findAll(selector.validationError).length).toEqual(0);
       });
@@ -418,10 +393,9 @@ describe('ChartForm.vue', () => {
         `${selector.dateFieldEventSelect} > option`
       );
 
-      wrapper
+      await wrapper
         .find(selector.dateFieldEventSelect)
         .setValue(dateFieldEventOptions.at(1).element.value);
-      await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.model.field).toEqual('');
       const dateFieldOptions = wrapper.findAll(`${selector.dateFieldSelect} > option`);
@@ -448,10 +422,9 @@ describe('ChartForm.vue', () => {
         `${selector.groupFieldEventSelect} > option`
       );
 
-      wrapper
+      await wrapper
         .find(selector.groupFieldEventSelect)
         .setValue(groupFieldEventOptions.at(3).element.value);
-      await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.model.group).toEqual('');
       const groupFieldOptions = wrapper.findAll(
@@ -485,8 +458,7 @@ describe('ChartForm.vue', () => {
 
       it('disables saving when date field event is missing', async () => {
         // unselect the event
-        form.find(selector.dateFieldEventSelect).setValue('');
-        await Vue.nextTick();
+        await form.find(selector.dateFieldEventSelect).setValue('');
 
         // date event is invalid
         expect(form.findAll(selector.validationError).length).toEqual(1);
@@ -497,10 +469,9 @@ describe('ChartForm.vue', () => {
 
       it('validates date field event selected if date field selected', async () => {
         // Unselect date field event - select date field
-        form.find(selector.dateFieldEventSelect).setValue('');
+        await form.find(selector.dateFieldEventSelect).setValue('');
         const dateFieldOption = form.findAll(`${selector.dateFieldSelect} > option`).at(1);
-        form.find(selector.dateFieldSelect).setValue(dateFieldOption.element.value);
-        await Vue.nextTick();
+        await form.find(selector.dateFieldSelect).setValue(dateFieldOption.element.value);
 
         // date event and date field are invalid
         expect(form.findAll(selector.validationError).length).toEqual(2);
@@ -512,10 +483,9 @@ describe('ChartForm.vue', () => {
 
       it('validates group event selected if group selected', async () => {
         // Unselect group event - select group field
-        form.find(selector.groupFieldEventSelect).setValue('');
+        await form.find(selector.groupFieldEventSelect).setValue('');
         const groupFieldOption = form.findAll(`${selector.groupingFieldSelect} > option`).at(1);
-        form.find(selector.groupingFieldSelect).setValue(groupFieldOption.element.value);
-        await Vue.nextTick();
+        await form.find(selector.groupingFieldSelect).setValue(groupFieldOption.element.value);
 
         expect(form.findAll(selector.validationError).length).toEqual(1);
         expect(form.text()).toMatch(

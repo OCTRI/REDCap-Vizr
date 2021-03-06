@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { shallowMount } from '@vue/test-utils';
-import Vue from 'vue';
+import flushPromises from 'flush-promises';
 
 import { exampleMetadata } from '../example-metadata';
 import { exampleChartDef } from '../example-chart-def';
@@ -34,7 +34,7 @@ function createProvideObject(chartConfig) {
 describe('Vizr.vue', () => {
   let mockProvide, exampleChartConfig, wrapper;
 
-  beforeEach(done => {
+  beforeEach(async () => {
     exampleChartConfig = createChartConfig();
     mockProvide = createProvideObject(exampleChartConfig);
     spyOn(mockProvide.dataService, 'getProjectConfig').and.callThrough();
@@ -47,7 +47,7 @@ describe('Vizr.vue', () => {
       provide: mockProvide
     });
 
-    wrapper.vm.configPromise.then(() => done());
+    await wrapper.vm.configPromise;
   });
 
   it('requests metadata and chart config when mounted', () => {
@@ -71,29 +71,27 @@ describe('Vizr.vue', () => {
     let style = wrapper.findComponent(ExampleChart).element.style;
     expect(style.display).toEqual('none');
 
-    wrapper.setData({ config: { charts: [] } });
-    await Vue.nextTick();
+    await wrapper.setData({ config: { charts: [] } });
     style = wrapper.findComponent(ExampleChart).element.style;
     expect(style.display).not.toEqual('none');
   });
 
   describe('when the user can edit', () => {
-    it('shows the button to create a chart', () => {
-      wrapper.setProps({ canEdit: true });
+    it('shows the button to create a chart', async () => {
+      await wrapper.setProps({ canEdit: true });
       expect(wrapper.find('button').exists()).toBe(true);
     });
   });
 
   describe('when user cannot edit', () => {
     it('the button to create a chart is not shown', async () => {
-      wrapper.setProps({ canEdit: false });
-      await Vue.nextTick();
+      await wrapper.setProps({ canEdit: false });
       expect(wrapper.find('button').exists()).toBe(false);
     });
   });
 
   describe('when fetching config fails', () => {
-    it('shows an error message', done => {
+    it('shows an error message', async () => {
       const provideObject = createProvideObject();
       provideObject.dataService.getProjectConfig = () => {
         return Promise.reject(new Error('Timeout'));
@@ -106,11 +104,7 @@ describe('Vizr.vue', () => {
         provide: provideObject
       });
 
-      errorWrapper.vm.configPromise.then(() => {
-        expect(errorWrapper.find('.error').exists()).toBe(true);
-        expect(errorWrapper.find('button').attributes().disabled).toBeTruthy();
-        done();
-      });
+      await errorWrapper.vm.configPromise;
     });
   });
 
@@ -120,49 +114,44 @@ describe('Vizr.vue', () => {
     });
 
     describe('when the chart is new', () => {
-      it('persists the new configuration', done => {
+      it('persists the new configuration', async () => {
         const newChart = exampleChartDef(uuid());
         const expectedCharts = [...exampleChartConfig.charts, newChart];
 
         wrapper.vm.saveChart(newChart);
+        await flushPromises();
 
-        // schedule on the task queue to allow promises to resolve
-        setTimeout(() => {
-          // new chart is added to the array
-          expect(mockProvide.dataService.saveChartConfig).toHaveBeenCalledWith(
-            expectedCharts
-          );
-          expect(wrapper.vm.charts).toEqual(expectedCharts);
-          done();
-        });
+        // new chart is added to the array
+        expect(mockProvide.dataService.saveChartConfig).toHaveBeenCalledWith(
+          expectedCharts
+        );
+        expect(wrapper.vm.charts).toEqual(expectedCharts);
+
       });
     });
 
     describe('when the chart is updated', () => {
-      it('persists the new configuration', done => {
+      it('persists the new configuration', async () => {
         // second chart config will be replaced
         const updatedChart = Object.assign({}, exampleChartConfig.charts[1]);
         updatedChart.title = 'Different Title';
         const expectedCharts = [exampleChartConfig.charts[0], updatedChart];
 
         wrapper.vm.saveChart(updatedChart);
+        await flushPromises();
 
-        // schedule on the task queue to allow promises to resolve
-        setTimeout(() => {
-          // updated chart is replaced
-          expect(mockProvide.dataService.saveChartConfig).toHaveBeenCalledWith(
-            expectedCharts
-          );
-          expect(wrapper.vm.charts).toEqual(expectedCharts);
-          done();
-        });
+        // updated chart is replaced
+        expect(mockProvide.dataService.saveChartConfig).toHaveBeenCalledWith(
+          expectedCharts
+        );
+        expect(wrapper.vm.charts).toEqual(expectedCharts);
       });
     });
 
     describe('when saving fails', () => {
       let errorWrapper;
 
-      beforeEach(done => {
+      beforeEach(async () => {
         const provideObject = createProvideObject(exampleChartConfig);
         provideObject.dataService.saveChartConfig = () => {
           const error = new Error('Expected to change 1 record, but 0 records changed.');
@@ -177,44 +166,37 @@ describe('Vizr.vue', () => {
           provide: provideObject
         });
 
-        errorWrapper.vm.configPromise.then(() => done());
+        await errorWrapper.vm.configPromise;
       });
 
-      it('displays errors', done => {
+      it('displays errors', async () => {
         const chartDef = exampleChartConfig.charts[0];
         errorWrapper.vm.saveChart(chartDef);
+        await flushPromises();
 
-        // schedule on the task queue to allow promises to resolve
-        setTimeout(() => {
-          const errorBlock = errorWrapper.find('.error');
-          // error message is displayed
-          expect(errorBlock.exists()).toBe(true);
-          // error details are displayed
-          expect(errorWrapper.find('ul').exists()).toBe(true);
-          done();
-        });
+        // error message is displayed
+        const errorBlock = errorWrapper.find('.error');
+        expect(errorBlock.exists()).toBe(true);
+        // error details are displayed
+        expect(errorWrapper.find('ul').exists()).toBe(true);
       });
     });
   });
 
   describe('deleting a chart', () => {
-    it('persists the new configuration', done => {
+    it('persists the new configuration', async () => {
       mockProvide.dataService.saveChartConfig.calls.reset();
 
       const toDelete = exampleChartConfig.charts[1];
       const expectedCharts = exampleChartConfig.charts.slice(0, 1);
 
       wrapper.vm.deleteChart(toDelete);
+      await flushPromises();
 
-      // schedule on the task queue to allow promises to resolve
-      setTimeout(() => {
-        // chart is removed
-        expect(mockProvide.dataService.saveChartConfig).toHaveBeenCalledWith(
-          expectedCharts
-        );
-        expect(wrapper.vm.charts).toEqual(expectedCharts);
-        done();
-      });
+      expect(mockProvide.dataService.saveChartConfig).toHaveBeenCalledWith(
+        expectedCharts
+      );
+      expect(wrapper.vm.charts).toEqual(expectedCharts);
     });
   });
 
