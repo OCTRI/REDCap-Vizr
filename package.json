@@ -33,7 +33,7 @@
     "babel-loader": "^8.2.2",
     "chart.js": "^2.9.4",
     "copy-webpack-plugin": "^8.1.1",
-    "css-loader": "^5.2.1",
+    "css-loader": "^5.2.4",
     "eslint": "^7.24.0",
     "eslint-plugin-vue": "^7.9.0",
     "file-loader": "^6.2.0",
