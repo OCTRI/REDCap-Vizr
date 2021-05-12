@@ -64,7 +64,9 @@ describe('Vizr.vue', () => {
     expect(wrapper.findComponent(VizrVersion).exists()).toBe(true);
 
     // renders a chart component for each chart
-    expect(wrapper.findAllComponents(Chart).length).toEqual(exampleChartConfig.charts.length);
+    expect(wrapper.findAllComponents(Chart).length).toEqual(
+      exampleChartConfig.charts.length
+    );
   });
 
   it('shows the example chart if no charts are defined yet', async () => {
@@ -126,7 +128,6 @@ describe('Vizr.vue', () => {
           expectedCharts
         );
         expect(wrapper.vm.charts).toEqual(expectedCharts);
-
       });
     });
 

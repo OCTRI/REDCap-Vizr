@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import { shallowMount } from '@vue/test-utils';
 
 import Chart from '@/components/Chart';
@@ -374,7 +373,7 @@ describe('Chart.vue', () => {
         }
       });
 
-      await wrapper.vm.dataPromise;;
+      await wrapper.vm.dataPromise;
     });
 
     it('is not shown if the user cannot edit', async () => {

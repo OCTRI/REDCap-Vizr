@@ -100,18 +100,12 @@ describe('ChartForm.vue', () => {
       );
 
       // dates are converted to MM/DD/YYYY format for display
-      expect(withData.find(selector.startDateField).element.value).toEqual(
-        '10/04/2016'
-      );
+      expect(withData.find(selector.startDateField).element.value).toEqual('10/04/2016');
       expect(withData.find(selector.endDateField).element.value).toEqual('06/04/2017');
-      expect(withData.find(selector.targetDateField).element.value).toEqual(
-        '02/25/2017'
-      );
+      expect(withData.find(selector.targetDateField).element.value).toEqual('02/25/2017');
 
       // group targets are initialized
-      expect(withData.find('input[name=group_target__Bend]').element.value).toEqual(
-        '20'
-      );
+      expect(withData.find('input[name=group_target__Bend]').element.value).toEqual('20');
       expect(withData.find('input[name=group_target__Eugene]').element.value).toEqual(
         '20'
       );
@@ -154,7 +148,9 @@ describe('ChartForm.vue', () => {
 
       // add HTML to title and description
       await form.find(selector.titleField).setValue('Chart Title <a href="#">Boop</a>');
-      await form.find(selector.descriptionField).setValue('<script>alert("hello");</script>');
+      await form
+        .find(selector.descriptionField)
+        .setValue('<script>alert("hello");</script>');
       await form.find(selector.saveButton).trigger('click');
 
       expect(form.emitted('save-chart')).toBeDefined();
@@ -193,7 +189,9 @@ describe('ChartForm.vue', () => {
       const firstGroupingField = form
         .findAll(`${selector.groupingFieldSelect} > option`)
         .at(0);
-      await form.find(selector.groupingFieldSelect).setValue(firstGroupingField.element.value);
+      await form
+        .find(selector.groupingFieldSelect)
+        .setValue(firstGroupingField.element.value);
 
       expect(form.vm.model.group).toEqual('');
       expect(form.vm.model.targets).toEqual(defaultTargetsObject());
@@ -211,7 +209,9 @@ describe('ChartForm.vue', () => {
       const firstGroupingField = form
         .findAll(`${selector.groupingFieldSelect} > option`)
         .at(0);
-      await form.find(selector.groupingFieldSelect).setValue(firstGroupingField.element.value);
+      await form
+        .find(selector.groupingFieldSelect)
+        .setValue(firstGroupingField.element.value);
       await form.find('input[name=target_count]').setValue('60');
 
       expect(form.vm.model.targets).toEqual({ [noGroupsLabel]: 60 });
@@ -470,7 +470,9 @@ describe('ChartForm.vue', () => {
       it('validates date field event selected if date field selected', async () => {
         // Unselect date field event - select date field
         await form.find(selector.dateFieldEventSelect).setValue('');
-        const dateFieldOption = form.findAll(`${selector.dateFieldSelect} > option`).at(1);
+        const dateFieldOption = form
+          .findAll(`${selector.dateFieldSelect} > option`)
+          .at(1);
         await form.find(selector.dateFieldSelect).setValue(dateFieldOption.element.value);
 
         // date event and date field are invalid
@@ -484,8 +486,12 @@ describe('ChartForm.vue', () => {
       it('validates group event selected if group selected', async () => {
         // Unselect group event - select group field
         await form.find(selector.groupFieldEventSelect).setValue('');
-        const groupFieldOption = form.findAll(`${selector.groupingFieldSelect} > option`).at(1);
-        await form.find(selector.groupingFieldSelect).setValue(groupFieldOption.element.value);
+        const groupFieldOption = form
+          .findAll(`${selector.groupingFieldSelect} > option`)
+          .at(1);
+        await form
+          .find(selector.groupingFieldSelect)
+          .setValue(groupFieldOption.element.value);
 
         expect(form.findAll(selector.validationError).length).toEqual(1);
         expect(form.text()).toMatch(
