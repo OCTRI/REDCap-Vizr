@@ -50,7 +50,7 @@
     "karma-junit-reporter": "^2.0.1",
     "karma-spec-reporter": "~0.0.32",
     "karma-webpack": "^5.0.0",
-    "mini-css-extract-plugin": "^1.6.0",
+    "mini-css-extract-plugin": "^2.0.0",
     "moment": "^2.29.1",
     "postcss": "^8.3.5",
     "prettier": "^2.3.2",
