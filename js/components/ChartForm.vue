@@ -7,8 +7,8 @@
           href="#"
           class="remove-form pull-right float-right"
           role="button"
-          data-toggle="collapse"
-          :data-target="idSelector"
+          data-bs-toggle="collapse"
+          :data-bs-target="idSelector"
           aria-hidden="true"
           aria-expanded="true"
           @click="reset"
@@ -62,10 +62,10 @@
                 @input="dateFieldChanged"
               />
               <span
-                class="input-group-addon input-group-append"
+                class="input-group-text"
                 @click="showDatePicker($refs.startDateInput)"
               >
-                <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                <i class="far fa-calendar-alt"></i>
               </span>
             </div>
             <div class="help-block error-help">{{ errors.startError }}</div>
@@ -87,10 +87,10 @@
                 @input="dateFieldChanged"
               />
               <span
-                class="input-group-addon input-group-append"
+                class="input-group-text"
                 @click="showDatePicker($refs.endDateInput)"
               >
-                <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                <i class="far fa-calendar-alt"></i>
               </span>
             </div>
             <div class="help-block error-help">{{ errors.chartEndError }}</div>
@@ -107,7 +107,7 @@
             <select
               ref="dateFieldEventSelect"
               v-model="model.dateFieldEvent"
-              class="form-control form-control-sm"
+              class="form-control form-control-sm form-select"
               name="date_field_event"
               required="required"
               data-field="dateFieldEvent"
@@ -131,7 +131,7 @@
             </label>
             <select
               v-model="model.field"
-              class="form-control form-control-sm"
+              class="form-control form-control-sm form-select"
               name="record_date"
               required="required"
               data-validate="validateDateEvent"
@@ -154,7 +154,7 @@
             </label>
             <select
               v-model="model.dateInterval"
-              class="form-control form-control-sm"
+              class="form-control form-control-sm form-select"
               name="date_interval"
               required="required"
               data-field="dateInterval"
@@ -197,7 +197,7 @@
               {{ messages.groupingFieldEventLabel }}
             </label>
             <select
-              class="form-control form-control-sm"
+              class="form-control form-control-sm form-select"
               name="group_field_event"
               data-field="groupFieldEvent"
               ref="groupFieldEventSelect"
@@ -221,7 +221,7 @@
             </label>
             <select
               v-model="model.group"
-              class="form-control form-control-sm"
+              class="form-control form-control-sm form-select"
               name="group_field"
               data-validate="validateGroup"
               data-field="group"
@@ -259,7 +259,7 @@
           <div class="form-group targets" v-else>
             <label>{{ messages.targetCountsLabel }}</label>
             <a
-              data-toggle="collapse"
+              data-bs-toggle="collapse"
               role="button"
               :href="groupTargetsIdSelector"
               aria-expanded="true"
@@ -307,10 +307,10 @@
                 @input="dateFieldChanged"
               />
               <span
-                class="input-group-addon input-group-append"
+                class="input-group-text"
                 @click="showDatePicker($refs.targetEndDateInput)"
               >
-                <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                <i class="far fa-calendar-alt"></i>
               </span>
             </div>
             <div class="help-block error-help">{{ errors.endError }}</div>
@@ -325,8 +325,8 @@
           type="submit"
           class="btn btn-primary"
           name="submit_vizr_form"
-          data-toggle="collapse"
-          :data-target="idSelector"
+          data-bs-toggle="collapse"
+          :data-bs-target="idSelector"
           :disabled="submitDisabled"
           aria-expanded="true"
           @click="save"
@@ -336,8 +336,8 @@
         <button
           type="cancel"
           class="btn btn-link"
-          data-toggle="collapse"
-          :data-target="idSelector"
+          data-bs-toggle="collapse"
+          :data-bs-target="idSelector"
           aria-expanded="true"
           @click="reset"
         >

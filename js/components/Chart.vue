@@ -13,7 +13,7 @@
         <a
           :href="formIdSelector"
           role="button"
-          data-toggle="collapse"
+          data-bs-toggle="collapse"
           data-description="edit"
           v-if="canEdit"
         >
@@ -51,7 +51,7 @@
     <div class="row">
       <span class="vizr-event-select col-xs-3">
         <select
-          class="form-control form-control-sm"
+          class="form-control form-control-sm form-select"
           name="filter-event"
           v-if="hasMultipleEvents"
           v-model="selectedEvent"
