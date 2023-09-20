@@ -35,7 +35,7 @@
     }
   ],
   "compatibility": {
-      "redcap-version-min": "8.5.4",
+      "redcap-version-min": "13.4.0",
       "redcap-version-max": ""
   },
   "permissions": [

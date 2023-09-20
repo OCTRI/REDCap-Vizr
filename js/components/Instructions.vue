@@ -12,8 +12,8 @@
     <li>
       <a
         href="#"
-        data-toggle="collapse"
-        data-target="#collapseMore"
+        data-bs-toggle="collapse"
+        data-bs-target="#collapseMore"
         aria-expanded="false"
         aria-controls="collapseMore"
       >

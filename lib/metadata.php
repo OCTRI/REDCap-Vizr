@@ -42,11 +42,6 @@ if (REDCap::isLongitudinal()) {
 $metadata_object->recordIdField = $record_id_field;
 $metadata_object->dataDictionary = $data_dictionary;
 $metadata_object->events = $event_map;
-if (REDCap::versionCompare ( REDCAP_VERSION , '8.7.1', '<')) {
-	$metadata_object->bootstrapVersion = 3;
-} else {
-	$metadata_object->bootstrapVersion = 4;
-}
 
 print json_encode($metadata_object);
 

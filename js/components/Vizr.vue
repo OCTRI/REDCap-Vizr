@@ -30,8 +30,8 @@
         <button
           type="button"
           class="btn btn-warning"
-          data-toggle="collapse"
-          data-target=".add-chart-form"
+          data-bs-toggle="collapse"
+          data-bs-target=".add-chart-form"
           aria-expanded="false"
           aria-controls="add-chart-form"
           :disabled="hasConfigError"
