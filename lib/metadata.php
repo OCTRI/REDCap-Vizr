@@ -1,4 +1,5 @@
 <?php
+namespace Octri\Vizr;
 /**
  * EXTERNAL MODULE: REDCap Vizr
  * DESCRIPTION: Queries the current project for the record id field and data dictionary.
@@ -17,19 +18,19 @@
 
 header('Content-Type: application/json');
 
-$metadata_object = new stdClass();
-$record_id_field = REDCap::getRecordIdField();
-$data_dictionary = json_decode(REDCap::getDataDictionary('json'));
+$metadata_object = new \stdClass();
+$record_id_field = \REDCap::getRecordIdField();
+$data_dictionary = json_decode(\REDCap::getDataDictionary('json'));
 $event_map = null;
 
-if (REDCap::isLongitudinal()) {
+if (\REDCap::isLongitudinal()) {
   // Get the unique event names
-  $events = REDCap::getEventNames(true);
+  $events = \REDCap::getEventNames(true);
 
-  $event_map = new stdClass();
+  $event_map = new \stdClass();
   foreach ($events as $event_name) {
       // Get the event id for the name and use this to get the forms for the event
-      $event_id = REDCap::getEventIdFromUniqueEvent($event_name);
+      $event_id = \REDCap::getEventIdFromUniqueEvent($event_name);
       $res = $conn->query("select form_name from redcap_events_forms where event_id = $event_id");
       $forms = array();
       while ($row = $res->fetch_assoc()) {

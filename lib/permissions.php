@@ -1,4 +1,5 @@
 <?php
+namespace Octri\Vizr;
 /**
  * EXTERNAL MODULE: REDCap Vizr
  * DESCRIPTION: Sets variables indicating whether or not the current user has

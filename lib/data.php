@@ -1,4 +1,5 @@
 <?php
+namespace Octri\Vizr;
 /**
  * EXTERNAL MODULE: REDCap Vizr
  * DESCRIPTION: Queries the current project for data, which is then summarized by Vizr to create
@@ -58,11 +59,11 @@ foreach ($_POST['fields'] as $field) {
   $fields[] = filterInput($field);
 }
 
-$returnObj = new stdClass();
+$returnObj = new \stdClass();
 
 if (is_null($eventFilter)) {
   // The project is not longitudinal. A single direct query with a JSON response is easiest.
-  $data = json_decode(REDCap::getData ('json' /* return_format */, NULL /* records */, $fields /* fields */,
+  $data = json_decode(\REDCap::getData ('json' /* return_format */, NULL /* records */, $fields /* fields */,
     NULL /* events */, NULL /* groups */, FALSE /* combineCheckboxValues */,
     FALSE /* exportDataAccessGroups */, FALSE /* exportSurveyFields */, $filterLogic,
     TRUE /* exportAsLabels */, FALSE /* exportCsvHeadersAsLabels */), true);
@@ -71,7 +72,7 @@ if (is_null($eventFilter)) {
   // First, apply the filter without any event restrictions, getting back only the record ids and events.
   // This comes back as a map from record id to event id to record. An array is returned because a JSON
   // response will not return an event id.
-  $filteredRecords = REDCap::getData ('array' /* return_format */, NULL /* records */,
+  $filteredRecords = \REDCap::getData ('array' /* return_format */, NULL /* records */,
     array($recordIdField, 'redcap_event_name') /* fields */, NULL /* events */,
     NULL /* groups */, FALSE /* combineCheckboxValues */, FALSE /* exportDataAccessGroups */,
     FALSE /* exportSurveyFields */, $filterLogic, TRUE /* exportAsLabels */,
@@ -79,7 +80,7 @@ if (is_null($eventFilter)) {
 
   if (count($filteredRecords) > 0) {
     // Now get the results for the records
-    $resultsForRecords = json_decode(REDCap::getData ('json' /* return_format */,
+    $resultsForRecords = json_decode(\REDCap::getData ('json' /* return_format */,
       array_keys($filteredRecords) /* records */, $fields /* fields */, $eventFilter /* events */,
       NULL /* groups */, FALSE /* combineCheckboxValues */, FALSE /* exportDataAccessGroups */,
       FALSE /* exportSurveyFields */, NULL /* filter */, TRUE /* exportAsLabels */,
@@ -138,7 +139,7 @@ function expandRecords($squashed, $filteredRecords, $recordIdField) {
     foreach ($recordEventIds as $recordEventId) {
       if (is_null($events[$recordEventId])) {
         // Get the unique event name for the event id and store it in a map
-        $events[$recordEventId] = REDCap::getEventNames(true, false, $recordEventId);
+        $events[$recordEventId] = \REDCap::getEventNames(true, false, $recordEventId);
       }
       $row['redcap_event_name'] = $events[$recordEventId]; // Add the event name to the row
       $expanded[] = $row; // Add the row to the expanded set
@@ -146,7 +147,7 @@ function expandRecords($squashed, $filteredRecords, $recordIdField) {
   }
 
   // Return the expanded set and the set of events from the filter
-  $returnObj = new stdClass();
+  $returnObj = new \stdClass();
   $returnObj->filterEvents = array_values($events);
   $returnObj->data = $expanded;
   return $returnObj;

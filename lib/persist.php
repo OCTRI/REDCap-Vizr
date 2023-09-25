@@ -1,4 +1,5 @@
 <?php
+namespace Octri\Vizr;
 /**
  * EXTERNAL MODULE: REDCap Vizr
  * DESCRIPTION: Persists chart configuration data for the current project in the external module
@@ -56,7 +57,7 @@ function sanitizeStringProperties($obj) {
     if (is_object($val)) {
       sanitizeStringProperties($val);
     } else if (is_string($val)) {
-      $obj->{$prop} = REDCap::filterHtml($val);
+      $obj->{$prop} = \REDCap::filterHtml($val);
     }
   }
 }
@@ -78,10 +79,10 @@ function sanitizeChartConfig($charts) {
 // If $rights returns NULL, then user does not have access to this project
 // Check if user has "Project Design and Setup" rights
 if (!$can_edit) {
-  exit(RestUtility::sendResponse(401, "You do not have the necessary permissions to modify charts.", 'json'));
+  exit(\RestUtility::sendResponse(401, "You do not have the necessary permissions to modify charts.", 'json'));
 }
 
-$response = new stdClass();
+$response = new \stdClass();
 $data = json_decode(file_get_contents('php://input'));
 
 if (inputIsValid($data)) {
@@ -93,7 +94,7 @@ if (inputIsValid($data)) {
     } else {
       $response->errors = array("You do not have permission to modify chart definitions.");
     }
-  } catch (Exception $e) {
+  } catch (\Exception $e) {
     error_log("Vizr caught an exception persisting configuration for PID $project_id: " . $e->getMessage());
     $response->errors = array("The settings could not be saved due to an error.");
   }
@@ -107,6 +108,6 @@ $logData = json_encode(array_merge(
   array("data" => $data),
   array("response" => $response)
 ));
-REDCap::logEvent("Vizr chart configuration changed", $logData, NULL/*sql*/,
+\REDCap::logEvent("Vizr chart configuration changed", $logData, NULL/*sql*/,
     NULL/*record*/, NULL/*event*/, $project_id);
 echo json_encode($response);

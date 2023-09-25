@@ -1,4 +1,5 @@
 <?php
+namespace Octri\Vizr;
 /**
  * EXTERNAL MODULE: REDCap Vizr
  * DESCRIPTION: Queries the Vizr external module settings for chart definition data for the current
@@ -6,7 +7,7 @@
  */
 header('Content-Type: application/json');
 
-$defs_object = new stdClass();
+$defs_object = new \stdClass();
 
 // NOTE: pid must be appended to the query url for this to be treated as a project-level request
 $chart_defs = $module->getProjectSetting('chart-definitions', $project_id);
