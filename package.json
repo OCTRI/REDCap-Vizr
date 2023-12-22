@@ -63,7 +63,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
-    "@babel/runtime": "^7.23.5",
+    "@babel/runtime": "^7.23.6",
     "axios": "^1.6.2",
     "lodash": "^4.17.21",
     "qs": "^6.11.2",
