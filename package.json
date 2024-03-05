@@ -51,7 +51,7 @@
     "karma-spec-reporter": "~0.0.36",
     "karma-webpack": "^5.0.0",
     "mini-css-extract-plugin": "^2.8.1",
-    "moment": "^2.29.4",
+    "moment": "^2.30.1",
     "postcss": "^8.4.35",
     "prettier": "^3.1.0",
     "style-loader": "^3.3.4",
