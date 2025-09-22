@@ -35,7 +35,7 @@
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^7.1.2",
     "eslint": "^8.57.0",
-    "eslint-plugin-vue": "^9.32.0",
+    "eslint-plugin-vue": "^10.5.0",
     "file-loader": "^6.2.0",
     "flush-promises": "^1.0.2",
     "git-repo-info": "^2.1.1",
