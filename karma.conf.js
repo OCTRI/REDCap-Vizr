@@ -20,7 +20,8 @@ module.exports = function (config) {
     files: [
       'node_modules/jquery/dist/jquery.js',
       'node_modules/@babel/polyfill/dist/polyfill.js',
-      { pattern: 'test/**/*.js', watched: false }
+      { pattern: 'test/setup.js', watched: false },
+      { pattern: 'test/**/*_test.js', watched: false }
     ],
 
     // list of files to exclude
@@ -29,7 +30,8 @@ module.exports = function (config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'test/**/*.js': ['webpack']
+      'test/setup.js': ['webpack'],
+      'test/**/*_test.js': ['webpack']
     },
 
     // test results reporter to use

@@ -97,9 +97,10 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch, inject, onMounted } from 'vue';
 import moment from 'moment';
-import { groupedByInterval, summarizeGroups, trendPoints } from '@/bucket';
+import { groupedByInterval, summarizeGroups, trendPoints as calcTrendPoints } from '@/bucket';
 import { makeStackedChart } from '@/chart-config';
 
 import ChartForm from '@/components/ChartForm';
@@ -120,254 +121,230 @@ const messages = {
   }
 };
 
-/**
- * Chart component. Fetches chart data and constructs the chart and summary tables.
- */
-export default {
-  name: 'Chart',
-  inject: ['dataService'],
+const props = defineProps({
+  canEdit: Boolean,
+  chartDef: Object,
+  metadata: Object
+});
 
-  props: {
-    canEdit: Boolean,
-    chartDef: Object,
-    metadata: Object
-  },
+const emit = defineEmits(['save-chart', 'delete-chart', 'toggle-legend']);
 
-  components: {
-    ChartForm,
-    ChartSummary
-  },
+const dataService = inject('dataService');
 
-  data() {
-    return {
-      messages,
-      allEventsSentinel: ALL_EVENTS,
-      loaded: false,
-      chart: null,
-      chartData: [],
-      filterEvents: [],
-      selectedEvent: ALL_EVENTS,
-      warnings: []
-    };
-  },
+// Template ref
+const canvas = ref(null);
 
-  mounted() {
-    // capture the promise to synchronize tests
-    this.dataPromise = this.fetchData();
-  },
+// Reactive state
+const allEventsSentinel = ALL_EVENTS;
+const loaded = ref(false);
+const chart = ref(null);
+const chartData = ref([]);
+const filterEvents = ref([]);
+const selectedEvent = ref(ALL_EVENTS);
+const warnings = ref([]);
+let dataPromise = null;
 
-  methods: {
-    fetchData() {
-      const { dataService, chartDef } = this;
-      const requestOptions = this._makeRequestOptions();
-      return dataService
-        .getChartData(chartDef.field, requestOptions)
-        .then(this._captureData)
-        .then(this._makeChart)
-        .catch(this._showFetchError);
-    },
+onMounted(() => {
+  // capture the promise to synchronize tests
+  dataPromise = fetchData();
+});
 
-    _captureData(dataResponse) {
-      const { filterEvents, data, warnings } = dataResponse;
+watch(
+  () => props.chartDef,
+  () => reloadChart()
+);
 
-      this.chartData = data;
-      this.filterEvents = filterEvents;
-      this.warnings = warnings;
-      this.loaded = true;
-    },
+function fetchData() {
+  const requestOptions = _makeRequestOptions();
+  return dataService
+    .getChartData(props.chartDef.field, requestOptions)
+    .then(_captureData)
+    .then(_makeChart)
+    .catch(_showFetchError);
+}
 
-    _makeChart() {
-      const { chartDef, grouped, trendPoints } = this;
-      const { canvas } = this.$refs;
-      if (this.chart) {
-        this.chart.destroy();
-      }
-      this.chart = makeStackedChart(canvas, grouped, chartDef, trendPoints);
-    },
+function _captureData(dataResponse) {
+  const { filterEvents: fe, data, warnings: w } = dataResponse;
 
-    _clearChart() {
-      this.chartData = [];
-      this.filterEvents = [];
-      this.selectedEvent = ALL_EVENTS;
+  chartData.value = data;
+  filterEvents.value = fe;
+  warnings.value = w;
+  loaded.value = true;
+}
 
-      if (this.chart) {
-        this.chart.destroy();
-      }
-    },
-
-    _showFetchError() {
-      const { responseError } = this;
-      this._clearChart();
-      this.warnings = [responseError];
-    },
-
-    _makeRequestOptions() {
-      const { chartDef, metadata } = this;
-      return {
-        recordIdField: metadata.recordIdField,
-        filter: chartDef.filter,
-        events: [chartDef.dateFieldEvent, chartDef.groupFieldEvent].filter(Boolean),
-        fields: [chartDef.field, chartDef.group].filter(Boolean)
-      };
-    },
-
-    /**
-     * Save handler for the chart form.
-     */
-    saveChart(chartDef) {
-      this.$emit('save-chart', chartDef);
-    },
-
-    /**
-     * Click event handler for the delete link.
-     */
-    deleteChart() {
-      const { chartDef, messages } = this;
-      if (confirm(`${messages.actions.confirmDelete}: ${chartDef.title}?`)) {
-        this.$emit('delete-chart', chartDef);
-      }
-    },
-
-    /**
-     * Click event handler for the reload link. Fetches chart data again.
-     */
-    reloadChart() {
-      this.dataPromise = this.fetchData();
-    },
-
-    /**
-     * Click event handler for the legend toggle link.
-     */
-    toggleLegend() {
-      const { canEdit, chart, chartDef } = this;
-      chart.config.options.legend.display = !chart.config.options.legend.display;
-      chart.update();
-
-      if (canEdit) {
-        chartDef.hide_legend = !chartDef.hide_legend;
-        this.$emit('toggle-legend', chartDef);
-      }
-    },
-
-    /**
-     * Refreshes the chart after the event filter changes.
-     */
-    chartFilterChanged() {
-      this._makeChart();
-    },
-
-    /**
-     * Reset the warnings.
-     */
-    resetWarnings() {
-      this.warnings = [];
-    }
-  },
-
-  computed: {
-    id() {
-      const { chartDef = {} } = this;
-      return chartDef.id ? chartDef.id : '';
-    },
-
-    chartId() {
-      const { id } = this;
-      return `chart-${id}`;
-    },
-
-    formId() {
-      const { id } = this;
-      return `form-${id}`;
-    },
-
-    formIdSelector() {
-      const { formId } = this;
-      return `#${formId}`;
-    },
-
-    responseError() {
-      return { key: 'responseError', message: messages.warnings.responseError };
-    },
-
-    hasDescription() {
-      const { chartDef } = this;
-      return Boolean(chartDef && chartDef.description);
-    },
-
-    hasWarnings() {
-      const { warnings } = this;
-      return Boolean(warnings && warnings.length);
-    },
-
-    hasMultipleEvents() {
-      const { filterEvents } = this;
-      return Boolean(filterEvents && filterEvents.length > 1);
-    },
-
-    chartEnd() {
-      const { chartDef } = this;
-      return chartDef.chartEnd ? chartDef.chartEnd : moment().format('YYYY-MM-DD');
-    },
-
-    dateInterval() {
-      const { chartDef } = this;
-      return chartDef.dateInterval ? chartDef.dateInterval : 'week';
-    },
-
-    filteredData() {
-      const { allEventsSentinel, selectedEvent, chartData } = this;
-      const eventFilter = record => record.redcap_event_name === selectedEvent;
-      return selectedEvent === allEventsSentinel
-        ? chartData
-        : chartData.filter(eventFilter);
-    },
-
-    grouped() {
-      const { loaded, filteredData, chartDef, chartEnd, dateInterval } = this;
-      return loaded
-        ? groupedByInterval(
-            filteredData,
-            chartDef.field,
-            chartDef.start,
-            chartEnd,
-            dateInterval,
-            chartDef.group
-          )
-        : {};
-    },
-
-    summary() {
-      const { grouped, chartDef } = this;
-      return summarizeGroups(grouped, chartDef.targets);
-    },
-
-    totalCount() {
-      const { summary } = this;
-      return summary
-        ? Object.keys(summary).reduce((total, k) => total + summary[k].count, 0)
-        : 0;
-    },
-
-    totalTarget() {
-      const { summary } = this;
-      return summary
-        ? Object.keys(summary).reduce((total, k) => total + summary[k].target, 0)
-        : 0;
-    },
-
-    trendPoints() {
-      const { chartDef, dateInterval, totalTarget } = this;
-      return trendPoints(chartDef.start, chartDef.end, dateInterval, totalTarget);
-    }
-  },
-
-  watch: {
-    /**
-     * Watches the `chartDef` prop for changes, indicating that it was replaced by a save.
-     */
-    chartDef() {
-      this.reloadChart();
-    }
+function _makeChart() {
+  if (chart.value) {
+    chart.value.destroy();
   }
-};
+  chart.value = makeStackedChart(canvas.value, grouped.value, props.chartDef, trendPoints.value);
+}
+
+function _clearChart() {
+  chartData.value = [];
+  filterEvents.value = [];
+  selectedEvent.value = ALL_EVENTS;
+
+  if (chart.value) {
+    chart.value.destroy();
+  }
+}
+
+function _showFetchError() {
+  _clearChart();
+  warnings.value = [responseError.value];
+}
+
+function _makeRequestOptions() {
+  const { chartDef, metadata } = props;
+  return {
+    recordIdField: metadata.recordIdField,
+    filter: chartDef.filter,
+    events: [chartDef.dateFieldEvent, chartDef.groupFieldEvent].filter(Boolean),
+    fields: [chartDef.field, chartDef.group].filter(Boolean)
+  };
+}
+
+/**
+ * Save handler for the chart form.
+ */
+function saveChart(chartDef) {
+  emit('save-chart', chartDef);
+}
+
+/**
+ * Click event handler for the delete link.
+ */
+function deleteChart() {
+  const { chartDef } = props;
+  if (confirm(`${messages.actions.confirmDelete}: ${chartDef.title}?`)) {
+    emit('delete-chart', chartDef);
+  }
+}
+
+/**
+ * Click event handler for the reload link. Fetches chart data again.
+ */
+function reloadChart() {
+  dataPromise = fetchData();
+}
+
+/**
+ * Click event handler for the legend toggle link.
+ */
+function toggleLegend() {
+  const { canEdit, chartDef } = props;
+  chart.value.config.options.legend.display = !chart.value.config.options.legend.display;
+  chart.value.update();
+
+  if (canEdit) {
+    chartDef.hide_legend = !chartDef.hide_legend;
+    emit('toggle-legend', chartDef);
+  }
+}
+
+/**
+ * Refreshes the chart after the event filter changes.
+ */
+function chartFilterChanged() {
+  _makeChart();
+}
+
+/**
+ * Reset the warnings.
+ */
+function resetWarnings() {
+  warnings.value = [];
+}
+
+// Computed
+const id = computed(() => {
+  const { chartDef = {} } = props;
+  return chartDef.id ? chartDef.id : '';
+});
+
+const chartId = computed(() => `chart-${id.value}`);
+
+const formId = computed(() => `form-${id.value}`);
+
+const formIdSelector = computed(() => `#${formId.value}`);
+
+const responseError = computed(() => ({
+  key: 'responseError',
+  message: messages.warnings.responseError
+}));
+
+const hasDescription = computed(() => Boolean(props.chartDef && props.chartDef.description));
+
+const hasWarnings = computed(() => Boolean(warnings.value && warnings.value.length));
+
+const hasMultipleEvents = computed(
+  () => Boolean(filterEvents.value && filterEvents.value.length > 1)
+);
+
+const chartEnd = computed(() => {
+  const { chartDef } = props;
+  return chartDef.chartEnd ? chartDef.chartEnd : moment().format('YYYY-MM-DD');
+});
+
+const dateInterval = computed(() => {
+  const { chartDef } = props;
+  return chartDef.dateInterval ? chartDef.dateInterval : 'week';
+});
+
+const filteredData = computed(() => {
+  const eventFilter = record => record.redcap_event_name === selectedEvent.value;
+  return selectedEvent.value === allEventsSentinel
+    ? chartData.value
+    : chartData.value.filter(eventFilter);
+});
+
+const grouped = computed(() => {
+  const { chartDef } = props;
+  return loaded.value
+    ? groupedByInterval(
+        filteredData.value,
+        chartDef.field,
+        chartDef.start,
+        chartEnd.value,
+        dateInterval.value,
+        chartDef.group
+      )
+    : {};
+});
+
+const summary = computed(() => summarizeGroups(grouped.value, props.chartDef.targets));
+
+const totalCount = computed(() =>
+  summary.value
+    ? Object.keys(summary.value).reduce((total, k) => total + summary.value[k].count, 0)
+    : 0
+);
+
+const totalTarget = computed(() =>
+  summary.value
+    ? Object.keys(summary.value).reduce((total, k) => total + summary.value[k].target, 0)
+    : 0
+);
+
+const trendPoints = computed(() =>
+  calcTrendPoints(
+    props.chartDef.start,
+    props.chartDef.end,
+    dateInterval.value,
+    totalTarget.value
+  )
+);
+
+defineExpose({
+  get dataPromise() { return dataPromise; },
+  set dataPromise(val) { dataPromise = val; },
+  chart,
+  chartData,
+  filterEvents,
+  filteredData,
+  grouped,
+  summary,
+  totalCount,
+  totalTarget
+});
 </script>

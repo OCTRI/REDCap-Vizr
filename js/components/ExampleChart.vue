@@ -12,29 +12,21 @@
   </figure>
 </template>
 
-<script>
+<script setup>
+import { computed, inject } from 'vue';
 import exampleImage from '../../lib/vizr_example.png';
 
-export default {
-  name: 'ExampleChart',
-  inject: ['assetUrls'],
+const assetUrls = inject('assetUrls');
 
-  data() {
-    return {
-      messages: {
-        captionIntro: 'Example',
-        captionTitle:
-          ': This charted data has a screen date, is true for screened in = yes, and has a Trend Line comparing collected data to a target count',
-        imgTitle: 'Example Vizr Chart - Screened In Results'
-      }
-    };
-  },
-
-  computed: {
-    imgSrc() {
-      const { assetUrls = {} } = this;
-      return assetUrls[exampleImage] || exampleImage;
-    }
-  }
+const messages = {
+  captionIntro: 'Example',
+  captionTitle:
+    ': This charted data has a screen date, is true for screened in = yes, and has a Trend Line comparing collected data to a target count',
+  imgTitle: 'Example Vizr Chart - Screened In Results'
 };
+
+const imgSrc = computed(() => {
+  const urls = assetUrls || {};
+  return urls[exampleImage] || exampleImage;
+});
 </script>

@@ -7,9 +7,11 @@ describe('ExampleChart.vue', () => {
   it('renders a figure with an image and caption', () => {
     const mockUrl = `https://example.com${chartImage}`;
     const wrapper = shallowMount(ExampleChart, {
-      provide: {
-        assetUrls: {
-          [chartImage]: mockUrl
+      global: {
+        provide: {
+          assetUrls: {
+            [chartImage]: mockUrl
+          }
         }
       }
     });

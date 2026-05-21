@@ -115,7 +115,14 @@
   </ul>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue';
+
+const props = defineProps({
+  canEdit: Boolean,
+  hasCharts: Boolean
+});
+
 const messages = {
   chartComponents: {
     recordFilter: 'Select the data through a filter.',
@@ -189,32 +196,11 @@ const messages = {
   }
 };
 
-export default {
-  name: 'Instructions',
+const showNoChartInstructions = computed(() => !props.hasCharts);
 
-  props: {
-    canEdit: Boolean,
-    hasCharts: Boolean
-  },
+const showExistingChartInstructions = computed(() => props.hasCharts && props.canEdit);
 
-  data() {
-    return {
-      messages
-    };
-  },
-
-  computed: {
-    showInstructions() {
-      return this.showNoChartInstructions || this.showExistingChartInstructions;
-    },
-
-    showNoChartInstructions() {
-      return !this.hasCharts;
-    },
-
-    showExistingChartInstructions() {
-      return this.hasCharts && this.canEdit;
-    }
-  }
-};
+const showInstructions = computed(
+  () => showNoChartInstructions.value || showExistingChartInstructions.value
+);
 </script>

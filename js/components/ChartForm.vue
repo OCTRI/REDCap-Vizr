@@ -1,5 +1,5 @@
 <template>
-  <div :id="id" aria-expanded="true" @input="validateChanges" @change="validateChanges">
+  <div ref="formRoot" :id="id" aria-expanded="true" @input="validateChanges" @change="validateChanges">
     <div class="vizr-form-panel panel panel-primary card">
       <div class="panel-heading card-header">
         <strong>{{ messages.heading }}</strong>
@@ -63,7 +63,7 @@
               />
               <span
                 class="input-group-text"
-                @click="showDatePicker($refs.startDateInput)"
+                @click="showDatePicker(startDateInput)"
               >
                 <i class="far fa-calendar-alt"></i>
               </span>
@@ -88,7 +88,7 @@
               />
               <span
                 class="input-group-text"
-                @click="showDatePicker($refs.endDateInput)"
+                @click="showDatePicker(endDateInput)"
               >
                 <i class="far fa-calendar-alt"></i>
               </span>
@@ -308,7 +308,7 @@
               />
               <span
                 class="input-group-text"
-                @click="showDatePicker($refs.targetEndDateInput)"
+                @click="showDatePicker(targetEndDateInput)"
               >
                 <i class="far fa-calendar-alt"></i>
               </span>
@@ -349,29 +349,6 @@
 </template>
 
 <script>
-// provided externally by REDCap; doesn't add anything to the bundle
-import $ from 'jquery';
-
-import moment from 'moment';
-import striptags from 'striptags';
-import debounce from 'lodash/debounce';
-
-import {
-  fieldComparator,
-  getDateFields,
-  getCategoricalFields,
-  getChoices
-} from '@/data-dictionary';
-
-import {
-  defaultTargetsObject,
-  targetsObjectWithGroups,
-  isoToUserDate,
-  userToIsoDate,
-  userDateFormat,
-  fieldLabel
-} from '@/util';
-
 export const selector = {
   titleField: 'input[name=chart_title]',
   descriptionField: 'input[name=chart_description]',
@@ -394,6 +371,32 @@ export const selector = {
   validatedInputs: 'input[data-validate],[required]',
   validationError: '.has-error:not(.save-warning)'
 };
+</script>
+
+<script setup>
+// provided externally by REDCap; doesn't add anything to the bundle
+import $ from 'jquery';
+
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
+import moment from 'moment';
+import striptags from 'striptags';
+import debounce from 'lodash/debounce';
+
+import {
+  fieldComparator,
+  getDateFields,
+  getCategoricalFields,
+  getChoices
+} from '@/data-dictionary';
+
+import {
+  defaultTargetsObject,
+  targetsObjectWithGroups,
+  isoToUserDate,
+  userToIsoDate,
+  userDateFormat,
+  fieldLabel
+} from '@/util';
 
 const messages = {
   actions: {
@@ -439,499 +442,418 @@ const messages = {
   }
 };
 
-export default {
-  name: 'ChartForm',
+const props = defineProps({
+  chartDef: Object,
+  metadata: Object
+});
 
-  props: {
-    chartDef: Object,
-    metadata: Object
-  },
+const emit = defineEmits(['save-chart']);
 
-  data() {
-    const { chartDef } = this;
-    return {
-      messages,
-      dateIntervals: [
-        { label: 'Days', value: 'day' },
-        { label: 'Weeks', value: 'week' },
-        { label: 'Months', value: 'month' },
-        { label: 'Years', value: 'year' }
-      ],
-      isDirty: false,
-      model: this.copyModel(chartDef),
-      startDate: isoToUserDate(chartDef.start),
-      endDate: isoToUserDate(chartDef.chartEnd),
-      targetEndDate: isoToUserDate(chartDef.end),
-      errors: this.createErrorObject()
+// Template refs
+const formRoot = ref(null);
+const startDateInput = ref(null);
+const endDateInput = ref(null);
+const targetEndDateInput = ref(null);
+const dateFieldEventSelect = ref(null);
+const groupFieldEventSelect = ref(null);
+
+// Reactive state
+const dateIntervals = [
+  { label: 'Days', value: 'day' },
+  { label: 'Weeks', value: 'week' },
+  { label: 'Months', value: 'month' },
+  { label: 'Years', value: 'year' }
+];
+
+const isDirty = ref(false);
+const model = ref(copyModel(props.chartDef));
+const startDate = ref(isoToUserDate(props.chartDef.start));
+const endDate = ref(isoToUserDate(props.chartDef.chartEnd));
+const targetEndDate = ref(isoToUserDate(props.chartDef.end));
+const errors = ref(createErrorObject());
+
+// Debounced validate
+const validateChanges = debounce(function (evt) {
+  const { target } = evt;
+  validateInput(target);
+}, 300);
+
+onMounted(() => {
+  attachDatePickers();
+});
+
+onBeforeUnmount(() => {
+  destroyDatePickers();
+});
+
+watch(
+  () => props.chartDef,
+  () => reset()
+);
+
+/**
+ * Constructs a copy of the chartDef object.
+ */
+function copyModel(chartDef) {
+  const modelCopy = Object.assign({}, chartDef);
+
+  // handle old charts where Vue replaces the empty targets object with an array
+  if (Array.isArray(chartDef.targets)) {
+    const { group } = chartDef;
+    modelCopy.targets = Object.assign(
+      {},
+      group ? createGroupTargets(group) : defaultTargetsObject()
+    );
+  } else {
+    modelCopy.targets = Object.assign({}, chartDef.targets);
+  }
+
+  return modelCopy;
+}
+
+/**
+ * Recursively strips HTML from string-valued properties of the provided model object.
+ * NOTE: This will mutate the input object.
+ */
+function sanitizeModel(modelObj) {
+  Object.keys(modelObj).forEach(key => {
+    const value = modelObj[key];
+    if (typeof value === 'string') {
+      modelObj[key] = striptags(value);
+    }
+
+    if (value && typeof value === 'object') {
+      sanitizeModel(value);
+    }
+  });
+}
+
+/**
+ * Creates a targets object for the selected group field.
+ */
+function createGroupTargets(group) {
+  const { metadata } = props;
+  const { dataDictionary } = metadata;
+
+  const groupField = dataDictionary.find(field => field.field_name === group);
+  const groups = getChoices(groupField).map(choice => choice.label);
+  return targetsObjectWithGroups(groups);
+}
+
+/**
+ * Creates an object for storing the component's error state.
+ */
+function createErrorObject() {
+  return {
+    chartEndError: '',
+    dateFieldEventError: '',
+    dateIntervalError: '',
+    endError: '',
+    fieldError: '',
+    groupError: '',
+    startError: '',
+    titleError: ''
+  };
+}
+
+/**
+ * Attaches date pickers to the date inputs.
+ */
+function attachDatePickers() {
+  const el = formRoot.value;
+  if (hasDatePickers.value && el) {
+    const pickerConfig = {
+      buttonText: messages.pickerConfig.buttonText,
+      yearRange: '-100:+10',
+      changeMonth: true,
+      changeYear: true,
+      dateFormat: 'mm/dd/yy',
+      onSelect() {
+        const inputEvent = new Event('input', {
+          bubbles: true,
+          cancelable: false
+        });
+        this.dispatchEvent(inputEvent);
+      }
     };
-  },
 
-  mounted() {
-    this.attachDatePickers();
-  },
+    $(el).find('input.vizr-date').datepicker(pickerConfig);
+  }
+}
 
-  beforeDestroy() {
-    this.destroyDatePickers();
-  },
+/**
+ * Destroys date pickers attached to the date inputs.
+ */
+function destroyDatePickers() {
+  const el = formRoot.value;
+  if (hasDatePickers.value && el) {
+    $(el).find('input.vizr-date').datepicker('destroy');
+  }
+}
 
-  methods: {
-    /**
-     * Constructs a copy of the chartDef object.
-     * @param {ChartDefinition} chartDef - object to be copied
-     * @return {ChartDefinition} new Object.
-     */
-    copyModel(chartDef) {
-      const model = Object.assign({}, chartDef);
+/**
+ * Opens the date picker for the given element.
+ */
+function showDatePicker(element) {
+  if (hasDatePickers.value) {
+    $(element).datepicker('show');
+  }
+}
 
-      // handle old charts where Vue replaces the empty targets object with an array
-      if (Array.isArray(chartDef.targets)) {
-        const { group } = chartDef;
-        model.targets = Object.assign(
-          {},
-          group ? this.createGroupTargets(group) : defaultTargetsObject()
-        );
-      } else {
-        model.targets = Object.assign({}, chartDef.targets);
-      }
+/**
+ * Resets the model. Used on cancel and when the `chartDef` prop is replaced.
+ */
+function reset() {
+  const { chartDef } = props;
+  model.value = copyModel(chartDef);
+  errors.value = createErrorObject();
+  startDate.value = isoToUserDate(chartDef.start);
+  endDate.value = isoToUserDate(chartDef.chartEnd);
+  targetEndDate.value = isoToUserDate(chartDef.end);
+  isDirty.value = false;
+}
 
-      return model;
-    },
+/**
+ * Clears the date field selection when the date field event changes.
+ */
+function dateFieldEventChanged() {
+  model.value.field = '';
+}
 
-    /**
-     * Recursively strips HTML from string-valued properties of the provided model object.
-     * NOTE: This will mutate the input object.
-     * @param {Object} model - the object to sanitize
-     */
-    sanitizeModel(model) {
-      Object.keys(model).forEach(key => {
-        const value = model[key];
-        if (typeof value === 'string') {
-          model[key] = striptags(value);
-        }
+/**
+ * Clears the grouping field selection when the grouping field event changes.
+ */
+function groupFieldEventChanged() {
+  model.value.group = '';
+}
 
-        if (value && typeof value === 'object') {
-          this.sanitizeModel(value);
-        }
-      });
-    },
+/**
+ * Resets the targets when the field used to group records changes.
+ */
+function groupFieldChanged() {
+  const { group } = model.value;
 
-    /**
-     * Creates a targets object for the selected group field.
-     * @param {String} group - the name of the field to group records by
-     */
-    createGroupTargets(group) {
-      // called before properties are computed, so extract data dictionary manually
-      const { metadata } = this;
-      const { dataDictionary } = metadata;
+  if (group === '') {
+    model.value.targets = defaultTargetsObject();
+  } else {
+    model.value.targets = createGroupTargets(group);
+  }
+}
 
-      const groupField = dataDictionary.find(field => field.field_name === group);
-      const groups = getChoices(groupField).map(choice => choice.label);
-      return targetsObjectWithGroups(groups);
-    },
+/**
+ * Keeps model in sync with date input values.
+ */
+function dateFieldChanged(evt) {
+  const { target } = evt;
 
-    /**
-     * Creates an object for storing the component's error state.
-     */
-    createErrorObject() {
-      return {
-        chartEndError: '',
-        dateFieldEventError: '',
-        dateIntervalError: '',
-        endError: '',
-        fieldError: '',
-        groupError: '',
-        startError: '',
-        titleError: ''
-      };
-    },
+  const field = target.getAttribute('data-field');
+  const vModelField = target.getAttribute('data-v-model');
 
-    /**
-     * Attaches date pickers to the date inputs.
-     */
-    attachDatePickers() {
-      const { $el, hasDatePickers, messages } = this;
-      if (hasDatePickers) {
-        // match the config used by REDCap
-        const pickerConfig = {
-          buttonText: messages.pickerConfig.buttonText,
-          yearRange: '-100:+10',
-          changeMonth: true,
-          changeYear: true,
-          dateFormat: 'mm/dd/yy',
-          onSelect() {
-            const inputEvent = new Event('input', {
-              bubbles: true,
-              cancelable: false
-            });
-            this.dispatchEvent(inputEvent);
-          }
-        };
+  // set ISO date in the model
+  model.value[field] = userToIsoDate(target.value);
 
-        $($el).find('input.vizr-date').datepicker(pickerConfig);
-      }
-    },
+  // manually update the v-model for changes from date picker
+  const dateFieldMap = { startDate, endDate, targetEndDate };
+  if (dateFieldMap[vModelField]) {
+    dateFieldMap[vModelField].value = target.value;
+  }
+}
 
-    /**
-     * Destroys date pickers attached to the date inputs.
-     */
-    destroyDatePickers() {
-      const { $el, hasDatePickers } = this;
-      if (hasDatePickers) {
-        $($el).find('input.vizr-date').datepicker('destroy');
-      }
-    },
+/**
+ * Validates all the form inputs prior to saving.
+ */
+function validateForm() {
+  const el = formRoot.value;
+  if (!el) return;
+  const inputs = el.querySelectorAll(selector.validatedInputs);
+  for (let i = 0; i < inputs.length; i++) {
+    validateInput(inputs[i]);
+  }
+}
 
-    /**
-     * Opens the date picker for the given element.
-     */
-    showDatePicker(element) {
-      const { hasDatePickers } = this;
-      if (hasDatePickers) {
-        $(element).datepicker('show');
-      }
-    },
+/**
+ * Validates the value of an input.
+ */
+function validateInput(el) {
+  // return early if the event didn't have a target
+  if (!el) {
+    return;
+  }
 
-    /**
-     * Resets the model. Used on cancel and when the `chartDef` prop is replaced.
-     */
-    reset() {
-      const { chartDef } = this;
-      this.model = this.copyModel(chartDef);
-      this.errors = this.createErrorObject();
-      this.startDate = isoToUserDate(chartDef.start);
-      this.endDate = isoToUserDate(chartDef.chartEnd);
-      this.targetEndDate = isoToUserDate(chartDef.end);
-      this.isDirty = false;
-    },
+  isDirty.value = true;
+  const errorsObj = errors.value;
+  const errorField = `${el.getAttribute('data-field')}Error`;
+  const validations = getValidations(el);
+  const validationFns = { validateRequiredInput, validateDate, validateDateEvent, validateTargetDate, validateGroup };
+  const inputErrors = validations.map(name =>
+    typeof validationFns[name] === 'function' ? validationFns[name](el) : null
+  );
 
-    /**
-     * Clears the date field selection when the date field event changes.
-     */
-    dateFieldEventChanged() {
-      const { model } = this;
-      model.field = '';
-    },
+  errorsObj[errorField] = inputErrors.filter(Boolean).join(' ');
+}
 
-    /**
-     * Clears the grouping field selection when the grouping field event changes.
-     */
-    groupFieldEventChanged() {
-      const { model } = this;
-      model.group = '';
-    },
+/**
+ * Gets the list of validation methods that should be run for the given field.
+ */
+function getValidations(el) {
+  const isRequired = el.hasAttribute('required');
+  const hasDataValidations = el.hasAttribute('data-validate');
+  const validations = [];
 
-    /**
-     * Resets the targets when the field used to group records changes.
-     */
-    groupFieldChanged() {
-      const { model } = this;
-      const { group } = model;
+  if (isRequired) {
+    validations.push('validateRequiredInput');
+  }
 
-      if (group === '') {
-        model.targets = defaultTargetsObject();
-      } else {
-        model.targets = this.createGroupTargets(group);
-      }
-    },
+  if (hasDataValidations) {
+    const validationNames = el.getAttribute('data-validate').split(',');
+    validations.push(...validationNames);
+  }
 
-    /**
-     * Keeps model in sync with date input values.
-     */
-    dateFieldChanged(evt) {
-      const { target } = evt;
-      const { model } = this;
+  return validations;
+}
 
-      const field = target.getAttribute('data-field');
-      const vModelField = target.getAttribute('data-v-model');
+/**
+ * Validates that the given element has a value.
+ */
+function validateRequiredInput(el) {
+  return !el.value.trim() ? messages.validation.requiredError : null;
+}
 
-      // set ISO date in the model
-      model[field] = userToIsoDate(target.value);
+/**
+ * Validates that the value of the given element is a date string.
+ */
+function validateDate(el) {
+  const value = el.value.trim();
+  if (value && !moment(value, userDateFormat, true).isValid()) {
+    return messages.validation.dateFormatError;
+  }
+}
 
-      // manually update the v-model for changes from date picker
-      this[vModelField] = target.value;
-    },
+/**
+ * Validates that a date field event is selected if the project is longitudinal and
+ * a date field is selected.
+ */
+function validateDateEvent(el) {
+  if (el.value && dateFieldEventSelect.value && !model.value.dateFieldEvent) {
+    return messages.validation.dateEventError;
+  }
+}
 
-    /**
-     * Validates the form on input and change events. Closely-spaced events are coalesced.
-     */
-    validateChanges: debounce(function (evt) {
-      const { target } = evt;
-      this.validateInput(target);
-    }, 300),
+/**
+ * Validates that start and end dates have been chosen if targets are present.
+ */
+function validateTargetDate(el) {
+  const targetsObj = targets.value;
+  const inputName = el.getAttribute('name');
 
-    /**
-     * Validates all the form inputs prior to saving.
-     */
-    validateForm() {
-      const { $el } = this;
-      const inputs = $el.querySelectorAll(selector.validatedInputs);
-      for (let i = 0; i < inputs.length; i++) {
-        this.validateInput(inputs[i]);
-      }
-    },
-
-    /**
-     * Validates the value of an input.
-     * @param {Element} el - the element to check
-     */
-    validateInput(el) {
-      // return early if the event didn't have a target
-      if (!el) {
-        return;
-      }
-
-      this.isDirty = true;
-      const { errors } = this;
-      const errorField = `${el.getAttribute('data-field')}Error`;
-      const validations = this.getValidations(el);
-      const inputErrors = validations.map(name =>
-        typeof this[name] === 'function' ? this[name].call(this, el) : null
-      );
-
-      errors[errorField] = inputErrors.filter(Boolean).join(' ');
-    },
-
-    /**
-     * Gets the list of validation methods that should be run for the given field.
-     * @param {Element} el - the input element to validate
-     * @return {String[]} an array of validation method names
-     */
-    getValidations(el) {
-      const isRequired = el.hasAttribute('required');
-      const hasDataValidations = el.hasAttribute('data-validate');
-      const validations = [];
-
-      if (isRequired) {
-        validations.push('validateRequiredInput');
-      }
-
-      if (hasDataValidations) {
-        const validationNames = el.getAttribute('data-validate').split(',');
-        validations.push(...validationNames);
-      }
-
-      return validations;
-    },
-
-    /**
-     * Validates that the given element has a value.
-     * @param {Element} el - the element to check
-     * @return {String} an error message if the input is invalid
-     */
-    validateRequiredInput(el) {
-      return !el.value.trim() ? messages.validation.requiredError : null;
-    },
-
-    /**
-     * Validates that the value of the given element is a date string.
-     * @param {Element} el - the element to check
-     * @return {String} an error message if the input is invalid
-     */
-    validateDate(el) {
-      const value = el.value.trim();
-      if (value && !moment(value, userDateFormat, true).isValid()) {
-        return messages.validation.dateFormatError;
-      }
-    },
-
-    /**
-     * Validates that a date field event is selected if the project is longitudinal and
-     * a date field is selected.
-     * @param {Element} el - the date field select list
-     * @return {String} an error message if the input is invalid
-     */
-    validateDateEvent(el) {
-      const { model } = this;
-      const { dateFieldEventSelect } = this.$refs;
-      if (el.value && dateFieldEventSelect && !model.dateFieldEvent) {
-        return messages.validation.dateEventError;
-      }
-    },
-
-    /**
-     * Validates that start and end dates have been chosen if targets are present.
-     * @param {Element} el - a target input or date input
-     * @return {String} an error message if the input is invalid
-     */
-    validateTargetDate(el) {
-      const { targets } = this;
-      const { startDateInput, targetEndDateInput } = this.$refs;
-      const inputName = el.getAttribute('name');
-
-      if (inputName === 'target_count' || inputName.startsWith('group_target')) {
-        // count changed, re-validate target dates
-        this.validateInput(startDateInput);
-        this.validateInput(targetEndDateInput);
-      } else {
-        // validating date input; check that if target(s) present, dates exist
-        const targetValues = Object.values(targets).filter(Number.isFinite);
-        if (targetValues.length > 0 && !el.value.trim()) {
-          return messages.validation.targetDateError;
-        }
-      }
-    },
-
-    /**
-     * Validates that a group field event is selected if the project is longitudinal and
-     * a grouping field is selected.
-     * @param {Element} el - the grouping field select list
-     * @return {String} an error message if the input is invalid
-     */
-    validateGroup(el) {
-      const { model } = this;
-      const { groupFieldEventSelect } = this.$refs;
-      if (el.value && groupFieldEventSelect && !model.groupFieldEvent) {
-        return messages.validation.groupError;
-      }
-    },
-
-    /**
-     * Emits an event with the updated chart configuration.
-     * @param {Event} evt - event triggered by the save button
-     */
-    save(evt) {
-      const { model } = this;
-
-      this.validateForm();
-      if (this.hasErrors) {
-        evt.stopPropagation();
-      } else {
-        const newModel = this.copyModel(model);
-        this.sanitizeModel(newModel);
-        this.$emit('save-chart', newModel);
-      }
-    }
-  },
-
-  computed: {
-    id() {
-      const { chartDef } = this;
-      return `form-${chartDef.id}`;
-    },
-
-    idSelector() {
-      const { id } = this;
-      return `#${id}`;
-    },
-
-    groupTargetsId() {
-      const { id } = this;
-      return `collapseGroupTargets_${id}`;
-    },
-
-    groupTargetsIdSelector() {
-      const { groupTargetsId } = this;
-      return `#${groupTargetsId}`;
-    },
-
-    dataDictionary() {
-      const { metadata } = this;
-      return metadata.dataDictionary;
-    },
-
-    events() {
-      const { events } = this.metadata;
-      return events;
-    },
-
-    eventNames() {
-      const { events } = this;
-      return events ? Object.keys(events) : [];
-    },
-
-    hasEvents() {
-      const { eventNames } = this;
-      return eventNames.length > 0;
-    },
-
-    hasDatePickers() {
-      return Boolean(window.$ && window.$.fn && window.$.fn.datepicker);
-    },
-
-    eventChoices() {
-      const { eventNames } = this;
-      return eventNames.map(name => ({ label: name, value: name }));
-    },
-
-    dateForms() {
-      const { events, hasEvents, model } = this;
-      const { dateFieldEvent } = model;
-      return hasEvents ? events[dateFieldEvent] : null;
-    },
-
-    dateFieldChoices() {
-      const { dataDictionary, dateForms } = this;
-      return getDateFields(dataDictionary, dateForms)
-        .sort(fieldComparator)
-        .map(f => ({ label: fieldLabel(f), value: f.field_name }));
-    },
-
-    groupForms() {
-      const { hasEvents, events, model } = this;
-      const { groupFieldEvent } = model;
-      return hasEvents ? events[groupFieldEvent] : null;
-    },
-
-    groupFieldChoices() {
-      const { dataDictionary, groupForms } = this;
-      return getCategoricalFields(dataDictionary, groupForms)
-        .sort(fieldComparator)
-        .map(f => ({ label: fieldLabel(f), value: f.field_name }));
-    },
-
-    hasGroup() {
-      const { model } = this;
-      return Boolean(model.group);
-    },
-
-    noGroup() {
-      const { hasGroup } = this;
-      return !hasGroup;
-    },
-
-    targets() {
-      const { model } = this;
-      return model.targets;
-    },
-
-    groupTargets() {
-      const { targets } = this;
-      return Object.keys(targets).map(key => ({
-        label: key,
-        name: `group_target__${key}`
-      }));
-    },
-
-    targetTotal() {
-      const { targets } = this;
-      return Object.keys(targets)
-        .filter(key => Number.isFinite(targets[key]))
-        .reduce((acc, key) => acc + targets[key], 0);
-    },
-
-    errorCount() {
-      const { errors } = this;
-      return Object.values(errors).filter(Boolean).length;
-    },
-
-    hasErrors() {
-      const { errorCount } = this;
-      return errorCount > 0;
-    },
-
-    submitDisabled() {
-      const { isDirty, hasErrors } = this;
-      return !isDirty || hasErrors;
-    }
-  },
-
-  watch: {
-    /**
-     * Watches the `chartDef` prop for changes, indicating that it was replaced by a save.
-     */
-    chartDef() {
-      this.reset();
+  if (inputName === 'target_count' || inputName.startsWith('group_target')) {
+    // count changed, re-validate target dates
+    validateInput(startDateInput.value);
+    validateInput(targetEndDateInput.value);
+  } else {
+    // validating date input; check that if target(s) present, dates exist
+    const targetValues = Object.values(targetsObj).filter(Number.isFinite);
+    if (targetValues.length > 0 && !el.value.trim()) {
+      return messages.validation.targetDateError;
     }
   }
-};
+}
+
+/**
+ * Validates that a group field event is selected if the project is longitudinal and
+ * a grouping field is selected.
+ */
+function validateGroup(el) {
+  if (el.value && groupFieldEventSelect.value && !model.value.groupFieldEvent) {
+    return messages.validation.groupError;
+  }
+}
+
+/**
+ * Emits an event with the updated chart configuration.
+ */
+function save(evt) {
+  validateForm();
+  if (hasErrors.value) {
+    evt.stopPropagation();
+  } else {
+    const newModel = copyModel(model.value);
+    sanitizeModel(newModel);
+    emit('save-chart', newModel);
+  }
+}
+
+// Computed
+const id = computed(() => `form-${props.chartDef.id}`);
+
+const idSelector = computed(() => `#${id.value}`);
+
+const groupTargetsId = computed(() => `collapseGroupTargets_${id.value}`);
+
+const groupTargetsIdSelector = computed(() => `#${groupTargetsId.value}`);
+
+const dataDictionary = computed(() => props.metadata.dataDictionary);
+
+const events = computed(() => props.metadata.events);
+
+const eventNames = computed(() => (events.value ? Object.keys(events.value) : []));
+
+const hasEvents = computed(() => eventNames.value.length > 0);
+
+const hasDatePickers = computed(
+  () => Boolean(window.$ && window.$.fn && window.$.fn.datepicker)
+);
+
+const eventChoices = computed(() =>
+  eventNames.value.map(name => ({ label: name, value: name }))
+);
+
+const dateForms = computed(() => {
+  const { dateFieldEvent } = model.value;
+  return hasEvents.value ? events.value[dateFieldEvent] : null;
+});
+
+const dateFieldChoices = computed(() =>
+  getDateFields(dataDictionary.value, dateForms.value)
+    .sort(fieldComparator)
+    .map(f => ({ label: fieldLabel(f), value: f.field_name }))
+);
+
+const groupForms = computed(() => {
+  const { groupFieldEvent } = model.value;
+  return hasEvents.value ? events.value[groupFieldEvent] : null;
+});
+
+const groupFieldChoices = computed(() =>
+  getCategoricalFields(dataDictionary.value, groupForms.value)
+    .sort(fieldComparator)
+    .map(f => ({ label: fieldLabel(f), value: f.field_name }))
+);
+
+const hasGroup = computed(() => Boolean(model.value.group));
+
+const noGroup = computed(() => !hasGroup.value);
+
+const targets = computed(() => model.value.targets);
+
+const groupTargets = computed(() =>
+  Object.keys(targets.value).map(key => ({
+    label: key,
+    name: `group_target__${key}`
+  }))
+);
+
+const targetTotal = computed(() =>
+  Object.keys(targets.value)
+    .filter(key => Number.isFinite(targets.value[key]))
+    .reduce((acc, key) => acc + targets.value[key], 0)
+);
+
+const errorCount = computed(() => Object.values(errors.value).filter(Boolean).length);
+
+const hasErrors = computed(() => errorCount.value > 0);
+
+const submitDisabled = computed(() => !isDirty.value || hasErrors.value);
+
+defineExpose({ isDirty, model, errors, sanitizeModel, copyModel, validateInput });
 </script>
