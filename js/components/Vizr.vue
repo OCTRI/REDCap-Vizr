@@ -75,7 +75,7 @@ const messages = {
   }
 };
 
-const props = defineProps({
+defineProps({
   pid: Number,
   canEdit: Boolean
 });
@@ -215,8 +215,6 @@ const noCharts = computed(() => !hasCharts.value);
 const charts = computed(() =>
   config.value && config.value.charts ? config.value.charts : []
 );
-
-const newChartFormId = computed(() => `form-${newChart.value.id}`);
 
 defineExpose({
   get configPromise() { return configPromise; },
