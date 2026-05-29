@@ -66,7 +66,11 @@ module.exports = {
     new DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(buildEnv),
       VIZR_VERSION: JSON.stringify(packageJson.version),
-      VIZR_GIT_HASH: JSON.stringify(repoInfo.abbreviatedSha)
+      VIZR_GIT_HASH: JSON.stringify(repoInfo.abbreviatedSha),
+      // Vue 3 compile-time feature flags
+      __VUE_OPTIONS_API__: JSON.stringify(true),
+      __VUE_PROD_DEVTOOLS__: JSON.stringify(false),
+      __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false)
     }),
     new VueLoaderPlugin(),
     new CopyWebpackPlugin({

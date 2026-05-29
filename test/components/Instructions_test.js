@@ -4,7 +4,7 @@ import Instructions from '@/components/Instructions';
 describe('Instructions.vue', () => {
   it('renders initial use instructions when there are no charts', () => {
     const wrapper = shallowMount(Instructions, {
-      propsData: {
+      props: {
         canEdit: false,
         hasCharts: false
       }
@@ -16,7 +16,7 @@ describe('Instructions.vue', () => {
 
     // no chart instructions are present
     const noChartsItems = instructionList.findAll('li[data-no-charts]');
-    expect(noChartsItems.wrappers.length).toEqual(2);
+    expect(noChartsItems.length).toEqual(2);
 
     // detailed instructions are present
     const details = wrapper.find('div.collapse');
@@ -25,7 +25,7 @@ describe('Instructions.vue', () => {
 
   it('renders instructions when there are charts and the user can edit', () => {
     const wrapper = shallowMount(Instructions, {
-      propsData: {
+      props: {
         canEdit: true,
         hasCharts: true
       }
@@ -36,7 +36,7 @@ describe('Instructions.vue', () => {
 
     // no chart instructions are not present
     const noChartsItems = instructionList.findAll('li[data-no-charts]');
-    expect(noChartsItems.wrappers.length).toEqual(0);
+    expect(noChartsItems.length).toEqual(0);
 
     // detailed instructions are present
     const details = wrapper.find('div.collapse');
@@ -45,7 +45,7 @@ describe('Instructions.vue', () => {
 
   it('renders an empty div when there are charts but the user cannot edit', () => {
     const wrapper = shallowMount(Instructions, {
-      propsData: {
+      props: {
         canEdit: false,
         hasCharts: true
       }

@@ -1,6 +1,6 @@
 import '@babel/polyfill';
 
-import Vue from 'vue';
+import { createApp } from 'vue';
 
 import '../lib/vizr.css';
 import Vizr from './components/Vizr';
@@ -23,26 +23,8 @@ export function run(pid, canEdit, jsonAssetUrls) {
   /**
    * Instantiate the Vue component tree.
    */
-  new Vue({
-    el: '.vizr-container',
-    components: { Vizr },
-    render(createElement) {
-      return createElement(Vizr, {
-        props: {
-          pid: this.pid,
-          canEdit: this.canEdit
-        }
-      });
-    },
-    data: {
-      pid,
-      canEdit
-    },
-    provide() {
-      return {
-        assetUrls,
-        dataService
-      };
-    }
-  });
+  const app = createApp(Vizr, { pid, canEdit });
+  app.provide('assetUrls', assetUrls);
+  app.provide('dataService', dataService);
+  app.mount('.vizr-container');
 }

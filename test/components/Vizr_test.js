@@ -41,10 +41,12 @@ describe('Vizr.vue', () => {
     spyOn(mockProvide.dataService, 'saveChartConfig').and.callThrough();
 
     wrapper = shallowMount(Vizr, {
-      propsData: {
+      props: {
         canEdit: true
       },
-      provide: mockProvide
+      global: {
+        provide: mockProvide
+      }
     });
 
     await wrapper.vm.configPromise;
@@ -73,8 +75,20 @@ describe('Vizr.vue', () => {
     let style = wrapper.findComponent(ExampleChart).element.style;
     expect(style.display).toEqual('none');
 
-    await wrapper.setData({ config: { charts: [] } });
-    style = wrapper.findComponent(ExampleChart).element.style;
+    // Use a separate wrapper with empty charts to test the no-charts state
+    const emptyChartConfig = { charts: [] };
+    const emptyProvide = createProvideObject(emptyChartConfig);
+    const emptyWrapper = shallowMount(Vizr, {
+      props: {
+        canEdit: true
+      },
+      global: {
+        provide: emptyProvide
+      }
+    });
+    await emptyWrapper.vm.configPromise;
+
+    style = emptyWrapper.findComponent(ExampleChart).element.style;
     expect(style.display).not.toEqual('none');
   });
 
@@ -100,10 +114,12 @@ describe('Vizr.vue', () => {
       };
 
       const errorWrapper = shallowMount(Vizr, {
-        propsData: {
+        props: {
           canEdit: true
         },
-        provide: provideObject
+        global: {
+          provide: provideObject
+        }
       });
 
       await errorWrapper.vm.configPromise;
@@ -161,10 +177,12 @@ describe('Vizr.vue', () => {
         };
 
         errorWrapper = shallowMount(Vizr, {
-          propsData: {
+          props: {
             canEdit: true
           },
-          provide: provideObject
+          global: {
+            provide: provideObject
+          }
         });
 
         await errorWrapper.vm.configPromise;

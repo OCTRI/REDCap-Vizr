@@ -18,21 +18,30 @@ describe('Chart.vue', () => {
 
       beforeEach(async () => {
         wrapper = shallowMount(Chart, {
-          propsData: {
+          props: {
             canEdit: true,
             chartDef: exampleChart,
             metadata: exampleMetadata
           },
-          provide: {
-            dataService: {
-              getChartData() {
-                return Promise.resolve(response);
+          global: {
+            provide: {
+              dataService: {
+                getChartData() {
+                  return Promise.resolve(response);
+                }
               }
             }
           }
         });
 
         await wrapper.vm.dataPromise;
+      });
+
+      afterEach(() => {
+        if (wrapper && wrapper.vm.chart) {
+          wrapper.vm.chart.destroy();
+        }
+        wrapper.unmount();
       });
 
       it('creates the chart container', () => {
@@ -96,21 +105,30 @@ describe('Chart.vue', () => {
 
       beforeEach(async () => {
         wrapper = shallowMount(Chart, {
-          propsData: {
+          props: {
             canEdit: true,
             chartDef: exampleChart,
             metadata: exampleMetadata
           },
-          provide: {
-            dataService: {
-              getChartData() {
-                return Promise.resolve(response);
+          global: {
+            provide: {
+              dataService: {
+                getChartData() {
+                  return Promise.resolve(response);
+                }
               }
             }
           }
         });
 
         await wrapper.vm.dataPromise;
+      });
+
+      afterEach(() => {
+        if (wrapper && wrapper.vm.chart) {
+          wrapper.vm.chart.destroy();
+        }
+        wrapper.unmount();
       });
 
       it('displays the warnings', () => {
@@ -128,21 +146,30 @@ describe('Chart.vue', () => {
 
       beforeEach(async () => {
         wrapper = shallowMount(Chart, {
-          propsData: {
+          props: {
             canEdit: true,
             chartDef: exampleLongitudinalChart,
             metadata: exampleLongitudinalMetadata
           },
-          provide: {
-            dataService: {
-              getChartData() {
-                return Promise.resolve(response);
+          global: {
+            provide: {
+              dataService: {
+                getChartData() {
+                  return Promise.resolve(response);
+                }
               }
             }
           }
         });
 
         await wrapper.vm.dataPromise;
+      });
+
+      afterEach(() => {
+        if (wrapper && wrapper.vm.chart) {
+          wrapper.vm.chart.destroy();
+        }
+        wrapper.unmount();
       });
 
       it('shows a title', () => {
@@ -205,21 +232,30 @@ describe('Chart.vue', () => {
 
       beforeEach(async () => {
         wrapper = shallowMount(Chart, {
-          propsData: {
+          props: {
             canEdit: true,
             chartDef: exampleChart,
             metadata: exampleMetadata
           },
-          provide: {
-            dataService: {
-              getChartData() {
-                return Promise.resolve(response);
+          global: {
+            provide: {
+              dataService: {
+                getChartData() {
+                  return Promise.resolve(response);
+                }
               }
             }
           }
         });
 
         await wrapper.vm.dataPromise;
+      });
+
+      afterEach(() => {
+        if (wrapper && wrapper.vm.chart) {
+          wrapper.vm.chart.destroy();
+        }
+        wrapper.unmount();
       });
 
       it('displays the warnings', () => {
@@ -237,21 +273,30 @@ describe('Chart.vue', () => {
 
       beforeEach(async () => {
         wrapper = shallowMount(Chart, {
-          propsData: {
+          props: {
             canEdit: true,
             chartDef: exampleLongitudinalChart,
             metadata: exampleLongitudinalMetadata
           },
-          provide: {
-            dataService: {
-              getChartData() {
-                return Promise.resolve(response);
+          global: {
+            provide: {
+              dataService: {
+                getChartData() {
+                  return Promise.resolve(response);
+                }
               }
             }
           }
         });
 
         await wrapper.vm.dataPromise;
+      });
+
+      afterEach(() => {
+        if (wrapper && wrapper.vm.chart) {
+          wrapper.vm.chart.destroy();
+        }
+        wrapper.unmount();
       });
 
       it('shows live event filter', () => {
@@ -274,7 +319,7 @@ describe('Chart.vue', () => {
         expect(wrapper.vm.summary).not.toEqual(allEventSummary);
 
         // Select all events again - data should revert
-        const allEventsOption = wrapper.findAll('option').at(0);
+        const allEventsOption = wrapper.findAll('option')[0];
         await wrapper.find('select').setValue(allEventsOption.element.value);
         expect(wrapper.vm.filteredData).toEqual(allEventData);
         expect(wrapper.vm.grouped).toEqual(allEventGrouped);
@@ -295,17 +340,26 @@ describe('Chart.vue', () => {
       };
 
       wrapper = shallowMount(Chart, {
-        propsData: {
+        props: {
           canEdit: true,
           chartDef: exampleLongitudinalChart,
           metadata: exampleLongitudinalMetadata
         },
-        provide: {
-          dataService
+        global: {
+          provide: {
+            dataService
+          }
         }
       });
 
       await wrapper.vm.dataPromise;
+    });
+
+    afterEach(() => {
+      if (wrapper && wrapper.vm.chart) {
+        wrapper.vm.chart.destroy();
+      }
+      wrapper.unmount();
     });
 
     it('refreshes chart data', async () => {
@@ -328,17 +382,26 @@ describe('Chart.vue', () => {
       };
 
       wrapper = shallowMount(Chart, {
-        propsData: {
+        props: {
           canEdit: true,
           chartDef: exampleLongitudinalChart,
           metadata: exampleLongitudinalMetadata
         },
-        provide: {
-          dataService
+        global: {
+          provide: {
+            dataService
+          }
         }
       });
 
       await wrapper.vm.dataPromise;
+    });
+
+    afterEach(() => {
+      if (wrapper && wrapper.vm.chart) {
+        wrapper.vm.chart.destroy();
+      }
+      wrapper.unmount();
     });
 
     it('refreshes chart data when chartDef is replaced', async () => {
@@ -359,21 +422,30 @@ describe('Chart.vue', () => {
 
     beforeEach(async () => {
       wrapper = shallowMount(Chart, {
-        propsData: {
+        props: {
           canEdit: true,
           chartDef: exampleLongitudinalChart,
           metadata: exampleLongitudinalMetadata
         },
-        provide: {
-          dataService: {
-            getChartData() {
-              return Promise.resolve(response);
+        global: {
+          provide: {
+            dataService: {
+              getChartData() {
+                return Promise.resolve(response);
+              }
             }
           }
         }
       });
 
       await wrapper.vm.dataPromise;
+    });
+
+    afterEach(() => {
+      if (wrapper && wrapper.vm.chart) {
+        wrapper.vm.chart.destroy();
+      }
+      wrapper.unmount();
     });
 
     it('is not shown if the user cannot edit', async () => {
@@ -405,15 +477,17 @@ describe('Chart.vue', () => {
     beforeEach(async () => {
       chartDef = exampleLongitudinalChartDef();
       wrapper = shallowMount(Chart, {
-        propsData: {
+        props: {
           chartDef,
           canEdit: true,
           metadata: exampleLongitudinalMetadata
         },
-        provide: {
-          dataService: {
-            getChartData() {
-              return Promise.resolve(response);
+        global: {
+          provide: {
+            dataService: {
+              getChartData() {
+                return Promise.resolve(response);
+              }
             }
           }
         }
@@ -421,6 +495,13 @@ describe('Chart.vue', () => {
 
       await wrapper.vm.dataPromise;
       spyOn(wrapper.vm.chart, 'update').and.returnValue(undefined);
+    });
+
+    afterEach(() => {
+      if (wrapper && wrapper.vm.chart) {
+        wrapper.vm.chart.destroy();
+      }
+      wrapper.unmount();
     });
 
     it('toggles the legend flag in the chart config', async () => {

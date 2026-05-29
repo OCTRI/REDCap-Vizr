@@ -2,16 +2,9 @@
   <div class="vizr-version">REDCap Vizr {{ versionString }}</div>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue';
 import VERSION_STRING from '../version';
 
-export default {
-  name: 'VizrVersion',
-
-  data() {
-    return {
-      versionString: VERSION_STRING
-    };
-  }
-};
+const versionString = computed(() => VERSION_STRING);
 </script>
